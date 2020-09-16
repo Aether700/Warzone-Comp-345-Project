@@ -1,8 +1,29 @@
 #include "Utils.h"
 #include <iostream>
+#include <time.h>
+#include <random>
 
 namespace WZ
 {
+	/*initilizes the seed of the rand function using the standard srand function 
+	by passing it the current time (time(NULL) returns the current time)
+	*/
+	void Random::Init()
+	{
+		srand(time(nullptr));
+	}
+
+	//wrapper function for the c function rand
+	int Random::GetInt() { return rand(); }
+
+	/* takes the value returned by rand as a float and divides it by 
+		32000.0f (this specific value was obtained through trial and errors
+	*/
+	float Random::GetFloat()
+	{
+		return (float)rand() / 32000.0f;
+	}
+
 	int AskInput(const std::vector<std::string>& choices, const char* backMessage)
 	{
 		bool hasBackMessage = backMessage != "";
