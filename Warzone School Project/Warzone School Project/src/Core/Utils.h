@@ -1,4 +1,9 @@
+/* We've asked the teacher permission to make a Utils file and he allowed us to do it.
+*/
+
+
 #pragma once
+#include <iostream>
 #include <array>
 #include <vector>
 #include <string>

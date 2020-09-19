@@ -1,3 +1,7 @@
+/* We've asked the teacher permission to make a Utils file and he allowed us to do it.
+*/
+
+
 #include "Utils.h"
 #include <iostream>
 #include <time.h>
