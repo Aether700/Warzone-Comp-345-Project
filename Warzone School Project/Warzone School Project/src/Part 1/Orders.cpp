@@ -1,6 +1,7 @@
 #include "Orders.h"
 #include "Utils.h"
 #include <sstream>
+#include <assert.h>
 
 //temp
 #include "TempOrderHeader.h"
@@ -42,7 +43,11 @@ namespace WZ
 	
 	// Order /////////////////////////////////////////////////////////////////////////
 
-	Order::Order(Player* p) : m_player(p), m_isExecuted(false) { }
+	Order::Order(Player* p) : m_player(p), m_isExecuted(false) 
+	{
+		assert(p != nullptr);
+	}
+
 	Order::Order(const Order& other) 
 		: m_player(other.m_player), m_isExecuted(other.m_isExecuted) { }
 
@@ -72,7 +77,7 @@ namespace WZ
 	DeployOrder::DeployOrder(Player* p, Territory* dest, unsigned int amount) 
 		: Order(p), m_destination(dest), m_amount(amount)
 	{
-
+		assert(dest != nullptr);
 	}
 
 	DeployOrder::DeployOrder(const DeployOrder& other) 
@@ -139,7 +144,8 @@ namespace WZ
 	AdvanceOrder::AdvanceOrder(Player* p, Territory* source, Territory* target, unsigned int amount) 
 		: Order(p), m_source(source), m_target(target), m_amount(amount)
 	{
-
+		assert(source != nullptr);
+		assert(target != nullptr);
 	}
 
 	AdvanceOrder::AdvanceOrder(const AdvanceOrder& other)
@@ -220,7 +226,11 @@ namespace WZ
 
 	// BombOrder /////////////////////////////////////////////////////////////////////////
 
-	BombOrder::BombOrder(Player* p, Territory* target) : Order(p), m_target(target)	{ }
+	BombOrder::BombOrder(Player* p, Territory* target) : Order(p), m_target(target)	
+	{
+		assert(target != nullptr);
+	}
+
 	BombOrder::BombOrder(const BombOrder& other) : Order(other), m_target(other.m_target) { }
 
 	bool BombOrder::validate() const
@@ -283,7 +293,10 @@ namespace WZ
 	// BlockadeOrder /////////////////////////////////////////////////////////////////////////
 
 	BlockadeOrder::BlockadeOrder(Player* p, Territory* target) 
-		: Order(p), m_target(target) { }
+		: Order(p), m_target(target) 
+	{
+		assert(target != nullptr);
+	}
 	
 	BlockadeOrder::BlockadeOrder(const BlockadeOrder& other) 
 		: Order(other), m_target(other.m_target) { }
@@ -344,7 +357,11 @@ namespace WZ
 	// AirliftOrder /////////////////////////////////////////////////////////////////////////
 
 	AirliftOrder::AirliftOrder(Player* p, Territory* source, Territory* destination, unsigned int amount) 
-		: Order(p), m_source(source), m_destination(destination), m_amount(amount) { }
+		: Order(p), m_source(source), m_destination(destination), m_amount(amount) 
+	{
+		assert(source != nullptr);
+		assert(destination != nullptr);
+	}
 
 	AirliftOrder::AirliftOrder(const AirliftOrder& other) 
 		: Order(other), m_source(other.m_source), m_destination(other.m_destination),
@@ -406,7 +423,11 @@ namespace WZ
 
 	// NegotiateOrder /////////////////////////////////////////////////////////////////////////
 
-	NegotiateOrder::NegotiateOrder(Player* p, Player* otherPlayer) : Order(p), m_otherPlayer(otherPlayer) { }
+	NegotiateOrder::NegotiateOrder(Player* p, Player* otherPlayer) : Order(p), m_otherPlayer(otherPlayer) 
+	{
+		assert(otherPlayer != nullptr);
+	}
+
 	NegotiateOrder::NegotiateOrder(const NegotiateOrder& other) 
 		: Order(other), m_otherPlayer(other.m_otherPlayer) { }
 
