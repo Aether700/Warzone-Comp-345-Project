@@ -51,6 +51,8 @@ namespace WZ
 	Order::Order(const Order& other) 
 		: m_player(other.m_player), m_isExecuted(other.m_isExecuted) { }
 
+	Order::~Order() { }
+
 	const Player* Order::getPlayer() const { return m_player; }
 	
 	bool Order::isExecuted() const { return m_isExecuted; }

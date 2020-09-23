@@ -30,6 +30,14 @@ namespace WZ
 		*/
 		Order(const Order& other);
 
+		/* default destructor of the Order class
+
+			while the destructor does not do anything, it is necessary to create 
+			a virtual destructor to allow subclasses to be deleted efficiently. 
+			This virtual destructor allows them to do so.
+		*/
+		virtual ~Order();
+
 		/* getter function which 
 		   returns a const pointer to the player who gave the order
 
