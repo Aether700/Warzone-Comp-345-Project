@@ -9,7 +9,7 @@
 
 namespace WZ
 {
-	/*initilizes the seed of the rand function using the standard srand function 
+	/*initializes the seed of the rand function using the standard srand function 
 	by passing it the current time (time(NULL) returns the current time)
 	*/
 	void Random::Init()
