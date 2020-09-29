@@ -576,7 +576,18 @@ namespace WZ
 
 	OrderList& OrderList::operator=(const OrderList& other)
 	{
-		m_orders = other.m_orders;
+		for (Order* o : m_orders)
+		{
+			delete o;
+		}
+
+		//reserve size of the undelying array to avoid unecessary resizing of the vector
+		m_orders.reserve(other.m_orders.size());
+
+		for (Order* o : other.m_orders)
+		{
+			m_orders.push_back(o->ptrCopy());
+		}
 		return *this;
 	}
 
