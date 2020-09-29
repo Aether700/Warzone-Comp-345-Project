@@ -146,13 +146,6 @@ int main()
 	delete t2;
 	delete t3;
 
-	delete deploy;
-	delete advance;
-	delete bomb;
-	delete blockade;
-	delete airlift;
-	delete negotiate;
-
 	delete invalidDeploy;
 	delete invalidAdvance;
 	delete invalidBomb;
@@ -160,5 +153,6 @@ int main()
 	delete invalidAirlift;
 	delete invalidNegotiate;
 
+	//the list deletes all the orders it contains within the destructor
 	delete list;
 }	

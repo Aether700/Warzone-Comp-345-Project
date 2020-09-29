@@ -17,6 +17,7 @@ namespace WZ
 	*/
 	class Order
 	{
+		friend class OrderList;
 	public:
 		/*Constructor of the base Order class, takes in a pointer to the player who gave the order.
 
@@ -93,7 +94,15 @@ namespace WZ
 	protected:
 		bool m_isExecuted;
 
+		/*equivalent of the Clone method from java. Used by the OrderList to 
+		  perform a deep copy of the Orders in the List
+
+		  returns: A pointer to a copy of the Order Object this function was called on.
+		*/
+		virtual Order* ptrCopy() const = 0;
+
 	private:
+
 		Player* m_player;
 	};
 
@@ -168,7 +177,16 @@ namespace WZ
 		*/
 		bool operator==(const Order& other) const override;
 
+	protected:
+		/*equivalent of the Clone method from java. Used by the OrderList to
+		  perform a deep copy of the Orders in the List
+
+		  returns: A pointer to a copy of the Order Object this function was called on.
+		*/
+		virtual Order* ptrCopy() const override;
+
 	private:
+
 		Territory* m_destination;
 		unsigned int m_amount;
 	};
@@ -240,8 +258,16 @@ namespace WZ
 		*/
 		bool operator==(const Order& other) const override;
 
-	private:
+	protected:
+		/*equivalent of the Clone method from java. Used by the OrderList to
+		  perform a deep copy of the Orders in the List
 
+		  returns: A pointer to a copy of the Order Object this function was called on.
+		*/
+		virtual Order* ptrCopy() const override;
+
+
+	private:
 
 		Territory* m_source;
 		Territory* m_target;
@@ -311,6 +337,14 @@ namespace WZ
 		   and they share the same player& the same target territory, false otherwise
 		*/
 		bool operator==(const Order& other) const override;
+	
+	protected:
+		/*equivalent of the Clone method from java. Used by the OrderList to
+		  perform a deep copy of the Orders in the List
+
+		  returns: A pointer to a copy of the Order Object this function was called on.
+		*/
+		virtual Order* ptrCopy() const override;
 
 	private:
 		Territory* m_target;
@@ -375,6 +409,14 @@ namespace WZ
 		   and they share the same player& the same target territory, false otherwise
 		*/
 		bool operator==(const Order& other) const override;
+	
+	protected:
+		/*equivalent of the Clone method from java. Used by the OrderList to
+		  perform a deep copy of the Orders in the List
+
+		  returns: A pointer to a copy of the Order Object this function was called on.
+		*/
+		virtual Order* ptrCopy() const override;
 
 	private:
 		Territory* m_target;
@@ -443,6 +485,14 @@ namespace WZ
 		   and they share the same player, the same source & destination and the same amount, false otherwise
 		*/
 		bool operator==(const Order& other) const override;
+
+	protected:
+		/*equivalent of the Clone method from java. Used by the OrderList to
+		  perform a deep copy of the Orders in the List
+
+		  returns: A pointer to a copy of the Order Object this function was called on.
+		*/
+		virtual Order* ptrCopy() const override;
 
 	private:
 
@@ -518,6 +568,14 @@ namespace WZ
 	    */
 		bool operator==(const Order& other) const override;
 
+	protected:
+		/*equivalent of the Clone method from java. Used by the OrderList to
+		  perform a deep copy of the Orders in the List
+
+		  returns: A pointer to a copy of the Order Object this function was called on.
+		*/
+		virtual Order* ptrCopy() const const override;
+
 	private:
 		Player* m_otherPlayer;
 	};
@@ -551,6 +609,11 @@ namespace WZ
 		  other: the other OrderList object to copy
 		*/
 		OrderList(const OrderList& other);
+
+		/*Destructor for the OrderList class
+		  deletes all the Order objects contained within the list
+		*/
+		~OrderList();
 
 		/*adds the provided Order* to the front of the list
 
