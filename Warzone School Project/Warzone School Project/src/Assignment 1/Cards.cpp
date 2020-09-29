@@ -9,17 +9,19 @@
 using namespace std;
 
 
-
-
     Deck::Deck(){
 		cout << "Creating deck" << endl;
     }
 
     Deck::~Deck()
     {
+        cout << "Deleting deck" << endl;
 
-        deck.clear();
-		cout << "Deleting deck" << endl;
+        //delete all cards to avoid memory leak
+        for (Card* c : deck)
+        {
+            delete c;
+        }
     }
 
 	void Deck::initDeck(Deck *deck)
