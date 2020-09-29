@@ -140,11 +140,6 @@ namespace WZ
 		return Order::operator==(other) && m_amount == deploy.m_amount && *m_destination == *deploy.m_destination;
 	}
 
-	Order* DeployOrder::ptrCopy() const
-	{
-		return new DeployOrder(*this);
-	}
-
 
 	// AdvanceOrder /////////////////////////////////////////////////////////////////////////
 
@@ -231,11 +226,6 @@ namespace WZ
 			*m_target == *advance.m_target;
 	}
 
-	Order* AdvanceOrder::ptrCopy() const
-	{
-		return new AdvanceOrder(*this);
-	}
-
 	// BombOrder /////////////////////////////////////////////////////////////////////////
 
 	BombOrder::BombOrder(Player* p, Territory* target) : Order(p), m_target(target)	
@@ -302,11 +292,6 @@ namespace WZ
 		return Order::operator==(other) && *m_target == *bomb.m_target;
 	}
 
-	Order* BombOrder::ptrCopy() const
-	{
-		return new BombOrder(*this);
-	}
-
 	// BlockadeOrder /////////////////////////////////////////////////////////////////////////
 
 	BlockadeOrder::BlockadeOrder(Player* p, Territory* target) 
@@ -370,10 +355,6 @@ namespace WZ
 		return Order::operator==(other) && *m_target == *block.m_target;
 	}
 
-	Order* BlockadeOrder::ptrCopy() const
-	{
-		return new BlockadeOrder(*this);
-	}
 
 	// AirliftOrder /////////////////////////////////////////////////////////////////////////
 
@@ -442,11 +423,6 @@ namespace WZ
 			*m_destination == *airlift.m_destination;
 	}
 
-	Order* AirliftOrder::ptrCopy() const
-	{
-		return new AirliftOrder(*this);
-	}
-
 	// NegotiateOrder /////////////////////////////////////////////////////////////////////////
 
 	NegotiateOrder::NegotiateOrder(Player* p, Player* otherPlayer) : Order(p), m_otherPlayer(otherPlayer) 
@@ -510,11 +486,6 @@ namespace WZ
 		return Order::operator==(other) && *m_otherPlayer == *negotiate.m_otherPlayer;
 	}
 
-	Order* NegotiateOrder::ptrCopy() const
-	{
-		return new NegotiateOrder(*this);
-	}
-
 	// OrderList /////////////////////////////////////////////////////////////////////////
 
 	OrderList::OrderList(size_t defaultSize) 
@@ -523,24 +494,7 @@ namespace WZ
 	}
 
 	OrderList::OrderList(const std::initializer_list<Order*>& list) : m_orders(list) { }
-	OrderList::OrderList(const OrderList& other) 
-	{
-		//reserve size of the undelying array to avoid unecessary resizing of the vector
-		m_orders.reserve(other.m_orders.size());
-
-		for (Order* o : other.m_orders)
-		{
-			m_orders.push_back(o->ptrCopy());
-		}
-	}
-
-	OrderList::~OrderList()
-	{
-		for (Order* o : m_orders)
-		{
-			delete o;
-		}
-	}
+	OrderList::OrderList(const OrderList& other) : m_orders(other.m_orders) { }
 
 	void OrderList::addOrder(Order* order) { m_orders.push_back(order); }
 
