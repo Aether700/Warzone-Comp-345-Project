@@ -4,7 +4,19 @@
 #define CARDS_H_
 
 #include <vector>
-
+    class Order;
+    
+    class Card
+    {
+    public:
+        Card();
+        ~Card();
+        void setType(int random);
+        const char* getType( ) const;
+	private:
+		const char* type;
+        Order* play();
+    };
 
     class Deck
     {
@@ -15,24 +27,13 @@
         void addCardToDeck(Card* card);
         void removeCardFromDeck(Card* card);
         Card* draw();
-        Card* play();
         
     private:
 		std::vector<Card*> deck;
         
     };
 
-    class Card
-    {
-    public:
-        Card();
-        ~Card();
-        void setType(int random);
-        char getType( ) const;
-	private:
-		char type;
-    };
-
+    
 
 
     class Hand{

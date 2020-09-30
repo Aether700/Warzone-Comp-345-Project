@@ -28,7 +28,7 @@ using namespace std;
 	{
 		cout << "Creating Deck" << endl;
 
-            for(int j = 0; j < 6; j++){ //Creating 6 cards for the 7 types we have
+            for(int j = 0; j < 5; j++){ //Creating 5 cards for the 5 types we have
                 Card *c = new Card(); 
                 c->setType(j); // each card with a unique type
                 deck->addCardToDeck(c); //add it to the deck vector
@@ -38,11 +38,8 @@ using namespace std;
 
     void Deck::addCardToDeck(Card *card){
 		cout << "Adding card to deck" << endl;
-        vector<Card*>::iterator it = find(deck.begin(), deck.end(), card);
-        if (it != deck.end())
-        {
-            deck.push_back(card); 
-        }
+        deck.push_back(card); 
+        
     }
 
      void Deck::removeCardFromDeck(Card *card)
@@ -59,8 +56,7 @@ using namespace std;
         int randCard;
         randCard = rand() % (deck.size());
 		Card* c = deck.at(randCard);
-        //need to access the vector in deck and remove card from it
-        //then add it to the vector in hand class
+        deck.erase(deck.begin() + randCard);
         
         return c;
     }
@@ -79,53 +75,47 @@ using namespace std;
     
     void Card::setType(int random)
     {
+        
         if(random == 0)
         {
-            cout << "Spy Card" << endl;
-            type = 'spy';
+			cout << "Bomb Card" << endl;
+            type = "bomb";
             return;
         }
-
         if(random == 1)
         {
-			cout << "Bomb Card" << endl;
-            type = 'bomb';
-            return;
-        }
-        if(random == 2)
-        {
 			cout << "Reinforcement Card" << endl;
-			type = 'reinforcement';
+			type = "reinforcement";
             return;
-        }if(random == 3)
+        }if(random == 2)
         {
 			cout << "Blockade Card" << endl;
-			type = 'blockade';
+			type = "blockade";
+            return;
+        }
+        if(random == 3)
+        {
+            cout << "Airlift Card" << endl;
+            type = "airlift";
             return;
         }
         if(random == 4)
         {
-            cout << "Airlift Card" << endl;
-            type = 'airlift';
-            return;
-        }
-        if(random == 5)
-        {
             cout << "Diplomacy Card" << endl;
-            type = 'diplomacy';
+            type = "diplomacy";
             return;
         }
     }
      
-    char Card::getType( ) const
+    const char* Card::getType( ) const
     {
         return type;
     }
 //Hand class
-Hand::Hand()
-    {}
+    Hand::Hand()
+        {}
             
-Hand::~Hand()
+    Hand::~Hand()
     {
         for (vector<Card*>::iterator it = hand.begin(); it != hand.end(); it++)
         {
@@ -134,7 +124,20 @@ Hand::~Hand()
         }
         hand.clear();
     }
-            
+
+    void Hand::addCardToHand(Card *card){
+		cout << "Adding card to deck" << endl;
+        hand.push_back(card);  
+}
+
+    void Hand::removeCardFromHand(Card *card)
+    {
+        vector<Card*>::iterator it = find(hand.begin(), hand.end(), card);
+        if (it != hand.end())
+        {
+            hand.erase(it); 
+        }
+    }
     
         
    
