@@ -9,31 +9,34 @@
 #include "Territory.h"
 #include "Orders.h"
 
-class Territory; 
-class Order; 
+namespace WZ
+{
+	class Territory;
+	class Order;
 
-class Player {
-private:
-	vector<Territory*> territorries;
-	Hand* hand;
-public:
-	Player() {}
-	~Player();
-	Player(string, vector<Territory*>);
+	class Player {
+	private:
+		vector<Territory*> territorries;
+		Hand* hand;
+	public:
+		Player() {}
+		~Player();
+		Player(string, vector<Territory*>);
 
-	//Getters
-	vector<Territory*> getTerritorries();
-	Territory* getTerritory(string n);
-	Hand* getHand();
+		//Getters
+		vector<Territory*> getTerritorries();
+		Territory* getTerritory(string n);
+		Hand* getHand();
 
-	//Setters
-	void setTerritorries();
-	void setHand();
+		//Setters
+		void setTerritorries();
+		void setHand();
 
-	//Methods 
-	void addTerritory(Territory* newTerritory);
-	void removeTerritory(Territory* oldTerritory);
-	void toDefend(Player* p, Territory* t);
-	void toAttack()(Player* p, Territory* t);
-	void issueOrder();
-};
+		//Methods 
+		void addTerritory(Territory* newTerritory);
+		void removeTerritory(Territory* oldTerritory);
+		void toDefend(Player* p, Territory* t);
+		void toAttack()(Player* p, Territory* t);
+		void issueOrder();
+	};
+}

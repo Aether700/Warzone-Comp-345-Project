@@ -6,11 +6,13 @@
 #include <time.h>
 #include "Cards.h"
 
-using namespace std;
 
+namespace WZ
+{
+    using namespace std;
 
-    Deck::Deck(){
-		cout << "Creating deck" << endl;
+    Deck::Deck() {
+        cout << "Creating deck" << endl;
     }
 
     Deck::~Deck()
@@ -24,122 +26,121 @@ using namespace std;
         }
     }
 
-	void Deck::initDeck(Deck *deck)
-	{
-		cout << "Creating Deck" << endl;
+    void Deck::initDeck(Deck* deck)
+    {
+        cout << "Creating Deck" << endl;
 
-            for(int j = 0; j < 5; j++){ //Creating 5 cards for the 5 types we have
-                Card *c = new Card(); 
-                c->setType(j); // each card with a unique type
-                deck->addCardToDeck(c); //add it to the deck vector
-            }
-		}
-	
-
-    void Deck::addCardToDeck(Card *card){
-		cout << "Adding card to deck" << endl;
-        deck.push_back(card); 
-        
+        for (int j = 0; j < 5; j++) { //Creating 5 cards for the 5 types we have
+            Card* c = new Card();
+            c->setType(j); // each card with a unique type
+            deck->addCardToDeck(c); //add it to the deck vector
+        }
     }
 
-     void Deck::removeCardFromDeck(Card *card)
+
+    void Deck::addCardToDeck(Card* card) {
+        cout << "Adding card to deck" << endl;
+        deck.push_back(card);
+
+    }
+
+    void Deck::removeCardFromDeck(Card* card)
     {
         vector<Card*>::iterator it = find(deck.begin(), deck.end(), card);
         if (it != deck.end())
         {
-            deck.erase(it); 
+            deck.erase(it);
         }
     }
     Card* Deck::draw()
-	{
-        srand ( time(NULL) ); 
+    {
+        srand(time(NULL));
         int randCard;
         randCard = rand() % (deck.size());
-		Card* c = deck.at(randCard);
+        Card* c = deck.at(randCard);
         deck.erase(deck.begin() + randCard);
-        
+
         return c;
     }
-    
+
     // Card class
     Card::Card()
     {
         cout << "Creating Card" << endl;
     }
-    
+
     Card::~Card()
     {
         cout << "Removing Card" << endl;
     }
-    
-    
+
+
     void Card::setType(int random)
     {
-        
-        if(random == 0)
+
+        if (random == 0)
         {
-			cout << "Bomb Card" << endl;
+            cout << "Bomb Card" << endl;
             type = "bomb";
             return;
         }
-        if(random == 1)
+        if (random == 1)
         {
-			cout << "Reinforcement Card" << endl;
-			type = "reinforcement";
+            cout << "Reinforcement Card" << endl;
+            type = "reinforcement";
             return;
-        }if(random == 2)
+        }if (random == 2)
         {
-			cout << "Blockade Card" << endl;
-			type = "blockade";
+            cout << "Blockade Card" << endl;
+            type = "blockade";
             return;
         }
-        if(random == 3)
+        if (random == 3)
         {
             cout << "Airlift Card" << endl;
             type = "airlift";
             return;
         }
-        if(random == 4)
+        if (random == 4)
         {
             cout << "Diplomacy Card" << endl;
             type = "diplomacy";
             return;
         }
     }
-     
-    const char* Card::getType( ) const
+
+    const char* Card::getType() const
     {
         return type;
     }
-//Hand class
+    //Hand class
     Hand::Hand()
-        {}
-            
+    {}
+
     Hand::~Hand()
     {
         for (vector<Card*>::iterator it = hand.begin(); it != hand.end(); it++)
         {
-            delete *it;
+            delete* it;
             *it = NULL;
         }
         hand.clear();
     }
 
-    void Hand::addCardToHand(Card *card){
-		cout << "Adding card to deck" << endl;
-        hand.push_back(card);  
-}
+    void Hand::addCardToHand(Card* card) {
+        cout << "Adding card to deck" << endl;
+        hand.push_back(card);
+    }
 
-    void Hand::removeCardFromHand(Card *card)
+    void Hand::removeCardFromHand(Card* card)
     {
         vector<Card*>::iterator it = find(hand.begin(), hand.end(), card);
         if (it != hand.end())
         {
-            hand.erase(it); 
+            hand.erase(it);
         }
     }
-    
-        
+}
    
 
 

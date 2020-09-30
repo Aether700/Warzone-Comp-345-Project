@@ -4,17 +4,20 @@
 #define CARDS_H_
 
 #include <vector>
+
+namespace WZ
+{
     class Order;
-    
+
     class Card
     {
     public:
         Card();
         ~Card();
         void setType(int random);
-        const char* getType( ) const;
-	private:
-		const char* type;
+        const char* getType() const;
+    private:
+        const char* type;
         Order* play();
     };
 
@@ -23,30 +26,30 @@
     public:
         Deck();
         ~Deck();
-		void initDeck(Deck* deck);
+        void initDeck(Deck* deck);
         void addCardToDeck(Card* card);
         void removeCardFromDeck(Card* card);
         Card* draw();
-        
+
     private:
-		std::vector<Card*> deck;
-        
+        std::vector<Card*> deck;
+
     };
 
-    
 
 
-    class Hand{
+
+    class Hand {
 
     public:
         Hand();
         ~Hand();
-        void addCardToHand(Card *card1);
-		void removeCardFromHand(Card *card1);
+        void addCardToHand(Card* card1);
+        void removeCardFromHand(Card* card1);
 
     private:
         std::vector<Card*> hand;
     };
-
+}
 
 #endif /* CARDS_H_ */

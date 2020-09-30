@@ -10,16 +10,19 @@ The map format that are readable - .txt or .map exclusevly.
 #include <iostream>
 //#include "Map.h"
 #include <fstream>
-using std::ifstream;
 
-class MapLoader
+namespace WZ
 {
-private:
-	ifstream &in;
-	bool parserFunction(string s);
+	using std::ifstream;
+	class MapLoader
+	{
+	private:
+		ifstream& in;
+		bool parserFunction(string s);
 
-public:
-	explicit MapLoader();		//	default constructor
-	~MapLoader();				//	default destructor
-	string menu_loader();		//	menu function to navigate through the menu option
-};
+	public:
+		explicit MapLoader();		//	default constructor
+		~MapLoader();				//	default destructor
+		string menu_loader();		//	menu function to navigate through the menu option
+	};
+}
