@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Map.h"
 
 namespace WZ
 {
@@ -8,19 +9,11 @@ namespace WZ
 
 	Player::Player(string n, vector<Territory*> t) {
 		playerName = n;
-		hand = new Hand();
 		territories = t;
+		hand = new Hand();
 	}
 
-	string Player::getName() {
-		return playerName;
-	}
-
-	void Player::setName(string n) {
-		playerName = n;
-	}
-
-	vector<Territory*> Player::getTerritorries() {
+	vector<Territory*> Player::getTerritorries() const{
 		return territorries;
 	}
 
@@ -40,9 +33,22 @@ namespace WZ
 		return hand;
 	}
 
+	string Player::getPlayerName() const {
+		return playerName;
+	}
+
+	void Player::setPlayerName(string n) {
+		playerName = n;
+	}
+
 	void Player::setHand() {
 		Hand h;
 		hand = &h;
+	}
+
+	void Player::setTerritorries() {
+		Territory t;
+		territories = &t;
 	}
 
 	void Player::addTerritory(Territory* newTerritory) {

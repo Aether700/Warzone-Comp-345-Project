@@ -1,12 +1,8 @@
 //include libraries
 #include <iostream>
-#include <string>
-#include <vector>
 
 // include parts 
-#include "Map.h"
 #include "Cards.h"
-#include "Territory.h"
 #include "Orders.h"
 
 namespace WZ
@@ -16,27 +12,29 @@ namespace WZ
 
 	class Player {
 	private:
-		vector<Territory*> territorries;
+		std::vector<Territory*> territorries;
 		Hand* hand;
 	public:
 		Player() {}
 		~Player();
-		Player(string, vector<Territory*>);
+		Player(std::string, std::vector<Territory*>);
 
 		//Getters
-		vector<Territory*> getTerritorries();
-		Territory* getTerritory(string n);
+		std::vector<Territory*> getTerritorries() const;
+		Territory* getTerritory(std::string n);
 		Hand* getHand();
+		Player* getPlayerName() const;
 
 		//Setters
-		void setTerritorries();
+		void setPlayerName();
 		void setHand();
+		void setTerritorries();
 
 		//Methods 
 		void addTerritory(Territory* newTerritory);
 		void removeTerritory(Territory* oldTerritory);
-		void toDefend(Player* p, Territory* t);
-		void toAttack()(Player* p, Territory* t);
+		std::vector<Territory*>  toDefend(Player* p, Territory* t);
+		std::vector<Territory*> toAttack()(Player* p, Territory* t);
 		void issueOrder();
 	};
 }
