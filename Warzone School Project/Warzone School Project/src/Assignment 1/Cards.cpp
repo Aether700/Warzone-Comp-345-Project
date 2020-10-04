@@ -1,10 +1,10 @@
 
 #include <iostream>
-#include <vector>
 #include <cstdlib>
 #include <random>
 #include <time.h>
 #include "Cards.h"
+#include <sstream>
 
 
 namespace WZ
@@ -25,6 +25,14 @@ namespace WZ
             delete c;
         }
     }
+    Deck::Deck(const Deck& other)  {
+        deck.reserve(other.deck.size());
+        for (Card* c:other.deck)
+        {
+            deck.push_back(new Card(*c));
+        }
+        
+     }
 
     void Deck::initDeck(Deck* deck)
     {
@@ -54,13 +62,34 @@ namespace WZ
     }
     Card* Deck::draw()
     {
-        srand(time(NULL));
+        if(deck.empty())
+        return nullptr;
         int randCard;
         randCard = rand() % (deck.size());
         Card* c = deck.at(randCard);
         deck.erase(deck.begin() + randCard);
 
         return c;
+    }
+    std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
+    std::vector<Card*>::iterator Deck::end(){return deck.end();}
+    std::vector<Card*>::const_iterator Deck::begin() const{return deck.cbegin();}
+    std::vector<Card*>::const_iterator Deck::end() const{return deck.cend();}
+    std::ostream& operator<<(std::ostream& stream, const Deck& d){
+        std::stringstream ss;
+        ss<<"Deck:";
+		for (Card* card : d)
+		{
+			ss << "[" << *card << "], ";
+		}
+
+		std::string str = ss.str();
+
+		str.erase(str.length() - 2, 2);
+
+		stream << str;
+		return stream;
+
     }
 
     // Card class
@@ -74,7 +103,7 @@ namespace WZ
         cout << "Removing Card" << endl;
     }
 
-
+    Card::Card(const Card& other): type(other.type){ }
     void Card::setType(int random)
     {
 
@@ -114,44 +143,49 @@ namespace WZ
         return type;
     }
 
-    Order* play(Territory* start,Territory* dest,Player* p){
-         switch(type)
-         {
-             case bomb:
+    Order* Card::play(Territory* start,Territory* dest,Player* p,Player* r){
+         
+         if(type =="bomb"){
+             
              Order* O= new BombOrder(p,dest);
              return O;
-             break;
-        
-         
-             case reinforcement:
-             Order* O= new BombOrder(p,dest);
-             return O;
-             break;
-         
-            case blockade:
-            Order* O= new BlockadeOrder(p,dest);
-             return O;
-             break;
-
-
-            case airlift:
-             Order* O= new AirliftOrder(p, start,dest, 5);
-             return O;
-             break;
-
-
-            case diplomacy:
-            //  Order* O= new BombOrder(p,dest);
-            //  return O;
-             break;
-         
-         
-         
-         
          }
+        
+         else if (type=="reinforcement"){
+             
+             Order* O= new DeployOrder(p,dest,5);
+             return O; }
+            
+         
+        else if  (type=="blockade"){
+            Order* O= new BlockadeOrder(p,dest);
+             return O; }
+             
 
+
+           else if (type=="airlift"){
+            Order* O= new AirliftOrder(p, start,dest, 5);
+             return O; } 
+            
+
+
+           else if(type=="diplomacy"){
+            Order* O= new NegotiateOrder(p,r);
+             return O; }
+             
+            
 
      }
+     Card& Card::operator=(const Card& other){
+         type=other.type;
+         return *this;
+     }
+     
+     std::ostream& operator<<(std::ostream& stream, const Card& c){
+         stream<<c.getType();
+         return stream;
+     }
+
     //Hand class
     Hand::Hand()
     {}
@@ -165,6 +199,14 @@ namespace WZ
         }
         hand.clear();
     }
+    Hand::Hand(const Hand& other)  {
+        hand.reserve(other.hand.size());
+        for (Card* c:other.hand)
+        {
+            hand.push_back(new Card(*c));
+        }
+        
+     }
 
     void Hand::addCardToHand(Card* card) {
         cout << "Adding card to deck" << endl;
@@ -178,6 +220,26 @@ namespace WZ
         {
             hand.erase(it);
         }
+    }
+    std::vector<Card*>::iterator Hand::begin(){return hand.begin();}
+    std::vector<Card*>::iterator Hand::end(){return hand.end();}
+    std::vector<Card*>::const_iterator Hand::begin() const{return hand.cbegin();}
+    std::vector<Card*>::const_iterator Hand::end() const{return hand.cend();}
+    std::ostream& operator<<(std::ostream& stream, const Hand& h){
+        std::stringstream ss;
+        ss<<"Hand:";
+		for (Card* card : h)
+		{
+			ss << "[" << *card << "], ";
+		}
+
+		std::string str = ss.str();
+
+		str.erase(str.length() - 2, 2);
+
+		stream << str;
+		return stream;
+
     }
 }
    

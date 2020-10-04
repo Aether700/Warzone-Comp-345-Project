@@ -53,15 +53,15 @@ namespace WZ
 		return playerName;
 	}
 
-	std::vector<Territory*>::iterator Player::begin() {
+	std::vector<Territory*>::iterator begin() {
 		return territories.begin();
 	}
 
-	std::vector<Territory*>::iterator Player::end() {
+	std::vector<Territory*>::iterator end() {
 		return territories.end();
 	}
 
-	void Player::setPlayerName(const string& n) {
+	void Player::setPlayerName(string n) {
 		playerName = n;
 	}
 
@@ -105,10 +105,10 @@ namespace WZ
 	Player& Player::operator=(const Player& p) {
 		delete hand;
 		delete listOrders;
-		hand = new Hand(*p.hand);
+		hand = new hand(*p.hand);
 		playerName = p.playerName;
 		territories = territories;
-		listOrders = new OrderList(*p.listOrders);
+		listOrders = new OrderList(p.listOrders);
 		return *this;
 	}
 

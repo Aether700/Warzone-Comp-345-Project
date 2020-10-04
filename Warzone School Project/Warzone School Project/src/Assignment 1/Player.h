@@ -25,12 +25,12 @@ namespace WZ
 		std::vector<Territory*> getTerritorries() const;
 		Territory* getTerritory(std::string n);
 		Hand* getHand();
-		std::string getPlayerName() const;
+		Player* getPlayerName() const;
 		std::vector<Territory*>::iterator begin();
 		std::vector<Territory*>::iterator end();
 
 		//Setters
-		void setPlayerName(const std::string& name);
+		void setPlayerName();
 		void setHand();
 		void setTerritorries();
 
