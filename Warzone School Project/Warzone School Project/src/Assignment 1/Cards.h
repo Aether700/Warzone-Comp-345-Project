@@ -8,7 +8,9 @@
 namespace WZ
 {
     class Order;
-
+    class Territory;
+    class Player;
+    
     class Card
     {
     public:
@@ -18,7 +20,7 @@ namespace WZ
         const char* getType() const;
     private:
         const char* type;
-        Order* play();
+        Order* play(Territory* start,Territory* dest,Player* p);
     };
 
     class Deck

@@ -33,14 +33,14 @@ namespace WZ
         for (int j = 0; j < 5; j++) { //Creating 5 cards for the 5 types we have
             Card* c = new Card();
             c->setType(j); // each card with a unique type
-            deck->addCardToDeck(c); //add it to the deck vector
+            deck->addCardToDeck(c); 
         }
     }
 
 
     void Deck::addCardToDeck(Card* card) {
         cout << "Adding card to deck" << endl;
-        deck.push_back(card);
+        deck.push_back(card); //add it to the deck vector
 
     }
 
@@ -113,6 +113,45 @@ namespace WZ
     {
         return type;
     }
+
+    Order* play(Territory* start,Territory* dest,Player* p){
+         switch(type)
+         {
+             case bomb:
+             Order* O= new BombOrder(p,dest);
+             return O;
+             break;
+        
+         
+             case reinforcement:
+             Order* O= new BombOrder(p,dest);
+             return O;
+             break;
+         
+            case blockade:
+            Order* O= new BlockadeOrder(p,dest);
+             return O;
+             break;
+
+
+            case airlift:
+             Order* O= new AirliftOrder(p, start,dest, 5);
+             return O;
+             break;
+
+
+            case diplomacy:
+            //  Order* O= new BombOrder(p,dest);
+            //  return O;
+             break;
+         
+         
+         
+         
+         }
+
+
+     }
     //Hand class
     Hand::Hand()
     {}
