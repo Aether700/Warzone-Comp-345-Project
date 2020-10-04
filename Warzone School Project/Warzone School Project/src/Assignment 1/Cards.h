@@ -20,7 +20,7 @@ namespace WZ
         Card(const Card& other);
         void setType(int random);
         const char* getType() const;
-        Order* play(Territory* start,Territory* dest,Player* p,Player* r);
+        Order* play(Territory* start,Territory* dest,Player* p,Player* r,int amount);
         Card& operator=(const Card& other);
     private:
         const char* type;

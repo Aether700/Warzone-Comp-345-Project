@@ -143,7 +143,7 @@ namespace WZ
         return type;
     }
 
-    Order* Card::play(Territory* start,Territory* dest,Player* p,Player* r){
+    Order* Card::play(Territory* start,Territory* dest,Player* p,Player* r,int amount){
          
          if(type =="bomb"){
              
@@ -153,7 +153,7 @@ namespace WZ
         
          else if (type=="reinforcement"){
              
-             Order* O= new DeployOrder(p,dest,5);
+             Order* O= new DeployOrder(p,dest,amount);
              return O; }
             
          
@@ -164,7 +164,7 @@ namespace WZ
 
 
            else if (type=="airlift"){
-            Order* O= new AirliftOrder(p, start,dest, 5);
+            Order* O= new AirliftOrder(p, start,dest, amount);
              return O; } 
             
 
@@ -172,9 +172,7 @@ namespace WZ
            else if(type=="diplomacy"){
             Order* O= new NegotiateOrder(p,r);
              return O; }
-             
-            
-
+               
      }
      Card& Card::operator=(const Card& other){
          type=other.type;
