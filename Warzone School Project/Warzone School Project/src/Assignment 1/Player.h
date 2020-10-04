@@ -14,6 +14,8 @@ namespace WZ
 	private:
 		std::vector<Territory*> territorries;
 		Hand* hand;
+		string playerName; 
+		vector<Territory*> territories;
 	public:
 		Player() {}
 		~Player();
@@ -23,7 +25,7 @@ namespace WZ
 		std::vector<Territory*> getTerritorries() const;
 		Territory* getTerritory(std::string n);
 		Hand* getHand();
-		Player* getPlayerName() const;
+		Player* getPlayerName();
 
 		//Setters
 		void setPlayerName();
@@ -34,7 +36,7 @@ namespace WZ
 		void addTerritory(Territory* newTerritory);
 		void removeTerritory(Territory* oldTerritory);
 		std::vector<Territory*>  toDefend(Player* p, Territory* t);
-		std::vector<Territory*> toAttack()(Player* p, Territory* t);
+		std::vector<Territory*> toAttack(Player* p, Territory* t);
 		void issueOrder();
 	};
 }

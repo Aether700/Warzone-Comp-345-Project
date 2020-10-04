@@ -3,6 +3,8 @@
 
 namespace WZ
 {
+	 using namespace std;
+
 	Player::Player() {
 		hand = new Hand();
 	}
@@ -33,7 +35,7 @@ namespace WZ
 		return hand;
 	}
 
-	string Player::getPlayerName() const {
+	string Player::getPlayerName(){
 		return playerName;
 	}
 
