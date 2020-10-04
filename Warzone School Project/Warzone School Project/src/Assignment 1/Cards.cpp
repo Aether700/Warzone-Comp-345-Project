@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <random>
-#include <time.h>
 #include "Cards.h"
 #include <sstream>
 
@@ -63,7 +62,8 @@ namespace WZ
     Card* Deck::draw()
     {
         if(deck.empty())
-        return nullptr;
+            return nullptr;
+
         int randCard;
         randCard = rand() % (deck.size());
         Card* c = deck.at(randCard);
@@ -71,10 +71,23 @@ namespace WZ
 
         return c;
     }
+    
+    Deck& Deck::operator=(const Deck& other){
+        for (Card* c : deck)
+        {
+            delete c;
+        }
+        for (Card* c:other.deck)
+        {
+            deck.push_back(new Card(*c));
+        }
+        return *this;
+    }
     std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
     std::vector<Card*>::iterator Deck::end(){return deck.end();}
     std::vector<Card*>::const_iterator Deck::begin() const{return deck.cbegin();}
     std::vector<Card*>::const_iterator Deck::end() const{return deck.cend();}
+    
     std::ostream& operator<<(std::ostream& stream, const Deck& d){
         std::stringstream ss;
         ss<<"Deck:";
@@ -150,28 +163,24 @@ namespace WZ
              Order* O= new BombOrder(p,dest);
              return O;
          }
-        
          else if (type=="reinforcement"){
              
              Order* O= new DeployOrder(p,dest,amount);
-             return O; }
-            
-         
+             return O; 
+        }
         else if  (type=="blockade"){
             Order* O= new BlockadeOrder(p,dest);
-             return O; }
-             
-
-
-           else if (type=="airlift"){
+             return O; 
+        }
+        else if (type=="airlift"){
             Order* O= new AirliftOrder(p, start,dest, amount);
-             return O; } 
+             return O; 
+        } 
             
-
-
-           else if(type=="diplomacy"){
+        else if(type=="diplomacy"){
             Order* O= new NegotiateOrder(p,r);
-             return O; }
+             return O; 
+        }
                
      }
      Card& Card::operator=(const Card& other){
@@ -192,10 +201,8 @@ namespace WZ
     {
         for (vector<Card*>::iterator it = hand.begin(); it != hand.end(); it++)
         {
-            delete* it;
-            *it = NULL;
+            delete* it;    
         }
-        hand.clear();
     }
     Hand::Hand(const Hand& other)  {
         hand.reserve(other.hand.size());
@@ -218,6 +225,17 @@ namespace WZ
         {
             hand.erase(it);
         }
+    }
+    Hand& Hand::operator=(const Hand& other){
+        for (vector<Card*>::iterator it = hand.begin(); it != hand.end(); it++)
+        {
+            delete* it;    
+        }
+        for (Card* c:other.hand)
+        {
+            hand.push_back(new Card(*c));
+        }
+        return *this;
     }
     std::vector<Card*>::iterator Hand::begin(){return hand.begin();}
     std::vector<Card*>::iterator Hand::end(){return hand.end();}
