@@ -34,7 +34,7 @@ namespace WZ
 		void addTerritory(Territory* newTerritory);
 		void removeTerritory(Territory* oldTerritory);
 		std::vector<Territory*>  toDefend(Player* p, Territory* t);
-		std::vector<Territory*> toAttack()(Player* p, Territory* t);
+		std::vector<Territory*> toAttack(Player* p, Territory* t);
 		void issueOrder();
 	};
 }
