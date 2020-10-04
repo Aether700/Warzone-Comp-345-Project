@@ -3,7 +3,7 @@
 
 namespace WZ
 {
-	 using namespace std;
+	 using namespace std;  
 
 	Player::Player() {
 		hand = new Hand();

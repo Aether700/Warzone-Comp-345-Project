@@ -29,7 +29,7 @@ namespace WZ
 
 		//Setters
 		void setPlayerName();
-		void setHand();
+		void setHand(); 
 		void setTerritorries();
 
 		//Methods 
