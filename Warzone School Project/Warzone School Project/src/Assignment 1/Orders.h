@@ -3,11 +3,11 @@
 #include <string>
 #include <unordered_map>
 
+#include "Player.h"
+
 namespace WZ
 {
 	//temp/////////////////////
-	class Player; 
-	
 	class Territory; 
 	////////////////////////////
 

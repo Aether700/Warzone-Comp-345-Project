@@ -105,10 +105,10 @@ namespace WZ
 	Player& Player::operator=(const Player& p) {
 		delete hand;
 		delete listOrders;
-		hand = new hand(*p.hand);
+		hand = new Hand(*p.hand);
 		playerName = p.playerName;
 		territories = territories;
-		listOrders = new OrderList(p.listOrders);
+		listOrders = new OrderList(*p.listOrders);
 		return *this;
 	}
 

@@ -3,13 +3,8 @@
 #include <sstream>
 #include <assert.h>
 
-
 //temp
 #include "TempOrderHeader.h"
-
-#define DEF_WIN_RATE 0.7f
-#define ATK_WIN_RATE 0.6f
-
 
 namespace WZ
 {
@@ -106,16 +101,16 @@ namespace WZ
 	std::string DeployOrder::toString() const
 	{
 		std::stringstream ss;
-		ss << getPlayer()->toString() << ": ";
+		ss << *getPlayer() << ": ";
 
 		if (isExecuted())
 		{
-			ss << "has deployed " << m_amount << " troups to " << m_destination->toString() 
+			ss << "has deployed " << m_amount << " troups to " << *m_destination 
 				<< " (current troups: " << m_destination->getTroups() << ")";
 		}
 		else
 		{
-			ss << "deploy " << m_amount << " troups to " << m_destination->toString();
+			ss << "deploy " << m_amount << " troups to " << *m_destination;
 		}
 		return ss.str();
 	}
@@ -189,16 +184,18 @@ namespace WZ
 	std::string AdvanceOrder::toString() const
 	{
 		std::stringstream ss;
-		ss << getPlayer()->toString() << ": ";
+		ss << *getPlayer() << ": ";
 
 		if (isExecuted())
 		{
-			ss << "has advanced " << m_amount << " troups from " << m_source->toString() << " to " << m_target->toString();
+			ss << "has advanced ";
 		}
 		else
 		{
-			ss << "advance " << m_amount << " troups from " << m_source->toString() << " to " << m_target->toString();
+			ss << "advance ";
 		}
+
+		ss << m_amount << " troups from " << *m_source << " to " << *m_target;
 
 		return ss.str();
 	}
@@ -259,16 +256,17 @@ namespace WZ
 	{
 		std::stringstream ss;
 
-		ss << getPlayer()->toString() << ": ";
+		ss << *getPlayer() << ": ";
 
 		if (isExecuted())
 		{
-			ss << "has bombed " << m_target->toString();
+			ss << "has bombed ";
 		}
 		else
 		{
-			ss << "bomb " << m_target->toString();
+			ss << "bomb ";
 		}
+		ss << *m_target;
 
 		return ss.str();
 	}
@@ -322,16 +320,18 @@ namespace WZ
 	{
 		std::stringstream ss;
 
-		ss << getPlayer()->toString() << ": ";
+		ss << *getPlayer() << ": ";
 
 		if (isExecuted())
 		{
-			ss << "has blockaded " << m_target->toString();
+			ss << "has blockaded ";
 		}
 		else
 		{
-			ss << "blockade " << m_target->toString();
+			ss << "blockade ";
 		}
+
+		ss << *m_target;
 
 		return ss.str();
 	}
@@ -387,16 +387,18 @@ namespace WZ
 	std::string AirliftOrder::toString() const
 	{
 		std::stringstream ss;
-		ss << getPlayer()->toString() << ": ";
+		ss << *getPlayer() << ": ";
 
 		if(isExecuted())
 		{
-			ss << "has Airlifted " << m_amount << " troups from " << m_source->toString() << " to " << m_destination->toString();
+			ss << "has Airlifted ";
 		}
 		else
 		{
-			ss << "Airlift " << m_amount << " troups from " << m_source->toString() << " to " << m_destination->toString();
+			ss << "Airlift ";
 		}
+
+		ss << m_amount << " troups from " << *m_source << " to " << *m_destination;
 
 		return ss.str();
 	}
@@ -453,16 +455,18 @@ namespace WZ
 	std::string NegotiateOrder::toString() const
 	{
 		std::stringstream ss;
-		ss << getPlayer()->toString() << ": ";
+		ss << *getPlayer() << ": ";
 
 		if (isExecuted())
 		{
-			ss << "is negotiating with " << m_otherPlayer->toString();
+			ss << "is negotiating with ";
 		}
 		else
 		{
-			ss << "negotiate with " << m_otherPlayer->toString();
+			ss << "negotiate with ";
 		}
+
+		ss << *m_otherPlayer;
 
 		return ss.str();
 	}
