@@ -25,10 +25,10 @@ namespace WZ
 		std::vector<Territory*> getTerritorries() const;
 		Territory* getTerritory(std::string n);
 		Hand* getHand();
-		Player* getPlayerName();
+		Player* getPlayerName();  
 
 		//Setters
-		void setPlayerName();
+		void setPlayerName(); 
 		void setHand(); 
 		void setTerritorries();
 
