@@ -29,8 +29,8 @@ namespace WZ
 		listOrders = new OrderList();
 	}
 
-	vector<Territory*> Player::getTerritorries() const {
-		return territorries;
+	vector<Territory*> Player::getTerritories() const {
+		return territories;
 	}
 
 	Territory* Player::getTerritory(string n) {
@@ -53,11 +53,11 @@ namespace WZ
 		return playerName;
 	}
 
-	std::vector<Territory*>::iterator begin() {
+	std::vector<Territory*>::iterator Player::begin() {
 		return territories.begin();
 	}
 
-	std::vector<Territory*>::iterator end() {
+	std::vector<Territory*>::iterator Player::end() {
 		return territories.end();
 	}
 
@@ -70,19 +70,19 @@ namespace WZ
 		hand = &h;
 	}
 
-	void Player::setTerritorries() {
+	void Player::setTerritories() {
 		Territory t;
 		territories = &t;
 	}
 
 	void Player::addTerritory(Territory* newTerritory) {
-		territorries.push_back(newTerritory);
+		territories.push_back(newTerritory);
 	}
 
 	void Player::removeTerritory(Territory* oldTerritory) {
-		for (int i = 0; i < territorries.size(); i++) {
+		for (int i = 0; i < territories.size(); i++) {
 			if (territories[i]->getTerritoryName() == oldTerritory->getTerritoryName()) {
-				territories.erase(territorries.begin() + i);
+				territories.erase(territories.begin() + i);
 			}
 		}
 	}

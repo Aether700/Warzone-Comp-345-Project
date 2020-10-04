@@ -22,17 +22,17 @@ namespace WZ
 		Player(std::string, std::vector<Territory*>);
 
 		//Getters
-		std::vector<Territory*> getTerritorries() const;
+		std::vector<Territory*> getTerritories() const;
 		Territory* getTerritory(std::string n);
 		Hand* getHand();
-		Player* getPlayerName() const;
+		std::string getPlayerName() const;
 		std::vector<Territory*>::iterator begin();
 		std::vector<Territory*>::iterator end();
 
 		//Setters
-		void setPlayerName();
+		void setPlayerName(std::string name);
 		void setHand();
-		void setTerritorries();
+		void setTerritories();
 
 		//Methods 
 		void addTerritory(Territory* newTerritory);
