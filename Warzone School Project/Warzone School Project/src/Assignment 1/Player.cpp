@@ -3,30 +3,14 @@
 
 namespace WZ
 {
-	using namespace std;
-
 	Player::Player() {
 		hand = new Hand();
-		listOrders = new OrderList();
-	}
-
-	Player::Player(const Player& p){
-		hand = new Hand(*p.hand);
-		playerName = p.playerName; 
-		territories = territories;
-		listOrders = new OrderList(*p.listOrders); 
-	}
-
-	Player::~Player() {
-		delete hand;
-		delete listOrders;
 	}
 
 	Player::Player(string n, vector<Territory*> t) {
 		playerName = n;
 		territories = t;
 		hand = new Hand();
-		listOrders = new OrderList();
 	}
 
 	vector<Territory*> Player::getTerritorries() const{
@@ -34,11 +18,11 @@ namespace WZ
 	}
 
 	Territory* Player::getTerritory(string n) {
-		for (int i = 0; i < territories.size(); i++)
+		for (int i = 0; i < territorries.size(); i++)
 		{
-			if (territories[i]->getTerritoryName() == n)
+			if (territorries[i]->getTerritoryName() == n)
 			{
-				return territories[i];
+				return territorries[i];
 			}
 		}
 		return NULL;
@@ -49,16 +33,8 @@ namespace WZ
 		return hand;
 	}
 
-	string Player::getPlayerName() const { 
+	string Player::getPlayerName() const {
 		return playerName;
-	}
-
-	std::vector<Territory*>::iterator begin(){
-		return territories.begin();
-	}
-
-	std::vector<Territory*>::iterator end(){
-		return territories.end();
 	}
 
 	void Player::setPlayerName(string n) {
@@ -81,39 +57,24 @@ namespace WZ
 
 	void Player::removeTerritory(Territory* oldTerritory) {
 		for (int i = 0; i < territorries.size(); i++) {
-			if (territories[i]->getTerritoryName() == oldTerritory->getTerritoryName()) {
-				territories.erase(territorries.begin() + i);
+			if (territorries[i]->getTerritoryName() == oldTerritory->getTerritoryName()) {
+				territorries.erase(territorries.begin() + i);
 			}
 		}
 	}
 
-	vector<Territory*> Player::toDefend(Player* p, Territory* t)
+	void Player::toDefend(Player* p, Territory* t)
 	{
-		return territories; 	
+
 	}
 
-	vector<Territory*> Player::toAttack(Player* p, Territory* t)
+	void Player::toAttack()(Player* p, Territory* t)
 	{
-		return territories; 
+
 	}
 
-	void Player::issueOrder(Order* order)
+	void Player::issueOrder()
 	{
-		listOrders->addOrder(order);	
-	}
 
-	Player& Player::operator=(const Player& p){
-		delete hand;
-		delete listOrders;
-		hand = new hand(*p.hand);
-		playerName = p.playerName;
-		territories = territories; 
-		listOrders = new OrderList(p.listOrders);
-		return *this;
-	} 
-
-	std::ostream& operator<<(std::ostream& stream, const Player& p){
-		stream << p.getPlayerName();
-		return stream;
 	}
 }
