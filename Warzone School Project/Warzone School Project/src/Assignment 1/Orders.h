@@ -90,6 +90,13 @@ namespace WZ
 		*/
 		virtual bool operator==(const Order& other) const;
 
+		/*Standard != operator. 
+		 Returns true if the == operator was false and vice versa
+
+		 returns: true if the == operator was false and vice versa
+		*/
+		bool operator!=(const Order& other) const;
+
 	protected:
 		bool m_isExecuted;
 
@@ -624,6 +631,22 @@ namespace WZ
 		*/
 		OrderList& operator=(const OrderList& other);
 
+		/* equals operator. returns true if both lists have the same number of 
+		   Orders and they have the same orders at the same positions
+
+		   other: the other OrderList object being compared to this one
+
+		   returns: true if both lists have the same number of 
+		   Orders and they have the same orders at the same positions
+		*/
+		bool operator==(const OrderList& other) const;
+
+		/*Standard != operator.
+		 Returns true if the == operator was false and vice versa
+
+		 returns: true if the == operator was false and vice versa
+		*/
+		bool operator!=(const OrderList& other) const;
 	private:
 		std::vector<Order*> m_orders;
 	};

@@ -40,6 +40,7 @@ namespace WZ
 		unsigned int m_troups;
 	};
 
+	/*
 	//temp player not actual class
 	class Player
 	{
@@ -76,4 +77,5 @@ namespace WZ
 	private:
 		std::vector<Territory*> m_owned;
 	};
+	*/
 }

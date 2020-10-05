@@ -64,6 +64,11 @@ namespace WZ
 		return *m_player == *other.m_player && m_isExecuted == other.m_isExecuted;
 	}
 
+	bool Order::operator!=(const Order& other) const
+	{
+		return !(*this == other);
+	}
+
 	std::ostream& operator<<(std::ostream& stream, const Order& o)
 	{
 		stream << o.toString();
@@ -539,6 +544,28 @@ namespace WZ
 		return *this;
 	}
 
+	bool OrderList::operator==(const OrderList& other) const
+	{
+		if (m_orders.size() != other.m_orders.size())
+		{
+			return false;
+		}
+
+		for (size_t i = 0; i < other.m_orders.size(); i++)
+		{
+			if (*m_orders[i] != *other.m_orders[i])
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool OrderList::operator!=(const OrderList& other) const
+	{
+		return !(*this == other);
+	}
 
 	std::ostream& operator<<(std::ostream& stream, const OrderList& o)
 	{

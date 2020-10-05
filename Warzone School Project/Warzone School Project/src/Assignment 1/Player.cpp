@@ -53,12 +53,39 @@ namespace WZ
 		return playerName;
 	}
 
+	//for not just returns an empty vector<Player*>
+	std::vector<Player*> Player::getNegotiatingPlayers() const
+	{
+		std::vector<Player*> n;
+		return n;
+	}
+
 	std::vector<Territory*>::iterator Player::begin() {
 		return territories.begin();
 	}
 
 	std::vector<Territory*>::iterator Player::end() {
 		return territories.end();
+	}
+
+	std::vector<Territory*>::const_iterator Player::begin() const {
+		return territories.cbegin();
+	}
+
+	std::vector<Territory*>::const_iterator Player::end() const {
+		return territories.cend();
+	}
+
+	bool Player::ownsTerritory(Territory* t) const
+	{
+		for (Territory* territory : *this)
+		{
+			if (*t == *territory)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void Player::setPlayerName(string n) {
@@ -68,11 +95,6 @@ namespace WZ
 	void Player::setHand() {
 		Hand h;
 		hand = &h;
-	}
-
-	void Player::setTerritories() {
-		Territory t;
-		territories = &t;
 	}
 
 	void Player::addTerritory(Territory* newTerritory) {
@@ -115,5 +137,16 @@ namespace WZ
 	std::ostream& operator<<(std::ostream& stream, const Player& p) {
 		stream << p.getPlayerName();
 		return stream;
+	}
+
+	//might have to modify later
+	bool Player::operator==(const Player& other) const
+	{
+		return playerName == other.playerName && listOrders == other.listOrders;
+	}
+
+	bool Player::operator!=(const Player& other) const
+	{
+		return !(*this == other);
 	}
 }

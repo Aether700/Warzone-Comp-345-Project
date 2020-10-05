@@ -26,15 +26,18 @@ namespace WZ
 		Territory* getTerritory(std::string n);
 		Hand* getHand();
 		std::string getPlayerName() const;
+		std::vector<Player*> getNegotiatingPlayers() const;
 		std::vector<Territory*>::iterator begin();
 		std::vector<Territory*>::iterator end();
+		std::vector<Territory*>::const_iterator begin() const;
+		std::vector<Territory*>::const_iterator end() const;
 
 		//Setters
 		void setPlayerName(std::string name);
 		void setHand();
-		void setTerritories();
 
 		//Methods 
+		bool ownsTerritory(Territory* t) const;
 		void addTerritory(Territory* newTerritory);
 		void removeTerritory(Territory* oldTerritory);
 		std::vector<Territory*>  toDefend(Player* p, Territory* t);
@@ -42,6 +45,8 @@ namespace WZ
 		void issueOrder(Order* order);
 
 		Player& operator=(const Player&); //assignment operator 
+		bool operator==(const Player&) const;
+		bool operator!=(const Player&) const;
 	};
 
 	std::ostream& operator<<(std::ostream&, const Player&);
