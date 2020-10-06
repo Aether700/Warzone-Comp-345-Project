@@ -1,10 +1,11 @@
 #include "Orders.h"
 #include "Utils.h"
+#include "Map.h"
 #include <sstream>
 #include <assert.h>
 
 //temp
-#include "TempOrderHeader.h"
+//#include "TempOrderHeader.h"
 
 namespace WZ
 {
@@ -25,7 +26,7 @@ namespace WZ
 	{
 		for (Territory* playerTerritory : *p)
 		{
-			for(Territory* adjacentTerritory : playerTerritory->getAdjacent())
+			for(Territory* adjacentTerritory : playerTerritory->getAdjList())
 			{
 				if (*adjacentTerritory == *t)
 				{
@@ -111,7 +112,7 @@ namespace WZ
 		if (isExecuted())
 		{
 			ss << "has deployed " << m_amount << " troups to " << *m_destination 
-				<< " (current troups: " << m_destination->getTroups() << ")";
+				<< " (current troups: " << m_destination->getArmies() << ")";
 		}
 		else
 		{
@@ -165,13 +166,13 @@ namespace WZ
 			return false;
 		}
 
-		auto adjacent = m_source->getAdjacent();
+		auto adjacent = m_source->getAdjList();
 
 		for (auto t : adjacent)
 		{
 			if (*t == *m_target)
 			{
-				return m_source->getTroups() >= m_amount;
+				return m_source->getArmies() >= m_amount;
 			}
 		}
 		return false;
@@ -377,7 +378,7 @@ namespace WZ
 
 	bool AirliftOrder::validate() const
 	{
-		return getPlayer()->ownsTerritory(m_source) && m_source->getTroups() >= m_amount;
+		return getPlayer()->ownsTerritory(m_source) && m_source->getArmies() >= m_amount;
 	}
 
 	void AirliftOrder::execute()
