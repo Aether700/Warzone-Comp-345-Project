@@ -4,14 +4,15 @@
 #define CARDS_H_
 
 #include <vector>
-#include "Orders.h"
+//#include "Orders.h"
 
 namespace WZ
 {
     
     class Territory;
     class Player;
-    
+    class Order;
+
     class Card
     {
     public:

@@ -1,5 +1,7 @@
 #include "Player.h"
+#include "Orders.h"
 #include "Map.h"
+#include "Cards.h"
 
 namespace WZ
 {
@@ -34,9 +36,9 @@ namespace WZ
 	}
 
 	Territory* Player::getTerritory(string n) {
-		for (int i = 0; i < territories.size(); i++)
+		for (size_t i = 0; i < territories.size(); i++)
 		{
-			if (territories[i]->getTerritoryName() == n)
+			if (territories[i]->getName() == n)
 			{
 				return territories[i];
 			}
@@ -78,9 +80,9 @@ namespace WZ
 
 	bool Player::ownsTerritory(Territory* t) const
 	{
-		for (Territory* territory : *this)
+		for (std::vector<Territory*>::const_iterator it = this->begin(); it != this->end(); it++)
 		{
-			if (*t == *territory)
+			if (*t == *(*it))
 			{
 				return true;
 			}
@@ -102,8 +104,8 @@ namespace WZ
 	}
 
 	void Player::removeTerritory(Territory* oldTerritory) {
-		for (int i = 0; i < territories.size(); i++) {
-			if (territories[i]->getTerritoryName() == oldTerritory->getTerritoryName()) {
+		for (size_t i = 0; i < territories.size(); i++) {
+			if (territories[i]->getName() == oldTerritory->getName()) {
 				territories.erase(territories.begin() + i);
 			}
 		}

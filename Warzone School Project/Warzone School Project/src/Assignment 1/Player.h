@@ -1,13 +1,14 @@
 //include libraries
 #include <iostream>
-
-// include parts 
-#include "Cards.h"
-#include "Orders.h"
+#include <vector>
 
 namespace WZ
 {
+	//forward class declaration
 	class Territory;
+	class OrderList;
+	class Order;
+	class Hand;
 
 	class Player {
 	private:
@@ -27,6 +28,7 @@ namespace WZ
 		Hand* getHand();
 		std::string getPlayerName() const;
 		std::vector<Player*> getNegotiatingPlayers() const;
+
 		std::vector<Territory*>::iterator begin();
 		std::vector<Territory*>::iterator end();
 		std::vector<Territory*>::const_iterator begin() const;

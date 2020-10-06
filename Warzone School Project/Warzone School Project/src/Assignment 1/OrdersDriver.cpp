@@ -1,7 +1,6 @@
 #include "Orders.h"
-
-//temp
-#include "TempOrderHeader.h"
+#include "Player.h"
+#include "Map.h"
 
 
 int main()
@@ -11,17 +10,20 @@ int main()
 	WZ::Player* p2 = new WZ::Player();
 	WZ::Player* p3 = new WZ::Player();
 
-	WZ::Territory* t1 = new WZ::Territory(p1, 5);
-	WZ::Territory* t2 = new WZ::Territory(p2, 10);
-	WZ::Territory* t3 = new WZ::Territory(p3, 15);
+	WZ::Territory* t1 = new WZ::Territory("T1", 1, nullptr, 5);
+	WZ::Territory* t2 = new WZ::Territory("T2", 2, nullptr, 10);
+	WZ::Territory* t3 = new WZ::Territory("T3", 3, nullptr, 15);
 	
-	t1->setAdj({ t2, t3 });
-	t2->setAdj({ t1 });
-	t3->setAdj({ t1 });
+	t1->addAdjTerritory(t2);
+	t1->addAdjTerritory(t3);
+	t2->addAdjTerritory(t1);
+	t3->addAdjTerritory(t1);
 
-	p1->setTerritories({ t1 });
-	p2->setTerritories({ t2 });
-	p3->setTerritories({ t3 });
+	p1->addTerritory(t1);
+	p2->addTerritory(t2);
+	p3->addTerritory(t3);
+
+	WZ::DeployOrder deployVal = WZ::DeployOrder(p1, t1, 5);
 
 	//create Orders
 	WZ::DeployOrder* deploy = new WZ::DeployOrder(p1, t1, 5);

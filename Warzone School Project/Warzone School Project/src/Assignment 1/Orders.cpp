@@ -1,11 +1,10 @@
 #include "Orders.h"
 #include "Utils.h"
 #include "Map.h"
+#include "Player.h"
+
 #include <sstream>
 #include <assert.h>
-
-//temp
-//#include "TempOrderHeader.h"
 
 namespace WZ
 {
@@ -161,14 +160,14 @@ namespace WZ
 
 	bool AdvanceOrder::validate() const
 	{
-		if (!getPlayer()->ownsTerritory(m_source) || isNegotiating(getPlayer(), m_target->getOwner()))
+		if (!getPlayer()->ownsTerritory(m_source) || isNegotiating(getPlayer(), (const Player*) m_target->getOwner()))
 		{
 			return false;
 		}
 
-		auto adjacent = m_source->getAdjList();
+		std::vector<Territory*> adjacent = m_source->getAdjList();
 
-		for (auto t : adjacent)
+		for (Territory* t : adjacent)
 		{
 			if (*t == *m_target)
 			{
@@ -246,7 +245,7 @@ namespace WZ
 			return false;
 		}
 
-		return HasTerritoryAdj(getPlayer(), m_target) && !isNegotiating(getPlayer(), m_target->getOwner());
+		return HasTerritoryAdj(getPlayer(), m_target) && !isNegotiating(getPlayer(), (const Player*) m_target->getOwner());
 	}
 
 	void BombOrder::execute()

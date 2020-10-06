@@ -3,14 +3,10 @@
 #include <string>
 #include <unordered_map>
 
-#include "Player.h"
-
 namespace WZ
 {
-	//temp/////////////////////
-	class Territory; 
-	////////////////////////////
-
+	class Territory;
+	class Player;
 
 	/*Base order class. An abstract class that serves as the base of 
 	  every order in the game by providing the api used by the orders

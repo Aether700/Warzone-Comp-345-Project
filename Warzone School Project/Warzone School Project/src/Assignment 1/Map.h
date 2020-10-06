@@ -1,12 +1,14 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "Orders.h"
-#include "Player.h"
+
+//#include "Orders.h"
+//#include "Player.h"
 
 namespace WZ
 {
     class Continent;
+    class Player;
 
     /*Territory class that represents a territory on our map or a node on our graph
     */

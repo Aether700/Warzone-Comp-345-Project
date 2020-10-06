@@ -5,6 +5,7 @@
 #include "Cards.h"
 #include <sstream>
 
+#include "Orders.h"
 
 namespace WZ
 {

@@ -4,9 +4,12 @@
 #include <unordered_map>
 #include <assert.h>
 
+#include "Player.h"
+
 namespace WZ
 {
 	// Territory //////////////////////////////////////////////
+
 	Territory::Territory(const std::string& name, unsigned int id, Continent* continent, unsigned int armies)
 		: m_name(name), m_id(id), m_armies(armies), m_continent(continent), m_owner(nullptr) { }
 
