@@ -78,7 +78,7 @@ namespace WZ
 	std::ostream& operator<<(std::ostream& stream, const Territory& t)
 	{
 		std::stringstream ss;
-		ss << t.getName() << " Armies: " << t.getArmies() << " Owner: ";
+		ss << "\"" << t.getName() << "\"" << " Armies: " << t.getArmies() << " Owner: ";
 
 		if (t.getOwner() == nullptr)
 		{
@@ -275,10 +275,10 @@ namespace WZ
 	{
 		std::stringstream ss;
 
-		ss << c.getName() << "Bonus: " << c.getBonus() << " Territories: ";
+		ss << "\"" << c.getName() << "\"" << " Bonus: " << c.getBonus() << " Territories: ";
 		for (size_t i = 0; i < c.getCount(); i++)
 		{
-			ss << *c.getTerritory(i) << ", ";
+			ss << "[" << *c.getTerritory(i) << "], ";
 		}
 
 		std::string str = ss.str();
@@ -338,14 +338,24 @@ namespace WZ
 
 			currContinent->m_visited = true;
 
+			//check every territory in the continent
 			for (size_t i = 0; i < currContinent->getCount(); i++)
 			{
-				if (!currContinent->contains(currContinent->getTerritory(i)))
+				//for every of those territories inside the continent check their adjList
+				Territory* currTerritory = currContinent->getTerritory(i);
+
+				for (Territory* t : currTerritory->getAdjList())
 				{
-					Continent* c = currContinent->getTerritory(i)->getContinent();
-					if (!c->m_visited)
+					//for every territory in the adjList check if the continent 
+					//contains that territory. if it doesn't then we enqueue 
+					//the continent of that territory in the queue
+					if (!currContinent->contains(t))
 					{
-						q.push(c);
+						Continent* c = t->getContinent();
+						if (!c->m_visited)
+						{
+							q.push(c);
+						}
 					}
 				}
 			}
@@ -459,7 +469,7 @@ namespace WZ
 
 		for (size_t i = 0; i < m.getCount(); i++)
 		{
-			ss << *m.getContinent(i) << ", ";
+			ss << "{" << *m.getContinent(i) << "}, ";
 		}
 
 		std::string str = ss.str();

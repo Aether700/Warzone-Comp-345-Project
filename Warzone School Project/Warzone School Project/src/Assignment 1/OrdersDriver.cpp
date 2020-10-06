@@ -6,9 +6,9 @@
 int main()
 {
 	//set up variables
-	WZ::Player* p1 = new WZ::Player();
-	WZ::Player* p2 = new WZ::Player();
-	WZ::Player* p3 = new WZ::Player();
+	WZ::Player* p1 = new WZ::Player("Player 1", {});
+	WZ::Player* p2 = new WZ::Player("Player 2", {});
+	WZ::Player* p3 = new WZ::Player("Player 3", {});
 
 	WZ::Territory* t1 = new WZ::Territory("T1", 1, nullptr, 5);
 	WZ::Territory* t2 = new WZ::Territory("T2", 2, nullptr, 10);
@@ -19,9 +19,16 @@ int main()
 	t2->addAdjTerritory(t1);
 	t3->addAdjTerritory(t1);
 
+	
+
 	p1->addTerritory(t1);
+	t1->setOwner(p1);
+
 	p2->addTerritory(t2);
+	t2->setOwner(p2);
+
 	p3->addTerritory(t3);
+	t3->setOwner(p3);
 
 	WZ::DeployOrder deployVal = WZ::DeployOrder(p1, t1, 5);
 
@@ -68,10 +75,10 @@ int main()
 		"\nindex 0: " << *(*list)[0] <<
 		"\nindex 3: "<< *(*list)[3] << "\n\n";
 
+	std::cout << "Moving order at index 0 to index 3\n\n";
 	list->move(0, 3);
 
 	std::cout << "orders at index 0 & 3 after move operation:"
-		"\nindex 0: " << *(*list)[0] <<
 		"\nindex 3: " << *(*list)[3] << "\n\n";
 
 	////////////////////////////////////
@@ -114,7 +121,7 @@ int main()
 	//initialize invalid orders
 	WZ::DeployOrder* invalidDeploy = new WZ::DeployOrder(p1, t2, 5);
 	WZ::AdvanceOrder* invalidAdvance = new WZ::AdvanceOrder(p2, t1, t3, 5);
-	WZ::BombOrder* invalidBomb = new WZ::BombOrder(p2, t3);
+	WZ::BombOrder* invalidBomb = new WZ::BombOrder(p2, t2);
 	WZ::BlockadeOrder* invalidBlockade = new WZ::BlockadeOrder(p1, t2);
 	WZ::AirliftOrder* invalidAirlift = new WZ::AirliftOrder(p2, t2, t1, 200);
 	WZ::NegotiateOrder* invalidNegotiate = new WZ::NegotiateOrder(p1, p1);
