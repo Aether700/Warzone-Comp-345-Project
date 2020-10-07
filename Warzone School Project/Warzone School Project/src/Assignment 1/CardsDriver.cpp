@@ -27,7 +27,8 @@ int main(){
     std::cout<<"Playing cards from hand "<< std::endl;
     for(WZ::Card* currentCard: *h1){
         
-        currentCard->play(t,t,p,p,2);
+        WZ::Order* temp=currentCard->play(t,t,p,p,2);
+        delete temp;
     }
     delete d1;
     delete h1;

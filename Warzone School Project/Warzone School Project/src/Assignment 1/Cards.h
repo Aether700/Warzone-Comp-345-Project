@@ -57,6 +57,7 @@ namespace WZ
         Hand();
         ~Hand();
         Hand(const Hand& other);
+        size_t getCount () const;
         void addCardToHand(Card* card1);
         void removeCardFromHand(Card* card1);
         Hand& operator=(const Hand& other);

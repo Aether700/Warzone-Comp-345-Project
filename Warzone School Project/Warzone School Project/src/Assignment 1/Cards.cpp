@@ -12,13 +12,10 @@ namespace WZ
     using namespace std;
 
     Deck::Deck() {
-        cout << "Creating deck" << endl;
     }
 
     Deck::~Deck()
     {
-        cout << "Deleting deck" << endl;
-
         //delete all cards to avoid memory leak
         for (Card* c : deck)
         {
@@ -30,14 +27,11 @@ namespace WZ
         for (Card* c:other.deck)
         {
             deck.push_back(new Card(*c));
-        }
-        
+        }   
      }
 
     void Deck::initDeck()
     {
-        cout << "Creating Deck" << endl;
-
         for (int j = 0; j < 5; j++) { //Creating 5 cards for the 5 types we have
             Card* c = new Card();
             c->setType(j); // each card with a unique type
@@ -108,14 +102,10 @@ namespace WZ
 
     // Card class
     Card::Card()
-    {
-        cout << "Creating Card" << endl;
-    }
+    {}
 
     Card::~Card()
-    {
-        cout << "Removing Card" << endl;
-    }
+    {}
 
     Card::Card(const Card& other): type(other.type){ }
     void Card::setType(int random)
@@ -123,30 +113,25 @@ namespace WZ
 
         if (random == 0)
         {
-            cout << "Bomb Card" << endl;
             type = "bomb";
             return;
         }
         if (random == 1)
         {
-            cout << "Reinforcement Card" << endl;
             type = "reinforcement";
             return;
         }if (random == 2)
         {
-            cout << "Blockade Card" << endl;
             type = "blockade";
             return;
         }
         if (random == 3)
         {
-            cout << "Airlift Card" << endl;
             type = "airlift";
             return;
         }
         if (random == 4)
         {
-            cout << "Diplomacy Card" << endl;
             type = "diplomacy";
             return;
         }
@@ -160,25 +145,28 @@ namespace WZ
     Order* Card::play(Territory* start,Territory* dest,Player* p,Player* r,int amount){
          
          if(type =="bomb"){
-             
+             std::cout<<"Playing Bomb card"<<std::endl;
              Order* O= new BombOrder(p,dest);
              return O;
          }
          else if (type=="reinforcement"){
-             
+             std::cout<<"Playing reinforcement card"<<std::endl;
              Order* O= new DeployOrder(p,dest,amount);
              return O; 
         }
         else if  (type=="blockade"){
+            std::cout<<"Playing blockade card"<<std::endl;
             Order* O= new BlockadeOrder(p,dest);
              return O; 
         }
         else if (type=="airlift"){
+            std::cout<<"Playing airlift card"<<std::endl;
             Order* O= new AirliftOrder(p, start,dest, amount);
              return O; 
         } 
             
         else if(type=="diplomacy"){
+            std::cout<<"Playing diplomacy card"<<std::endl;
             Order* O= new NegotiateOrder(p,r);
              return O; 
         }
@@ -212,6 +200,11 @@ namespace WZ
             hand.push_back(new Card(*c));
         }
         
+     }
+     
+     size_t Hand::getCount() const{
+         return hand.size();
+
      }
 
     void Hand::addCardToHand(Card* card) {
@@ -251,9 +244,9 @@ namespace WZ
 		}
 
 		std::string str = ss.str();
-
+        if(h.getCount()!= 0){
 		str.erase(str.length() - 2, 2);
-
+        }
 		stream << str;
 		return stream;
 
