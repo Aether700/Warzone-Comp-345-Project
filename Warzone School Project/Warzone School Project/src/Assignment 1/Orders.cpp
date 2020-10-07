@@ -505,6 +505,8 @@ namespace WZ
 	OrderList::OrderList(const std::initializer_list<Order*>& list) : m_orders(list) { }
 	OrderList::OrderList(const OrderList& other) : m_orders(other.m_orders) { }
 
+	size_t OrderList::getCount() const { return m_orders.size(); }
+
 	void OrderList::addOrder(Order* order) { m_orders.push_back(order); }
 
 	void OrderList::deleteOrder(size_t index) { m_orders.erase(m_orders.begin() + index); }
@@ -577,7 +579,10 @@ namespace WZ
 
 		std::string str = ss.str();
 
-		str.erase(str.length() - 2, 2);
+		if(o.getCount() != 0)
+		{
+			str.erase(str.length() - 2, 2);
+		}
 
 		stream << str;
 		return stream;

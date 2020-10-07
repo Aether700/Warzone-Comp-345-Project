@@ -555,6 +555,11 @@ namespace WZ
 		*/
 		OrderList(const OrderList& other);
 
+		/*returns the number of orders stored inside the list
+		  returns: the number of orders stored inside the list
+		*/
+		size_t getCount() const;
+
 		/*adds the provided Order* to the front of the list
 
 		  order: the order to add to the list

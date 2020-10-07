@@ -282,7 +282,11 @@ namespace WZ
 		}
 
 		std::string str = ss.str();
-		str.erase(str.length() - 2, 2);
+		
+		if (c.getCount() != 0)
+		{
+			str.erase(str.length() - 2, 2);
+		}
 
 		stream << str;
 		return stream;
@@ -473,8 +477,12 @@ namespace WZ
 		}
 
 		std::string str = ss.str();
-		str.erase(str.length() - 2, 2);
-
+		
+		if (m.getCount() != 0)
+		{
+			str.erase(str.length() - 2, 2);
+		}
+		
 		stream << str;
 		return stream;
 	}
