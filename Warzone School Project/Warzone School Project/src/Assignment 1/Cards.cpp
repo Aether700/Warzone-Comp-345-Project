@@ -39,11 +39,12 @@ namespace WZ
         }
     }
 
+    size_t Deck::getCount() const{
+         return deck.size();
+    }
 
     void Deck::addCardToDeck(Card* card) {
-        cout << "Adding card to deck" << endl;
         deck.push_back(card); //add it to the deck vector
-
     }
 
     void Deck::removeCardFromDeck(Card* card)
@@ -92,12 +93,11 @@ namespace WZ
 		}
 
 		std::string str = ss.str();
-
-		str.erase(str.length() - 2, 2);
-
+        if(d.getCount()!=0){
+		    str.erase(str.length() - 2, 2);
+        }
 		stream << str;
 		return stream;
-
     }
 
     // Card class
@@ -245,7 +245,7 @@ namespace WZ
 
 		std::string str = ss.str();
         if(h.getCount()!= 0){
-		str.erase(str.length() - 2, 2);
+		    str.erase(str.length() - 2, 2);
         }
 		stream << str;
 		return stream;

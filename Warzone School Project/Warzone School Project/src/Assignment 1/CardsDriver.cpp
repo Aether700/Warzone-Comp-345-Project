@@ -22,9 +22,9 @@ int main(){
         h1->addCardToHand(c);
         c = d1->draw();
     }
-    std::cout<<"Deck after drawing "<< *d1<<std::endl<<std::endl;
+    std::cout<<"\nDeck after drawing "<< *d1<<std::endl<<std::endl;
     std::cout<<"Hand after drawing "<< *h1 << std::endl<<std::endl;
-    std::cout<<"Playing cards from hand "<< std::endl;
+    std::cout<<"Playing cards from hand:"<< std::endl<<std::endl;
     for(WZ::Card* currentCard: *h1){
         
         WZ::Order* temp=currentCard->play(t,t,p,p,2);

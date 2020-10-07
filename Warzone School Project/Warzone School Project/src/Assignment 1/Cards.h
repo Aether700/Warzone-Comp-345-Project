@@ -36,6 +36,7 @@ namespace WZ
         ~Deck();
         Deck(const Deck& other);
         void initDeck();
+        size_t getCount () const;
         void addCardToDeck(Card* card);
         void removeCardFromDeck(Card* card);
         Card* draw();
