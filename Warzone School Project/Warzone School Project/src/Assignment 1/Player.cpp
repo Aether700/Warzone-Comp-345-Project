@@ -62,6 +62,8 @@ namespace WZ
 		return n;
 	}
 
+	const OrderList* Player::getOrderList() const { return listOrders; }
+
 	std::vector<Territory*>::iterator Player::begin() {
 		return territories.begin();
 	}

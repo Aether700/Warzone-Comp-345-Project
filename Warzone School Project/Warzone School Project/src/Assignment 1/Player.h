@@ -28,6 +28,7 @@ namespace WZ
 		Hand* getHand();
 		std::string getPlayerName() const;
 		std::vector<Player*> getNegotiatingPlayers() const;
+		const OrderList* getOrderList() const;
 
 		std::vector<Territory*>::iterator begin();
 		std::vector<Territory*>::iterator end();
