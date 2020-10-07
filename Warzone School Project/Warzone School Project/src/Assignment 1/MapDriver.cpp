@@ -7,7 +7,7 @@ WZ::Map* CreateValidMap()
 	std::vector<WZ::Continent*> v;
 
 	//do continent 1
-	WZ::Continent* c1 = new WZ::Continent("C1", 1, 5);
+	WZ::Continent* c1 = new WZ::Continent("C1", 5);
 	
 	WZ::Territory* t1 = new WZ::Territory("T1", 2, c1);
 	WZ::Territory* t2 = new WZ::Territory("T2", 3, c1);
@@ -25,7 +25,7 @@ WZ::Map* CreateValidMap()
 	v.push_back(c1);
 
 	//do continent 2
-	WZ::Continent* c2 = new WZ::Continent("C2", 12, 4);
+	WZ::Continent* c2 = new WZ::Continent("C2", 4);
 
 	WZ::Territory* t4 = new WZ::Territory("T4", 2, c2);
 	WZ::Territory* t5 = new WZ::Territory("T5", 3, c2);
@@ -42,7 +42,7 @@ WZ::Map* CreateValidMap()
 	v.push_back(c2);
 
 	//do continent 3
-	WZ::Continent* c3 = new WZ::Continent("C3", 1, 5);
+	WZ::Continent* c3 = new WZ::Continent("C3", 5);
 
 	WZ::Territory* t8 = new WZ::Territory("T8", 3, c3);
 	WZ::Territory* t7 = new WZ::Territory("T7", 2, c3);
@@ -74,7 +74,7 @@ WZ::Map* CreateInvalidMap1()
 	std::vector<WZ::Continent*> v;
 
 	//do continent 1
-	WZ::Continent* c1 = new WZ::Continent("C1", 1, 5);
+	WZ::Continent* c1 = new WZ::Continent("C1", 5);
 
 	WZ::Territory* t1 = new WZ::Territory("T1", 2, c1);
 	WZ::Territory* t2 = new WZ::Territory("T2", 3, c1);
@@ -91,7 +91,7 @@ WZ::Map* CreateInvalidMap1()
 	v.push_back(c1);
 
 	//do continent 2
-	WZ::Continent* c2 = new WZ::Continent("C2", 12, 4);
+	WZ::Continent* c2 = new WZ::Continent("C2", 4);
 
 	WZ::Territory* t4 = new WZ::Territory("T4", 2, c2);
 	WZ::Territory* t5 = new WZ::Territory("T5", 3, c2);
@@ -108,7 +108,7 @@ WZ::Map* CreateInvalidMap1()
 	v.push_back(c2);
 
 	//do continent 3
-	WZ::Continent* c3 = new WZ::Continent("C3", 1, 5);
+	WZ::Continent* c3 = new WZ::Continent("C3", 5);
 
 	WZ::Territory* t8 = new WZ::Territory("T8", 3, c3);
 	WZ::Territory* t7 = new WZ::Territory("T7", 2, c3);
@@ -140,7 +140,7 @@ WZ::Map* CreateInvalidMap2()
 	std::vector<WZ::Continent*> v;
 
 	//do continent 1
-	WZ::Continent* c1 = new WZ::Continent("C1", 1, 5);
+	WZ::Continent* c1 = new WZ::Continent("C1", 5);
 
 	WZ::Territory* t1 = new WZ::Territory("T1", 2, c1);
 	WZ::Territory* t2 = new WZ::Territory("T2", 3, c1);
@@ -158,7 +158,7 @@ WZ::Map* CreateInvalidMap2()
 	v.push_back(c1);
 
 	//do continent 2
-	WZ::Continent* c2 = new WZ::Continent("C2", 12, 4);
+	WZ::Continent* c2 = new WZ::Continent("C2", 4);
 
 	WZ::Territory* t4 = new WZ::Territory("T4", 2, c2);
 	WZ::Territory* t5 = new WZ::Territory("T5", 3, c2);
@@ -175,7 +175,7 @@ WZ::Map* CreateInvalidMap2()
 	v.push_back(c2);
 
 	//do continent 3
-	WZ::Continent* c3 = new WZ::Continent("C3", 1, 5);
+	WZ::Continent* c3 = new WZ::Continent("C3", 5);
 
 	WZ::Territory* t8 = new WZ::Territory("T8", 3, c3);
 	WZ::Territory* t7 = new WZ::Territory("T7", 2, c3);

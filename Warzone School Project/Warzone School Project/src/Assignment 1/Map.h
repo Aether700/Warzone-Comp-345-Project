@@ -180,7 +180,7 @@ namespace WZ
          id: the id of the continent to construct
          bonus: the bonus provided to the player who owns all the territories inside this continent.
         */
-        Continent(const std::string& name, unsigned int id, unsigned int bonus);
+        Continent(const std::string& name, unsigned int bonus);
 
         /* copy constructor of the Continent class.
            Note that this constructor does not do a deep
@@ -201,12 +201,6 @@ namespace WZ
           returns: the name of the Continent object
         */
         const std::string& getName() const;
-
-        /* getter function that returns the id of the Continent object
-
-          returns: the id of the Continent object
-        */
-        unsigned int getID() const;
 
         /* getter function that returns the bonus of the Continent object
 

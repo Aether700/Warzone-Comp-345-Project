@@ -43,8 +43,8 @@ namespace WZ
 		bool ownsTerritory(Territory* t) const;
 		void addTerritory(Territory* newTerritory);
 		void removeTerritory(Territory* oldTerritory);
-		std::vector<Territory*>  toDefend(Player* p, Territory* t);
-		std::vector<Territory*> toAttack(Player* p, Territory* t);
+		std::vector<Territory*>  toDefend();
+		std::vector<Territory*> toAttack();
 		void issueOrder(Order* order);
 
 		Player& operator=(const Player&); //assignment operator 

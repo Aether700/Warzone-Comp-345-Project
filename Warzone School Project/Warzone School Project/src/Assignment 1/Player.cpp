@@ -113,12 +113,12 @@ namespace WZ
 		}
 	}
 
-	vector<Territory*> Player::toDefend(Player* p, Territory* t)
+	vector<Territory*> Player::toDefend()
 	{
 		return territories;
 	}
 
-	vector<Territory*> Player::toAttack(Player* p, Territory* t)
+	vector<Territory*> Player::toAttack()
 	{
 		return territories;
 	}

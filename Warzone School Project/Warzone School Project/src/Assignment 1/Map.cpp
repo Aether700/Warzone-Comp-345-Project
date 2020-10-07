@@ -101,11 +101,11 @@ namespace WZ
 
 	// Continent //////////////////////////////////////////////
 	
-	Continent::Continent(const std::string& name, unsigned int id, unsigned int bonus) 
-		: m_name(name), m_id(id), m_bonus(bonus) { }
+	Continent::Continent(const std::string& name, unsigned int bonus) 
+		: m_name(name), m_bonus(bonus) { }
 
 	Continent::Continent(const Continent& other) 
-		: m_name(other.m_name), m_id(other.m_id), m_bonus(other.m_bonus), 
+		: m_name(other.m_name), m_bonus(other.m_bonus), 
 		m_territories(other.m_territories) { }
 
 	Continent::~Continent()
@@ -117,8 +117,6 @@ namespace WZ
 	}
 
 	const std::string& Continent::getName() const { return m_name; }
-	
-	unsigned int Continent::getID() const { return m_id; }
 	
 	unsigned int Continent::getBonus() const { return m_bonus; }
 	
