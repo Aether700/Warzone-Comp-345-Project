@@ -208,7 +208,6 @@ namespace WZ
      }
 
     void Hand::addCardToHand(Card* card) {
-        cout << "Adding card to deck" << endl;
         hand.push_back(card);
     }
 
