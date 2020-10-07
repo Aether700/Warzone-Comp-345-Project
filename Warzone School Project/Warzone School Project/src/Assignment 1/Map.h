@@ -16,6 +16,7 @@ namespace WZ
     {
         friend class Continent;
         friend class Map;
+        friend class MapLoader;
     public:
         /*Territory constructor
 
@@ -177,7 +178,6 @@ namespace WZ
         /*Continent constructor
 
          name: the name of the continent to construct
-         id: the id of the continent to construct
          bonus: the bonus provided to the player who owns all the territories inside this continent.
         */
         Continent(const std::string& name, unsigned int bonus);
