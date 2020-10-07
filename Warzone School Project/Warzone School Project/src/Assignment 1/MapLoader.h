@@ -9,24 +9,25 @@ The map format that are readable - .txt or .map exclusevly.
 #pragma once
 #include <string>
 #include <vector>
-//#include "Map.h"
+#include "Map.h"
+
 using std::string;
 using std::vector;
 namespace WZ {
-
+	class Borders;
 	class MapLoader
 	{
 	private:
-		string map_name;
-		vector<Continents> continents;
-		vector<Countries> countries;
+		vector<Continent*> continents;
+		vector<Territory*> territories;
 		vector<Borders> borders;
 		bool map_validator(const string&);		//	determine if the file contains a map or not
-		void parserFunction(const string&, vector<Continents>&, vector<Countries>&, vector<Borders>&);
+		void parserFunction(const string&, vector<Continent*>&, vector<Territory*>&, vector<Borders>&);
+		void setAdjList();
 	public:
-		void setMapName(const string&);
-		string getMapName() const;
-		explicit MapLoader();						//	default constructor
+
+		Map* mapGenerator();
+		Map* mapGenerator(const string&);			//	map file 
 		~MapLoader();								//	default destructor
 		string menu_loader(const string& path = "\Maps");			//	menu function to navigate through the menu option
 	}

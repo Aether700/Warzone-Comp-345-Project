@@ -8,6 +8,7 @@
 #include <exception>
 #include "Utils.h"
 
+
 using std::string;
 using std::cout;
 using std::cin;
@@ -16,71 +17,6 @@ using std::string;
 using std::vector;
 namespace WZ {
 
-	//  constructor
-	explicit MapLoader::MapLoader() {
-		map_name = menu_loader();
-		if (map_validator(map_name)) {
-			if (parserFunction(map_name, continents, countries, borders))
-				Map newMap(continents, countries, borders);	//	to be done
-		}
-		else
-			cout << "Invalid map file." << endl;
-	}
-
-	//  destructor
-	MapLoader::~MapLoader() {
-		cout << "The " << map_name << " has been unloaded." << endl;
-	}
-
-	class Continents {
-	private:
-		string name;
-		int bonus;
-	public:
-		Continents(string name, int bonus) : name{ name }, bonus{ bonus }{}
-		void setName(string name) {
-			this->name = name;
-		}
-		string getName() const {
-			return name;
-		}
-		void setBonus(int bonus) {
-			this->bonus = bonus;
-		}
-		int getBonus() const {
-			return bonus;
-		}
-	};
-
-	class Countries {
-	private:
-		int id;
-		string name;
-		int continent;
-	public:
-		Countries(int id, string name, int cont) : id{ id }, name{ name }, continent{ cont }{}
-		void setID(int id) {
-			this->id = id;
-		}
-		int getID() const {
-			return id;
-		}
-
-		void setName(string name) {
-			this->name = name;
-		}
-		string getName() const {
-			return name;
-		}
-
-		void setContinent(int continent) {
-			this->continent = continent;
-		}
-		int getContinent() const {
-			return continent;
-		}
-	};
-
 	class Borders {
 	private:
 		vector<int> borders;			//	reprezents the border status of each country.
@@ -88,20 +24,39 @@ namespace WZ {
 		void setBorders(int state) {
 			borders.push_back(state);
 		}
-		int getBorder(int i) const {
-			return borders[i];
+		vector<int>& getBorder() {
+			return borders;
 		}
 	};
 
-	//  getters and setters
-	void MapLoader::setMapName(const string& name) {
-		map_name = name;
+	MapLoader::~MapLoader() {
+		for (Borders b : borders)
+			delete& b;
 	}
 
-	string MapLoader::getMapName() const {
-		return map_name;
+	Map* MapLoader::mapGenerator(const string& map_name) {
+		if (map_validator(map_name)) {
+			parserFunction(map_name, continents, territories, borders);
+			setAdjList();
+			return new Map(continents);
+		}
+		else {
+			cout << "Invalid map file." << endl;
+			return NULL;
+		}
 	}
 
+	Map* MapLoader::mapGenerator() {
+		return mapGenerator(menu_loader());
+	}
+
+	void MapLoader::setAdjList() {
+		for (Borders b : borders) {
+			Territory* curentTerritory = territories[b.getBorder()[0] - 1];
+			for (int i = 1; i < b.getBorder().size(); i++)
+				curentTerritory->addAdjTerritory(territories[b.getBorder()[i] - 1]);
+		}
+	}
 
 	bool MapLoader::map_validator(const string& map) {
 		if (map.compare(""))                        //  checks for an empty folder
@@ -134,7 +89,7 @@ namespace WZ {
 		}
 	}
 
-	void MapLoader::parserFunction(const string& s, vector<Continents>& continents, vector<Countries>& countries, vector<Borders>& borders) {
+	void MapLoader::parserFunction(const string& s, vector<Continent*>& continents, vector<Territory*>& countries, vector<Borders>& borders) {
 		string line, section = "";
 		std::ifstream open_map(s);
 		open_map.open(s);
@@ -160,10 +115,10 @@ namespace WZ {
 				line = line.substr(++space);
 				space = line.find(" ");
 				bonus = stringToInt(line.substr(0, space));
-				continents.push_back(Continents(cont, bonus));
+				continents.push_back(new Continent(cont, bonus));
 			}
 			if (section.compare("countries")) {
-				int space, id, continent;
+				int space, id, continentIndex;
 				string name;
 				space = line.find(" ");
 				id = stringToInt(line.substr(0, space));
@@ -171,8 +126,12 @@ namespace WZ {
 				space = line.find(" ");
 				name = line.substr(0, space);
 				line = line.substr(++space);
-				continent = stringToInt(line.substr(0, space));
-				countries.push_back(Countries(id, name, continent));
+				continentIndex = stringToInt(line.substr(0, space));
+				Continent* c = continents[continentIndex - 1];
+				Territory* t = new Territory(name, id, c);
+				territories.push_back(t);
+				t->setContinent(c);
+				c->addTerritory(t);
 			}
 			if (section.compare("borders")) {
 				Borders* b = new Borders();
