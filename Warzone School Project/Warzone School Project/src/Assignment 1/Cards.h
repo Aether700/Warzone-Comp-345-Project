@@ -34,7 +34,7 @@ namespace WZ
         Deck();
         ~Deck();
         Deck(const Deck& other);
-        void initDeck(Deck* deck);
+        void initDeck();
         void addCardToDeck(Card* card);
         void removeCardFromDeck(Card* card);
         Card* draw();

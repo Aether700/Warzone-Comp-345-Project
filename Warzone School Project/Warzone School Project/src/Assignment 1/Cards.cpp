@@ -34,14 +34,14 @@ namespace WZ
         
      }
 
-    void Deck::initDeck(Deck* deck)
+    void Deck::initDeck()
     {
         cout << "Creating Deck" << endl;
 
         for (int j = 0; j < 5; j++) { //Creating 5 cards for the 5 types we have
             Card* c = new Card();
             c->setType(j); // each card with a unique type
-            deck->addCardToDeck(c); 
+            this->addCardToDeck(c); 
         }
     }
 
