@@ -17,12 +17,16 @@ using std::string;
 using std::vector;
 namespace WZ {
 
+	/*
+		Borders class object has a temporary character and is used to store each territory's neigbours - obtained from the map file.
+		Based on this object, the map graph is created, followed by the borders object deletion.
+	*/
 	class Borders {
 	private:
-		vector<int> borders;			//	reprezents the border status of each country.
+		vector<int> borders;			//	a list of borders for each territory - it reflects the neighbouring territories saved as ID in a list
 	public:
-		void setBorders(int state);
-		vector<int>& getBorder();
+		void setBorders(int state);		//	setter for borders
+		vector<int>& getBorder();		//	getter for borders
 	};
 
 	class MapLoader
