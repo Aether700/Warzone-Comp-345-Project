@@ -572,9 +572,11 @@ namespace WZ
 	{
 		std::stringstream ss;
 
+		ss << "OrderList:";
+
 		for (Order* order : o)
 		{
-			ss << "[" << *order << "], ";
+			ss << "\t[" << *order << "],\n";
 		}
 
 		std::string str = ss.str();

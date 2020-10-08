@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Map.h"
 
-int main(){
+void CardsDriver() {
     
     WZ::Deck* d1 = new WZ::Deck();
     WZ::Hand* h1 = new WZ::Hand();

@@ -273,10 +273,10 @@ namespace WZ
 	{
 		std::stringstream ss;
 
-		ss << "\"" << c.getName() << "\"" << " Bonus: " << c.getBonus() << " Territories: ";
+		ss << "\"" << c.getName() << "\"" << " Bonus: " << c.getBonus() << " Territories:\n";
 		for (size_t i = 0; i < c.getCount(); i++)
 		{
-			ss << "[" << *c.getTerritory(i) << "], ";
+			ss << "\t[" << *c.getTerritory(i) << "],\n";
 		}
 
 		std::string str = ss.str();
@@ -467,11 +467,11 @@ namespace WZ
 	{
 		std::stringstream ss;
 
-		ss << "Continents: ";
+		ss << "Continents:\n";
 
 		for (size_t i = 0; i < m.getCount(); i++)
 		{
-			ss << "{" << *m.getContinent(i) << "}, ";
+			ss << "\t{" << *m.getContinent(i) << "},\n";
 		}
 
 		std::string str = ss.str();

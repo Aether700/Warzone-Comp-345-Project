@@ -86,10 +86,10 @@ namespace WZ
     
     std::ostream& operator<<(std::ostream& stream, const Deck& d){
         std::stringstream ss;
-        ss<<"Deck:";
+        ss<<"Deck:\n";
 		for (Card* card : d)
 		{
-			ss << "[" << *card << "], ";
+			ss << "\t[" << *card << "],\n";
 		}
 
 		std::string str = ss.str();
@@ -236,10 +236,10 @@ namespace WZ
     std::vector<Card*>::const_iterator Hand::end() const{return hand.cend();}
     std::ostream& operator<<(std::ostream& stream, const Hand& h){
         std::stringstream ss;
-        ss<<"Hand:";
+        ss<<"Hand:\n";
 		for (Card* card : h)
 		{
-			ss << "[" << *card << "], ";
+			ss << "\t[" << *card << "],\n";
 		}
 
 		std::string str = ss.str();

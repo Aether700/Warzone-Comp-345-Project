@@ -3,7 +3,7 @@
 #include "Map.h"
 
 
-int main()
+void OrdersDriver()
 {
 	//set up variables
 	WZ::Player* p1 = new WZ::Player("Player 1", {});

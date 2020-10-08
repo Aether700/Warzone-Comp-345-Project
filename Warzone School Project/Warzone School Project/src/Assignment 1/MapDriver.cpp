@@ -204,7 +204,7 @@ WZ::Map* CreateInvalidMap2()
 	return new WZ::Map(v);
 }
 
-int main () 
+void MapDriver()
 {
 	WZ::Territory* t = new WZ::Territory("Example Territory", 7, nullptr, 10);
 	WZ::Player* p = new WZ::Player("Example Player", { t });
