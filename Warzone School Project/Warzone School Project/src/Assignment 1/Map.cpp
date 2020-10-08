@@ -245,7 +245,6 @@ namespace WZ
 	{
 		m_name = other.m_name;
 		m_bonus = other.m_bonus;
-		m_id = other.m_id;
 		m_territories = other.m_territories;
 
 		return *this;
@@ -253,7 +252,7 @@ namespace WZ
 
 	bool Continent::operator==(const Continent& other) const
 	{
-		return m_name == other.m_name && m_id == other.m_id && m_bonus == other.m_bonus;
+		return m_name == other.m_name && m_bonus == other.m_bonus;
 	}
 
 	bool Continent::operator!=(const Continent& other) const
@@ -471,14 +470,14 @@ namespace WZ
 
 		for (size_t i = 0; i < m.getCount(); i++)
 		{
-			ss << "\t{" << *m.getContinent(i) << "},\n";
+			ss << "\t{" << *m.getContinent(i) << "},\n\n";
 		}
 
 		std::string str = ss.str();
 		
 		if (m.getCount() != 0)
 		{
-			str.erase(str.length() - 2, 2);
+			str.erase(str.length() - 3, 3);
 		}
 		
 		stream << str;

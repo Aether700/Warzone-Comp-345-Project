@@ -299,7 +299,6 @@ namespace WZ
         void ResetVisitedTerritories() const;
 
         bool m_visited;
-        unsigned int m_id;
         unsigned int m_bonus;
         std::string m_name;
         std::vector<Territory*> m_territories;

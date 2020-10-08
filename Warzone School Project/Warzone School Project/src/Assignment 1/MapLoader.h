@@ -9,26 +9,60 @@ The map format that are readable - .txt or .map exclusevly.
 #pragma once
 #include <string>
 #include <vector>
+#include <iostream>
 #include "Map.h"
+#include "Utils.h"
 
 using std::string;
 using std::vector;
 namespace WZ {
-	class Borders;
+
+	class Borders {
+	private:
+		vector<int> borders;			//	reprezents the border status of each country.
+	public:
+		void setBorders(int state);
+		vector<int>& getBorder();
+	};
+
 	class MapLoader
 	{
 	private:
+		/*
+			the continents object is a temporary storage container for the continent values taken from the map file.
+		*/
 		vector<Continent*> continents;
+		/*
+			the territories object is a temporary storage container for the territorie values taken from the map file.
+		*/
 		vector<Territory*> territories;
+		/*
+			the borders object is a temporary storage container for the border values taken from the map file.
+		*/
 		vector<Borders> borders;
-		bool map_validator(const string&);		//	determine if the file contains a map or not
+		/*
+			determine if the given file contains a map or not
+		*/
+		bool map_validator(const string&);
+		/*
+			extracts the needed data from the passed map file and stores it into the passed vectors acordingly
+		*/
 		void parserFunction(const string&, vector<Continent*>&, vector<Territory*>&, vector<Borders>&);
+		/*
+			function that creates the graph which will represent the map during the game play. All adjacency
+		*/
 		void setAdjList();
-	public:
 
-		Map* mapGenerator();
-		Map* mapGenerator(const string&);			//	map file 
-		~MapLoader();								//	default destructor
-		string menu_loader(const string& path = "\Maps");			//	menu function to navigate through the menu option
-	}
+	public:
+		MapLoader();										//	default constructor
+		MapLoader(const MapLoader&);						//	parameterised constructor
+		MapLoader& operator=(const MapLoader&);				//	assign operator overwriter
+		Map* mapGenerator();								//	default map generator - user picks a map from the predefined map folder
+		Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
+		string menu_loader(const string& path = "\Maps");	//	menu function to navigate through the menu option
+	};
+	/*
+		overwriter of the insertion operator
+	*/
+	std::ostream& operator<<(std::ostream& stream, const MapLoader& m);
 }

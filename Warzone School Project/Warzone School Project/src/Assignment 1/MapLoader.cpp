@@ -17,28 +17,66 @@ using std::string;
 using std::vector;
 namespace WZ {
 
-	class Borders {
-	private:
-		vector<int> borders;			//	reprezents the border status of each country.
-	public:
-		void setBorders(int state) {
-			borders.push_back(state);
-		}
-		vector<int>& getBorder() {
-			return borders;
-		}
-	};
+	// Borders ////////////////////////////////////////////////////////////////////
 
-	MapLoader::~MapLoader() {
-		for (Borders b : borders)
-			delete& b;
+	void Borders::setBorders(int state) {
+		borders.push_back(state);
+	}
+	vector<int>& Borders::getBorder() {
+		return borders;
+	}
+
+	// MapLoader //////////////////////////////////////////////////////////////////
+
+	//	converter from string numbers to integers
+	int stringToInt(string s) {		//	takes the string s representing the number
+		if (s.size() == 1)			//	if the string is a single char
+			return (int)s[0] - 48;	//		convert it according the ASCII value
+		else						//	if the number is represented on a multi
+			return (10 * (stringToInt(s.substr(0, (s.size() - 1))))) + (int)s[(s.size() - 1)] - 48;
+	}
+
+	MapLoader::MapLoader() {}
+	MapLoader::MapLoader(const MapLoader& mapL) 
+		: territories(mapL.territories), continents(mapL.continents), borders(mapL.borders) 
+	{
+		//	No need for copying because the data used is cleared after the map creation -
+		//			which all take place inside the mapGenerator function.
+		//	The only time this object stores data is durring the process of creating a map.
+	}
+
+	MapLoader& MapLoader::operator=(const MapLoader& other) {
+		//	No need for copying because the data used is cleared after the map creation -
+		//			which all take place inside the mapGenerator function.
+		//	The only time this object stores data is durring the process of creating a map.
+		continents = other.continents;
+		territories = other.territories;
+		borders = other.borders;
+		return *this;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const MapLoader& m) {
+		stream << "MapLoader";
+		return stream;
 	}
 
 	Map* MapLoader::mapGenerator(const string& map_name) {
 		if (map_validator(map_name)) {
 			parserFunction(map_name, continents, territories, borders);
+
+			//make sure have enough territories for the number of borders
+			if (territories.size() < borders.size())
+			{
+				cout << "Invalid map file." << endl;
+				return NULL;
+			}
+
 			setAdjList();
-			return new Map(continents);
+			Map* mapPointer = new Map(continents);
+			continents.clear();
+			territories.clear();
+			borders.clear();
+			return mapPointer;
 		}
 		else {
 			cout << "Invalid map file." << endl;
@@ -47,7 +85,7 @@ namespace WZ {
 	}
 
 	Map* MapLoader::mapGenerator() {
-		return mapGenerator(menu_loader());
+		return mapGenerator(menu_loader("Map"));
 	}
 
 	void MapLoader::setAdjList() {
@@ -59,32 +97,38 @@ namespace WZ {
 	}
 
 	bool MapLoader::map_validator(const string& map) {
-		if (map.compare(""))                        //  checks for an empty folder
+		if (map == "")                        //  checks for an empty folder
 			return false;
 		else {
 			string line{ "" };                        //  string iterator through the file
 			int valid[] = { 0, 0, 0 };              //  counter to determine if the map has all sections needed
-			static std::ifstream in(map);           //  reader stream
-			in.open(map);
+			std::ifstream in(map);			        //  reader stream
+			
 			if (!in) {                              //  checks for corrupt files
 				cout << "Unable to open file";
 				return false;
 			}
+
 			while (std::getline(in, line)) {        //  checking line by line for the 3 sections needed
-				if (line.compare("[continents]")) {
+				if (line == "[continents]") {
 					valid[0]++;
 				}
-				if (line.compare("[countries]")) {
+				else if (line == "[countries]") {
 					valid[1]++;
 				}
-				if (line.compare("[borders]")) {
+				else if (line == "[borders]") {
 					valid[2]++;
 				}
 			}
 			in.close();
-			int correct[] = { 1, 1, 1 };
-			if (valid != correct)             //  if any of the section is missing, 
-				return false;
+			constexpr int correct[] = { 1, 1, 1 };
+			for (int i = 0; i < sizeof(correct)/sizeof(int); i++)
+			{
+				if (valid[i] != correct[i])
+				{
+					return false;
+				}
+			}
 			return true;
 		}
 	}
@@ -92,22 +136,30 @@ namespace WZ {
 	void MapLoader::parserFunction(const string& s, vector<Continent*>& continents, vector<Territory*>& countries, vector<Borders>& borders) {
 		string line, section = "";
 		std::ifstream open_map(s);
-		open_map.open(s);
-		while (std::getline(open_map, line)) {
-			if (line.compare("")) continue;
-			if (line.compare("[continents]")) {
+
+		std::getline(open_map, line);
+		while (!open_map.eof()) {
+			
+			std::getline(open_map, line);
+			
+			if (line == "")
+			{
+				continue;
+			}
+			if (line == "[continents]") {
 				section = "continents";
 				continue;
 			}
-			if (line.compare("[countries]")) {
+			else if (line == "[countries]") {
 				section = "countries";
 				continue;
 			}
-			if (line.compare("[borders]")) {
+			else if (line == "[borders]") {
 				section = "borders";
 				continue;
 			}
-			if (section.compare("continents")) {
+			
+			if (section == "continents") {
 				int space, bonus;
 				string cont;
 				space = line.find(" ");
@@ -117,7 +169,7 @@ namespace WZ {
 				bonus = stringToInt(line.substr(0, space));
 				continents.push_back(new Continent(cont, bonus));
 			}
-			if (section.compare("countries")) {
+			else if (section == "countries") {
 				int space, id, continentIndex;
 				string name;
 				space = line.find(" ");
@@ -126,6 +178,7 @@ namespace WZ {
 				space = line.find(" ");
 				name = line.substr(0, space);
 				line = line.substr(++space);
+				space = line.find(" ");
 				continentIndex = stringToInt(line.substr(0, space));
 				Continent* c = continents[continentIndex - 1];
 				Territory* t = new Territory(name, id, c);
@@ -133,21 +186,26 @@ namespace WZ {
 				t->setContinent(c);
 				c->addTerritory(t);
 			}
-			if (section.compare("borders")) {
+			else if (section == "borders") {
 				Borders* b = new Borders();
-				char* c = &line[0];
 				string num = "";
-				while (*c != '\n') {
-					while (*c != ' ' || *c != '\n') {
-						num += *c;
-						c++;
+				
+
+				for (size_t i = 0; i < line.size(); i++)
+				{
+					while (line[i] == ' ' && i < line.size()) { i++; }
+
+					for (; line[i] != ' ' && line[i] != '\n' && i < line.size(); i++)
+					{
+						num += line[i];
 					}
+
 					b->setBorders(stringToInt(num));
 					num = "";
-					if (*c == ' ')
-						c++;
 				}
+
 				borders.push_back(*b);
+				delete b;
 			}
 		}
 	}
@@ -157,7 +215,7 @@ namespace WZ {
 		vector<string> files;
 		for (const auto& entry : std::filesystem::directory_iterator(path)) {
 			extension = entry.path().filename().extension().string();
-			if (extension.compare(".map") || extension.compare(".txt")) {
+			if (extension == ".map" || extension == ".txt") {
 				files.push_back(entry.path().filename().string());
 			}
 		}
@@ -170,10 +228,4 @@ namespace WZ {
 		int fileIndex = AskInput(files);
 		return files[fileIndex - 1];
 	}
-
-	int stringToInt(string s) {
-		if (s.size() == 1)
-			return (int)s[0] - 48;
-		else
-			return (10 * (stringToInt(s.substr(0, (s.size() - 1))))) + (int)s[(s.size() - 1)] - 48;
-	}
+}
