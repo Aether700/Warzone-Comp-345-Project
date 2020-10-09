@@ -65,8 +65,8 @@ namespace WZ
 
 		// assignement operator. Assigns the values of the provided Player object and returns the modified object 
 		Player& operator=(const Player&);
-		/* equals operator.returns true if the two orders point to the same player 
-		   and if they are both executed/not executed, false otherwise
+		/* equals operator. returns true if the two players share the same 
+		   name and the same orderlist, false otherwise
 		*/
 		bool operator==(const Player&) const;
 		/*Standard != operator. 
