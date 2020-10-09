@@ -9,7 +9,8 @@ namespace WZ
 	class OrderList;
 	class Order;
 	class Hand;
-
+	
+	// Player class
 	class Player {
 	private:
 		std::vector<Territory*> territories;
@@ -17,8 +18,11 @@ namespace WZ
 		std::string playerName;
 		OrderList* listOrders;
 	public:
+		//default constructor of the Player class
 		Player();
-		Player(const Player&); //copy constructor
+		// Copy constructor of the Player class 
+		Player(const Player&); 
+		//default destructor of the Player class
 		~Player();
 		Player(std::string, std::vector<Territory*>);
 
@@ -29,28 +33,48 @@ namespace WZ
 		std::string getPlayerName() const;
 		std::vector<Player*> getNegotiatingPlayers() const;
 		const OrderList* getOrderList() const;
-
+		
+		/* default begin function to allow use of ranged for loops
+		returns: an iterator pointing to the beginning of the list
+		*/
 		std::vector<Territory*>::iterator begin();
+		/* default end function to allow use of ranged for loops
+			returns: an iterator pointing to the end of the list
+			*/
 		std::vector<Territory*>::iterator end();
+		/* default begin function to allow use of ranged for loops in a const context
+			returns: an const_iterator pointing to the beginning of the list
+			*/
 		std::vector<Territory*>::const_iterator begin() const;
+		/* default end function to allow use of ranged for loops in a const context
+			returns: an const_iterator pointing to the end of the list */
 		std::vector<Territory*>::const_iterator end() const;
+		
 
 		//Setters
 		void setPlayerName(std::string name);
 		void setHand();
 
 		//Methods 
-		bool ownsTerritory(Territory* t) const;
-		void addTerritory(Territory* newTerritory);
-		void removeTerritory(Territory* oldTerritory);
-		std::vector<Territory*>  toDefend();
-		std::vector<Territory*> toAttack();
+		bool ownsTerritory(Territory* t) const; //method to check if a territory is owned or not.
+		void addTerritory(Territory* newTerritory); // method to add a territory
+		void removeTerritory(Territory* oldTerritory);// method to remove a territory
+		std::vector<Territory*>  toDefend(); //method toDefend that returns a list of territories that are defended.
+		std::vector<Territory*> toAttack();//method toAttack that returns a list of territories that are attacked.
 		void issueOrder(Order* order);
 
-		Player& operator=(const Player&); //assignment operator 
+		// assignement operator. Assigns the values of the provided Player object and returns the modified object 
+		Player& operator=(const Player&);
+		/* equals operator.returns true if the two orders point to the same player 
+		   and if they are both executed/not executed, false otherwise
+		*/
 		bool operator==(const Player&) const;
+		/*Standard != operator. 
+		 Returns true if the == operator was false and vice versa
+		 returns: true if the == operator was false and vice versa
+		*/
 		bool operator!=(const Player&) const;
 	};
-
+	//insertion operator for every Player object
 	std::ostream& operator<<(std::ostream&, const Player&);
 }
