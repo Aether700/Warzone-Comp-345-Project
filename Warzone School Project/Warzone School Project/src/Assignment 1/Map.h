@@ -5,9 +5,6 @@
 //#include "Orders.h"
 //#include "Player.h"
 
-//88888888888
-
-
 namespace WZ
 {
     class Continent;
