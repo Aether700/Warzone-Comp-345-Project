@@ -244,11 +244,22 @@ namespace WZ
 		bool operator==(const Order& other) const override;
 
 	private:
+		
+		/*Outcome enum class defining the possible outcomes of an AdvanceOrder.
+		  is used to keep track of what happens once the order is executed i.e. if
+		  the troups we moved or if they attacked another territory as well as the
+		  outcome of that attack
+		*/
+		enum class Outcome
+		{
+			NotExecuted, Move, AttackWin, AttackLost
+		};
 
 
 		Territory* m_source;
 		Territory* m_target;
 		unsigned int m_amount;
+		Outcome m_outcome;
 	};
 
 	/*BombOrder class, a sub class of the Order object.
@@ -449,9 +460,20 @@ namespace WZ
 
 	private:
 
+		/*Outcome enum class defining the possible outcomes of an Airlift.
+		  is used to keep track of what happens once the order is executed i.e. if
+		  the troups we moved or if they attacked another territory as well as the
+		  outcome of that attack
+		*/
+		enum class Outcome
+		{
+			NotExecuted, Move, AttackWin, AttackLost
+		};
+
 		Territory* m_source;
 		Territory* m_destination;
 		unsigned int m_amount;
+		Outcome m_outcome;
 	};
 
 	/*NegotiateOrder class, a sub class of the Order object.

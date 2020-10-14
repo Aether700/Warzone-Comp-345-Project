@@ -1,9 +1,13 @@
 #include "Orders.h"
+#include "Utils.h"
 #include "Map.h"
 #include "Player.h"
 
 #include <sstream>
 #include <assert.h>
+
+#define DEF_WIN_RATE 0.7f
+#define ATK_WIN_RATE 0.6f
 
 namespace WZ
 {
@@ -33,6 +37,61 @@ namespace WZ
 			}
 		}
 		return false;
+	}
+	
+	static bool Attack(Territory* source, Territory* target, unsigned int amount)
+	{
+		unsigned int initialAmount = amount;
+
+		unsigned int atkCasualties = 0;
+		unsigned int defCasualties = 0;
+
+		//defender
+		for (size_t i = 0; i < source->getArmies() && amount > atkCasualties; i++)
+		{
+			if (Random::GetFloat() >= DEF_WIN_RATE)
+			{
+				atkCasualties++;
+			}
+		}
+
+
+		//attacker
+		for (size_t i = 0; i < amount && target->getArmies() > defCasualties; i++)
+		{
+			if (Random::GetFloat() >= ATK_WIN_RATE)
+			{
+				defCasualties++;
+			}
+		}
+
+		//apply casualties
+		source->setArmies(source->getArmies() - defCasualties);
+		amount -= atkCasualties;
+
+
+		if (target->getArmies() == 0)
+		{
+			target->setOwner(source->getOwner());
+			target->setArmies(amount);
+			source->setArmies(target->getArmies() - initialAmount);
+
+			////////////////////////////////
+			//only one per turn!!!!!!!!!!!!!
+			////////////////////////////////
+			source->getOwner()->drawCard(); //player gets to draw a card if they conquer a territory
+			return true;
+		}
+
+		source->setArmies(source->getArmies() - initialAmount + amount);
+
+		return false;
+	}
+
+	static void Move(Territory* source, Territory* target, unsigned int amount)
+	{
+		target->setArmies(target->getArmies() + amount);
+		source->setArmies(source->getArmies() - amount);
 	}
 
 	
@@ -97,7 +156,7 @@ namespace WZ
 	{
 		if (validate())
 		{
-			std::cout << "Deploy order executed\n";
+			m_destination->setArmies(m_destination->getArmies() + m_amount);
 			m_isExecuted = true;
 		}
 	}
@@ -144,7 +203,7 @@ namespace WZ
 	// AdvanceOrder /////////////////////////////////////////////////////////////////////////
 
 	AdvanceOrder::AdvanceOrder(Player* p, Territory* source, Territory* target, unsigned int amount) 
-		: Order(p), m_source(source), m_target(target), m_amount(amount)
+		: Order(p), m_source(source), m_target(target), m_amount(amount), m_outcome(Outcome::NotExecuted)
 	{
 		assert(source != nullptr);
 		assert(target != nullptr);
@@ -152,7 +211,7 @@ namespace WZ
 
 	AdvanceOrder::AdvanceOrder(const AdvanceOrder& other)
 		: Order(other), m_source(other.m_source), m_target(other.m_target), 
-		m_amount(other.m_amount)
+		m_amount(other.m_amount), m_outcome(other.m_outcome)
 	{
 
 	}
@@ -180,7 +239,23 @@ namespace WZ
 	{
 		if (validate())
 		{
-			std::cout << "Advance order executed\n";
+			if (getPlayer()->ownsTerritory(m_target))
+			{
+				Move(m_source, m_target, m_amount);
+				m_outcome = Outcome::Move;
+			}
+			else
+			{
+				if (Attack(m_source, m_target, m_amount))
+				{
+					m_outcome = Outcome::AttackWin;
+				}
+				else
+				{
+					m_outcome = Outcome::AttackLost;
+				}
+			}
+
 			m_isExecuted = true;
 		}
 	}
@@ -188,18 +263,26 @@ namespace WZ
 	std::string AdvanceOrder::toString() const
 	{
 		std::stringstream ss;
-		ss << *getPlayer() << ": ";
+		ss << getPlayer()->getPlayerName() << ": ";
 
-		if (isExecuted())
+		switch (m_outcome)
 		{
-			ss << "has advanced ";
-		}
-		else
-		{
-			ss << "advance ";
-		}
+		case Outcome::NotExecuted:
+			ss << "Advance " << m_amount << " troups from " << m_source->getName() << " to " << m_target->getName();
+			break;
 
-		ss << m_amount << " troups from " << *m_source << " to " << *m_target;
+		case Outcome::Move:
+			ss << "Moved " << m_amount << " troups from " << m_source->getName() << " to " << m_target->getName();
+			break;
+
+		case Outcome::AttackLost:
+			ss << m_source->getName() << " failed to conquer " << m_target->getName() << " with " << m_amount << " troups";
+			break;
+
+		case Outcome::AttackWin:
+			ss << m_source->getName() << " conquered " << m_target->getName() << " with " << m_amount << " troups";
+			break;
+		}
 
 		return ss.str();
 	}
@@ -211,6 +294,7 @@ namespace WZ
 		m_source = other.m_source;
 		m_target = other.m_target;
 		m_amount = other.m_amount;
+		m_outcome = other.m_outcome;
 
 		return *this;
 	}
@@ -251,7 +335,7 @@ namespace WZ
 	{
 		if (validate())
 		{
-			std::cout << "Bomb order executed\n";
+			m_target->setArmies(m_target->getArmies() / 2);
 			m_isExecuted = true;
 		}
 	}
@@ -315,7 +399,8 @@ namespace WZ
 	{
 		if (validate())
 		{
-			std::cout << "Blockade order executed\n";
+			m_target->setArmies(m_target->getArmies() * 2);
+			m_target->setOwner(nullptr);
 			m_isExecuted = true;
 		}
 	}
@@ -364,7 +449,7 @@ namespace WZ
 	// AirliftOrder /////////////////////////////////////////////////////////////////////////
 
 	AirliftOrder::AirliftOrder(Player* p, Territory* source, Territory* destination, unsigned int amount) 
-		: Order(p), m_source(source), m_destination(destination), m_amount(amount) 
+		: Order(p), m_source(source), m_destination(destination), m_amount(amount), m_outcome(Outcome::NotExecuted)
 	{
 		assert(source != nullptr);
 		assert(destination != nullptr);
@@ -372,7 +457,7 @@ namespace WZ
 
 	AirliftOrder::AirliftOrder(const AirliftOrder& other) 
 		: Order(other), m_source(other.m_source), m_destination(other.m_destination),
-		m_amount(other.m_amount) { }
+		m_amount(other.m_amount), m_outcome(other.m_outcome) { }
 
 	bool AirliftOrder::validate() const
 	{
@@ -383,26 +468,46 @@ namespace WZ
 	{
 		if (validate())
 		{
-			std::cout << "Airlift order executed\n";
-			m_isExecuted = true;
+			if (getPlayer()->ownsTerritory(m_destination))
+			{
+				Move(m_source, m_destination, m_amount);
+				m_outcome = Outcome::Move;
+			}
+			else
+			{
+				if (Attack(m_source, m_destination, m_amount))
+				{
+					m_outcome = Outcome::AttackWin;
+					return;
+				}
+				m_outcome = Outcome::AttackLost;
+			}
 		}
 	}
 
 	std::string AirliftOrder::toString() const
 	{
 		std::stringstream ss;
-		ss << *getPlayer() << ": ";
+		ss << getPlayer()->getPlayerName() << ": ";
 
-		if(isExecuted())
+		switch (m_outcome)
 		{
-			ss << "has Airlifted ";
-		}
-		else
-		{
-			ss << "Airlift ";
-		}
+		case Outcome::NotExecuted:
+			ss << "Airlift " << m_amount << " troups from " << m_source->getName() << " to " << m_destination->getName();
+			break;
 
-		ss << m_amount << " troups from " << *m_source << " to " << *m_destination;
+		case Outcome::Move:
+			ss << "has Airlifted " << m_amount << " troups from " << m_source->getName() << " to " << m_destination->getName();
+			break;
+
+		case Outcome::AttackLost:
+			ss << *m_source << " failed to conquer " << m_destination->getName() << " with " << m_amount << " troups";
+			break;
+
+		case Outcome::AttackWin:
+			ss << m_source->getName() << " conquered " << m_destination->getName() << " with " << m_amount << " troups";
+			break;
+		}
 
 		return ss.str();
 	}
@@ -413,6 +518,7 @@ namespace WZ
 		m_source = other.m_source;
 		m_destination = other.m_destination;
 		m_amount = other.m_amount;
+		m_outcome = other.m_outcome;
 
 		return *this;
 	}
@@ -451,7 +557,7 @@ namespace WZ
 	{
 		if (validate())
 		{
-			std::cout << "Negotiation order executed\n";
+			do stuff here!!!
 			m_isExecuted = true;
 		}
 	}
@@ -459,7 +565,7 @@ namespace WZ
 	std::string NegotiateOrder::toString() const
 	{
 		std::stringstream ss;
-		ss << *getPlayer() << ": ";
+		ss << getPlayer()->getPlayerName() << ": ";
 
 		if (isExecuted())
 		{
@@ -470,7 +576,7 @@ namespace WZ
 			ss << "negotiate with ";
 		}
 
-		ss << *m_otherPlayer;
+		ss << m_otherPlayer->getPlayerName();
 
 		return ss.str();
 	}

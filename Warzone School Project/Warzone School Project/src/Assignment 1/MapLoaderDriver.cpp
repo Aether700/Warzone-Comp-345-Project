@@ -12,7 +12,7 @@ void MapLoaderDriver() {
 	map = loader->mapGenerator("assets/map files/arcticWrong.txt");
 	std::cout << "generating wrong map from bigeuropeWrong.map" << std::endl;
 	map = loader->mapGenerator("assets/map files/bigeuropeWrong.map");
-
+	
 	// good maps
 	std::cout << "generating correct map from solar.map" << std::endl;
 	map = loader->mapGenerator("assets/map files/solar.map");
