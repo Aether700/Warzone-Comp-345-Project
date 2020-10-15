@@ -1,17 +1,19 @@
 #include "Map.h"
+#include "Player.h"
+#include "GameEngine.h"
+
 #include <queue>
 #include <sstream>
 #include <unordered_map>
 #include <assert.h>
 
-#include "Player.h"
 
 namespace WZ
 {
 	// Territory //////////////////////////////////////////////
 
 	Territory::Territory(const std::string& name, unsigned int id, Continent* continent, unsigned int armies)
-		: m_name(name), m_id(id), m_armies(armies), m_continent(continent), m_owner(nullptr) { }
+		: m_name(name), m_id(id), m_armies(armies), m_continent(continent), m_owner(GameManager::getNeutralPlayer()) { }
 
 	Territory::Territory(const Territory& other) 
 		: m_name(other.m_name), m_id(other.m_id), m_armies(other.m_armies), 
@@ -78,16 +80,8 @@ namespace WZ
 	std::ostream& operator<<(std::ostream& stream, const Territory& t)
 	{
 		std::stringstream ss;
-		ss << "\"" << t.getName() << "\"" << " Armies: " << t.getArmies() << " Owner: ";
-
-		if (t.getOwner() == nullptr)
-		{
-			ss << "Neutral";
-		}
-		else
-		{
-			ss << *t.getOwner();
-		}
+		ss << "\"" << t.getName() << "\"" << " Armies: " << t.getArmies() << " Owner: " << *t.getOwner();
+		
 		stream << ss.str();
 		return stream;
 	}

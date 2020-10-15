@@ -21,6 +21,10 @@ namespace WZ
 		*/
 		static void init();
 
+		/* deletes all static member variable allocated on the heap
+		*/
+		static void close();
+
 		/*returns true if the two players provided are negotiating this turn, false otherwise
 
 		  returns: true if the two players provided are negotiating this turn, false otherwise
@@ -34,9 +38,19 @@ namespace WZ
 		*/
 		static void addNegotiatingPlayers(const Player* p1, const Player* p2);
 
+		/* allows players to draw a card (one per turn max)
+		*/
+		static void drawCard(Player* p);
+
+		/*getter function which returns the neutral Player
+
+		  returns: a ptr to the neutral player;
+		*/
+		static Player* getNeutralPlayer();
 
 	private:
 		static std::vector<std::pair<const Player*, const Player*>> s_negotiatingPlayers;
 		static Deck* s_deck;
+		static Player* s_neutralPlayer;
 	};
 }

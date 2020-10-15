@@ -24,7 +24,7 @@ namespace WZ
 		Player(const Player&); 
 		//default destructor of the Player class
 		~Player();
-		Player(std::string, std::vector<Territory*>);
+		Player(std::string, std::vector<Territory*> = {});
 
 		//Getters
 		std::vector<Territory*> getTerritories() const;

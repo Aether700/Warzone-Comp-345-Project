@@ -81,10 +81,7 @@ namespace WZ
 			target->setArmies(amount);
 			source->setArmies(target->getArmies() - initialAmount);
 
-			////////////////////////////////
-			//only one per turn!!!!!!!!!!!!!
-			////////////////////////////////
-			source->getOwner()->drawCard(); //player gets to draw a card if they conquer a territory
+			GameManager::drawCard(source->getOwner());
 			return true;
 		}
 
@@ -405,7 +402,7 @@ namespace WZ
 		if (validate())
 		{
 			m_target->setArmies(m_target->getArmies() * 2);
-			m_target->setOwner(nullptr);
+			m_target->setOwner(GameManager::getNeutralPlayer());
 			m_isExecuted = true;
 		}
 	}
