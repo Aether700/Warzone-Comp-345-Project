@@ -2,6 +2,7 @@
 #include "Utils.h"
 #include "Map.h"
 #include "Player.h"
+#include "GameEngine.h"
 
 #include <sstream>
 #include <assert.h>
@@ -561,7 +562,7 @@ namespace WZ
 	{
 		if (validate())
 		{
-			do stuff here!!!
+			GameManager::addNegotiatingPlayers(getPlayer(), m_otherPlayer);
 			m_isExecuted = true;
 		}
 	}
