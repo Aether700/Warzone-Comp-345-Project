@@ -41,13 +41,17 @@ namespace WZ
 	
 	static bool Attack(Territory* source, Territory* target, unsigned int amount)
 	{
+		assert(amount != 0);
+		assert(source != nullptr);
+		assert(target != nullptr);
+
 		unsigned int initialAmount = amount;
 
 		unsigned int atkCasualties = 0;
 		unsigned int defCasualties = 0;
 
-		//defender
-		for (size_t i = 0; i < source->getArmies() && amount > atkCasualties; i++)
+		//atk casualties
+		for (size_t i = 0; i < source->getArmies() && amount >= atkCasualties; i++)
 		{
 			if (Random::GetFloat() >= DEF_WIN_RATE)
 			{
@@ -56,8 +60,8 @@ namespace WZ
 		}
 
 
-		//attacker
-		for (size_t i = 0; i < amount && target->getArmies() > defCasualties; i++)
+		//def casualties
+		for (size_t i = 0; i < amount && target->getArmies() >= defCasualties; i++)
 		{
 			if (Random::GetFloat() >= ATK_WIN_RATE)
 			{
@@ -65,7 +69,7 @@ namespace WZ
 			}
 		}
 
-		//apply casualties
+		//apply casualties to defenders
 		source->setArmies(source->getArmies() - defCasualties);
 		amount -= atkCasualties;
 
@@ -328,7 +332,7 @@ namespace WZ
 			return false;
 		}
 
-		return HasTerritoryAdj(getPlayer(), m_target) && !isNegotiating(getPlayer(), (const Player*) m_target->getOwner());
+		return HasTerritoryAdj(getPlayer(), m_target);
 	}
 
 	void BombOrder::execute()

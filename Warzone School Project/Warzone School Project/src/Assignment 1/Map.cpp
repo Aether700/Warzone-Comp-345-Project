@@ -293,7 +293,10 @@ namespace WZ
 
 	Map::Map() { }
 
-	Map::Map(std::vector<Continent*> continents) : m_continents(continents) { }
+	Map::Map(std::vector<Continent*> continents) : m_continents(continents) 
+	{
+		SetTerritoryHash();
+	}
 
 	Map::Map(const Map& other)
 	{
@@ -394,7 +397,15 @@ namespace WZ
 
 	size_t Map::getCount() const { return m_continents.size(); }
 	
-	void Map::addContinent(Continent* c) { m_continents.push_back(c); }
+	void Map::addContinent(Continent* c) 
+	{ 
+		m_continents.push_back(c); 
+		for (size_t i = 0; i < c->getCount(); i++)
+		{
+			Territory* curr = c->getTerritory(i);
+			m_territoryHash[curr->getID()] = curr;
+		}
+	}
 	
 	void Map::removeContinent(Continent* c)
 	{
@@ -402,6 +413,13 @@ namespace WZ
 		{
 			if (*m_continents[i] == *c)
 			{
+				for (auto it = m_territoryHash.begin(); it != m_territoryHash.end(); it++)
+				{
+					if ((*it).second->getContinent() == m_continents[i])
+					{
+						m_territoryHash.erase(it);
+					}
+				}
 				m_continents.erase(m_continents.begin() + i);
 				break;
 			}
@@ -451,6 +469,9 @@ namespace WZ
 
 			currTerritory->getContinent()->addTerritory(currTerritory);
 		}
+
+		m_territoryHash.clear();
+		SetTerritoryHash();
 	}
 
 	void Map::ResetVisitedContinents() const
@@ -461,7 +482,18 @@ namespace WZ
 		}
 	}
 
-
+	void Map::SetTerritoryHash()
+	{
+		for (Continent* c : m_continents)
+		{
+			for (size_t i = 0; i < c->getCount(); i++)
+			{
+				Territory* currTerritory = c->getTerritory(i);
+				m_territoryHash[currTerritory->getID()] = currTerritory;
+			}
+		}
+	}
+	
 	std::ostream& operator<<(std::ostream& stream, const Map& m)
 	{
 		std::stringstream ss;
@@ -483,5 +515,6 @@ namespace WZ
 		stream << str;
 		return stream;
 	}
+
 
 }

@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 
 //#include "Orders.h"
 //#include "Player.h"
@@ -402,7 +403,13 @@ namespace WZ
         */
         void ResetVisitedContinents() const;
 
+        /*helper function which sets the Territory hash map (the unordered map) 
+          so that we can access the territories easily
+        */
+        void SetTerritoryHash();
+
         std::vector<Continent*> m_continents;
+        std::unordered_map<unsigned int, Territory*> m_territoryHash;
     };
 
     /* insertion operator for Map objects.
