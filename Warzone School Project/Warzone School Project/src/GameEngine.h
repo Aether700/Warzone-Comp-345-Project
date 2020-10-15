@@ -38,7 +38,7 @@ namespace WZ
 		*/
 		static void addNegotiatingPlayers(const Player* p1, const Player* p2);
 
-		/* allows players to draw a card (one per turn max)
+		/* allows players to draw a card if they did not draw one this turn
 		*/
 		static void drawCard(Player* p);
 
@@ -49,6 +49,13 @@ namespace WZ
 		static Player* getNeutralPlayer();
 
 	private:
+
+		/*private helper function which sets the "hasDrawnCard" 
+		  bool of each players to false to allow them to draw again
+		*/
+		static void resetPlayerDrawCard();
+
+		static std::vector<Player*> s_activePlayers;
 		static std::vector<std::pair<const Player*, const Player*>> s_negotiatingPlayers;
 		static Deck* s_deck;
 		static Player* s_neutralPlayer;

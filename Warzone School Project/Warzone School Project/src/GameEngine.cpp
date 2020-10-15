@@ -9,6 +9,7 @@ namespace WZ
 	std::vector<std::pair<const Player*, const Player*>> GameManager::s_negotiatingPlayers;
 	Deck* GameManager::s_deck = new Deck();
 	Player* GameManager::s_neutralPlayer = new Player("Neutral");
+	std::vector<Player*> GameManager::s_activePlayers;
 	////////////////////////////////////////////////////////////////////////////
 
 	void GameManager::init()
@@ -41,19 +42,32 @@ namespace WZ
 		s_negotiatingPlayers.push_back({ p1, p2 });
 	}
 
-	//temp implementation needs to make sure only one per turn
 	void GameManager::drawCard(Player* p)
 	{
+		if (p->hasDrawnCard)
+		{
+			return;
+		}
+
 		Card* c = s_deck->draw();
 		if (c == nullptr)
 		{
 			return;
 		}
 		p->getHand()->addCardToHand(c);
+		p->hasDrawnCard = true;
 	}
 
 	Player* GameManager::getNeutralPlayer()
 	{
 		return s_neutralPlayer;
+	}
+
+	void GameManager::resetPlayerDrawCard()
+	{
+		for (Player* p : s_activePlayers)
+		{
+			p->hasDrawnCard = false;
+		}
 	}
 }

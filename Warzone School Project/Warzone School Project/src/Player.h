@@ -12,11 +12,13 @@ namespace WZ
 	
 	// Player class
 	class Player {
+		friend class GameManager;
 	private:
 		std::vector<Territory*> territories;
 		Hand* hand;
 		std::string playerName;
 		OrderList* listOrders;
+		bool hasDrawnCard;
 	public:
 		//default constructor of the Player class
 		Player();
