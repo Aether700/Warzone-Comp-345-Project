@@ -33,4 +33,9 @@ namespace WZ
 		s_negotiatingPlayers.push_back({ p1, p2 });
 	}
 
+	//to be implemented
+	void startupPhase(const Player* p, const Territory* t){
+
+	}
+
 }

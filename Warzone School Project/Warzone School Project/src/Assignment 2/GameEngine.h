@@ -38,5 +38,12 @@ namespace WZ
 	private:
 		static std::vector<std::pair<const Player*, const Player*>> s_negotiatingPlayers;
 		static Deck* s_deck;
+	
+	/*Method startupPhase is a method that will randomise the order of play of the player.
+	 where the number of players can be between 2 and 5 inclusively. The territories in the 
+	 map will be randomly assigned to the players in a round-robin fashion.
+	 And finally, depending on the number of players, each player will start with a number of 
+	 initial armies.  This method will return the player, the number of armies and its territories.*/;
+	void startupPhase(const Player* p, const Territory* t);
 	};
 }
