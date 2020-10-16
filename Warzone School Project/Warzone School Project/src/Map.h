@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <iostream>
@@ -390,6 +391,30 @@ namespace WZ
            returns: the modified Map object
         */
         Map& operator=(const Map& other);
+
+        /* begin override function which provides an iterator at the start of the unordered map of Territories of the map
+
+          returns: an iterator at the start of the unordered map of Territories of the map
+        */
+        std::unordered_map<unsigned int, Territory*>::iterator begin();
+
+        /* end override function which provides an iterator at the end of the unordered map of Territories of the map
+
+          returns: an iterator at the end of the unordered map of Territories of the map
+        */
+        std::unordered_map<unsigned int, Territory*>::iterator end();
+
+        /* begin override function which provides a const iterator at the start of the unordered map of Territories of the map
+
+          returns: a const iterator at the start of the unordered map of Territories of the map
+        */
+        std::unordered_map<unsigned int, Territory*>::const_iterator begin() const;
+
+        /* end override function which provides a const iterator at the end of the unordered map of Territories of the map
+
+          returns: a const iterator at the end of the unordered map of Territories of the map
+        */
+        std::unordered_map<unsigned int, Territory*>::const_iterator end() const;
 
     private:
         /*private helper function which make a deep 

@@ -8,16 +8,72 @@
 #include <assert.h>
 
 
+#define ARMIES_SPACES 7
+
 namespace WZ
 {
+	static std::string FitInTable(std::string_view str, unsigned int totalSpaces)
+	{
+		assert(str.size() <= totalSpaces);
+
+		int spacesLeft = totalSpaces - str.size();
+
+		int spacesBefore = spacesLeft / 2;
+		int spacesAfter = spacesLeft - spacesBefore;
+		std::stringstream ss;
+
+		for (int i = 0; i < spacesBefore; i++)
+		{
+			ss << " ";
+		}
+		
+		ss << str;
+
+		for (int i = 0; i < spacesAfter; i++)
+		{
+			ss << " ";
+		}
+
+		return ss.str();
+	}
+
+	static std::string SetTableEntry(Territory* t, int* entrySpaces)
+	{
+		std::stringstream ss;
+		std::stringstream adjStream;
+
+		//"|  Territory\t|  Continent\t|  Owner\t|  Armies\t| Adjacent Territories\t|\n"
+		ss << "|" << FitInTable(t->getName(), entrySpaces[0]) << "|" 
+			<< FitInTable(t->getContinent()->getName(), entrySpaces[1]) << "|"
+			<< FitInTable(t->getOwner()->getPlayerName(), entrySpaces[2]) << "|"
+			<< FitInTable(std::to_string(t->getArmies()), ARMIES_SPACES) << "|";
+
+		
+		for (Territory* adj : t->getAdjList())
+		{
+			adjStream << adj->getName() << ", ";
+		}
+
+		std::string str = adjStream.str();
+		if (t->getAdjList().size() != 0)
+		{
+			str.erase(str.size() - 2, 2);
+		}
+
+		ss << FitInTable(adjStream.str(), entrySpaces[3])<<"|\n";
+
+		return ss.str();
+	}
+
 	// Territory //////////////////////////////////////////////
 
 	Territory::Territory(const std::string& name, unsigned int id, Continent* continent, unsigned int armies)
-		: m_name(name), m_id(id), m_armies(armies), m_continent(continent), m_owner(GameManager::getNeutralPlayer()) { }
+		: m_name(name), m_id(id), m_armies(armies), m_continent(continent), 
+		m_owner(GameManager::getNeutralPlayer()), m_visited(false) { }
 
-	Territory::Territory(const Territory& other) 
-		: m_name(other.m_name), m_id(other.m_id), m_armies(other.m_armies), 
-		m_continent(other.m_continent), m_owner(other.m_owner), m_adjList(other.m_adjList) { }
+	Territory::Territory(const Territory& other)
+		: m_name(other.m_name), m_id(other.m_id), m_armies(other.m_armies),
+		m_continent(other.m_continent), m_owner(other.m_owner), m_adjList(other.m_adjList), m_visited(false) { }
 
 	const std::string& Territory::getName() const { return m_name; }
 	
@@ -96,11 +152,11 @@ namespace WZ
 	// Continent //////////////////////////////////////////////
 	
 	Continent::Continent(const std::string& name, unsigned int bonus) 
-		: m_name(name), m_bonus(bonus) { }
+		: m_name(name), m_bonus(bonus), m_visited(false) { }
 
 	Continent::Continent(const Continent& other) 
 		: m_name(other.m_name), m_bonus(other.m_bonus), 
-		m_territories(other.m_territories) { }
+		m_territories(other.m_territories), m_visited(false) { }
 
 	Continent::~Continent()
 	{
@@ -420,6 +476,14 @@ namespace WZ
 		}
 	}
 
+	std::unordered_map<unsigned int, Territory*>::iterator Map::begin() { return m_territoryHash.begin(); }
+
+	std::unordered_map<unsigned int, Territory*>::iterator Map::end() { return m_territoryHash.end(); }
+
+	std::unordered_map<unsigned int, Territory*>::const_iterator Map::begin() const { return m_territoryHash.cbegin(); }
+
+	std::unordered_map<unsigned int, Territory*>::const_iterator Map::end() const { return m_territoryHash.cend(); }
+
 	Map& Map::operator=(const Map& other)
 	{
 		for (Continent* c : m_continents)
@@ -492,21 +556,81 @@ namespace WZ
 	{
 		std::stringstream ss;
 
-		ss << "Continents:\n";
+		int entrySpaces[4] = { 9, 9, 5, 20 };
 
-		for (size_t i = 0; i < m.getCount(); i++)
+		//check max entry length for each column
+		for (std::pair<unsigned int, Territory*> pair : m)
 		{
-			ss << "\t{" << *m.getContinent(i) << "},\n\n";
+			Territory* curr = pair.second;
+			if (entrySpaces[0] < curr->getName().size())
+			{
+				entrySpaces[0] = curr->getName().size();
+			}
+
+			if (entrySpaces[1] < curr->getContinent()->getName().size())
+			{
+				entrySpaces[1] = curr->getContinent()->getName().size();
+			}
+
+			if (entrySpaces[2] < curr->getOwner()->getPlayerName().size())
+			{
+				entrySpaces[2] = curr->getOwner()->getPlayerName().size();
+			}
+
+			int adjSize = 0;
+			for (Territory* t : curr->getAdjList())
+			{
+				adjSize += t->getName().size() + 2;
+			}
+
+			if (curr->getAdjList().size() != 0)
+			{
+				adjSize -= 2;
+			}
+
+			if (entrySpaces[3] < adjSize)
+			{
+				entrySpaces[3] = adjSize;
+			}
 		}
 
-		std::string str = ss.str();
-		
-		if (m.getCount() != 0)
+		int totalSpace = 0;
+
+		for (int i = 0; i < 4; i++)
 		{
-			str.erase(str.length() - 3, 3);
+			entrySpaces[i] += 2;
+			totalSpace += entrySpaces[i];
 		}
+
+		totalSpace += 5 + ARMIES_SPACES;
+
+		//header of table
+		ss << "|" << FitInTable("Territory", entrySpaces[0]) << "|" << FitInTable("Continent", entrySpaces[1]) 
+			<< "|" << FitInTable("Owner", entrySpaces[2]) 
+			<< "|" << FitInTable("Armies", ARMIES_SPACES) 
+			<< "|" << FitInTable("Adjacent Territories", entrySpaces[3]) << "|\n";
+
+		for (int i = 0; i < totalSpace; i++)
+		{
+			ss << "-";
+		}
+		ss << "\n";
 		
-		stream << str;
+		//territory entries
+		for (std::pair<unsigned int, Territory*> pair : m)
+		{
+			Territory* curr = pair.second;
+			ss << SetTableEntry(curr, entrySpaces);
+		}
+
+		//end of table
+		for (int i = 0; i < totalSpace; i++)
+		{
+			ss << "-";
+		}
+		ss << "\n";
+
+		stream << ss.str();
 		return stream;
 	}
 
