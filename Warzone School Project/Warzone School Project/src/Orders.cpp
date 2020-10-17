@@ -64,7 +64,7 @@ namespace WZ
 
 		if (target->getArmies() == 0)
 		{
-			target->setOwner(source->getOwner());
+			source->getOwner()->addTerritory(target);
 			target->setArmies(amount);
 			source->setArmies(source->getArmies() - initialAmount);
 

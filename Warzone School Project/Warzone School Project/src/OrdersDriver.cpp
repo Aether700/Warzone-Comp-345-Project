@@ -1,6 +1,7 @@
 #include "Orders.h"
 #include "Player.h"
 #include "Map.h"
+#include "GameEngine.h"
 
 #include <vector>
 
@@ -25,7 +26,8 @@ static WZ::Map* CreateMap(WZ::Player* players)
 	players[3].addTerritory(t5);
 	
 
-	t1->setArmies(20);
+	t1->setArmies(30);
+	t2->setArmies(2);
 	t5->setArmies(20);
 
 	t1->addAdjTerritory(t2);
@@ -41,6 +43,7 @@ static WZ::Map* CreateMap(WZ::Player* players)
 	c1->addTerritory(t2);
 	c1->addTerritory(t3);
 	c1->addTerritory(t4);
+	c1->addTerritory(t5);
 
 	v.push_back(c1);
 
@@ -55,9 +58,10 @@ void OrdersDriver()
 
 	//creating orders
 	WZ::DeployOrder deploy = WZ::DeployOrder(&players[3], players[3].getTerritory("T4"), 5);
-	WZ::AdvanceOrder advance = WZ::AdvanceOrder(&players[0], players[0].getTerritory("T1"), players[1].getTerritory("T2"), 5);
+	WZ::AdvanceOrder advance = WZ::AdvanceOrder(&players[0], players[0].getTerritory("T1"), players[1].getTerritory("T2"), 10);
 	WZ::AirliftOrder airlift = WZ::AirliftOrder(&players[0], players[0].getTerritory("T1"), players[2].getTerritory("T3"), 5);
 	WZ::BombOrder bomb = WZ::BombOrder(&players[2], players[0].getTerritory("T1"));
+	WZ::BlockadeOrder blockade = WZ::BlockadeOrder(&players[0], players[1].getTerritory("T2"));
 	WZ::NegotiateOrder negotiate = WZ::NegotiateOrder(&players[0], &players[3]);
 	WZ::AdvanceOrder advance2 = WZ::AdvanceOrder(&players[3], players[3].getTerritory("T5"), players[0].getTerritory("T1"), 5);
 
@@ -72,7 +76,7 @@ void OrdersDriver()
 	std::cout << *m << "\n";
 
 	//advance
-	std::cout << "\n" << players[0].getPlayerName() << " advances 5 armies from T1 to T2\n\n";
+	std::cout << "\n" << players[0].getPlayerName() << " advances 10 armies from T1 to T2\n\n";
 	advance.execute();
 	std::cout << *m << "\n";
 
@@ -84,6 +88,11 @@ void OrdersDriver()
 	//bomb
 	std::cout << "\n" << players[2].getPlayerName() << " bombs T1\n\n";
 	bomb.execute();
+	std::cout << *m << "\n";
+
+	//blockade
+	std::cout << "\n" << players[0].getPlayerName() << " blockades T2\n\n";
+	blockade.execute();
 	std::cout << *m << "\n";
 
 	//negotiate
