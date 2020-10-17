@@ -60,7 +60,7 @@ namespace WZ
 			str.erase(str.size() - 2, 2);
 		}
 
-		ss << FitInTable(adjStream.str(), entrySpaces[3])<<"|\n";
+		ss << FitInTable(str, entrySpaces[3])<<"|\n";
 
 		return ss.str();
 	}
@@ -277,6 +277,7 @@ namespace WZ
 	void Continent::addTerritory(Territory* t)
 	{
 		m_territories.push_back(t);
+		t->setContinent(this);
 	}
 	
 	void Continent::removeTerritory(Territory* t)
@@ -605,6 +606,12 @@ namespace WZ
 		totalSpace += 5 + ARMIES_SPACES;
 
 		//header of table
+		for (int i = 0; i < totalSpace; i++)
+		{
+			ss << "-";
+		}
+		ss << "\n";
+
 		ss << "|" << FitInTable("Territory", entrySpaces[0]) << "|" << FitInTable("Continent", entrySpaces[1]) 
 			<< "|" << FitInTable("Owner", entrySpaces[2]) 
 			<< "|" << FitInTable("Armies", ARMIES_SPACES) 

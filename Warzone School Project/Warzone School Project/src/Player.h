@@ -33,7 +33,6 @@ namespace WZ
 		Territory* getTerritory(std::string n);
 		Hand* getHand();
 		std::string getPlayerName() const;
-		std::vector<Player*> getNegotiatingPlayers() const;
 		const OrderList* getOrderList() const;
 		
 		/* default begin function to allow use of ranged for loops

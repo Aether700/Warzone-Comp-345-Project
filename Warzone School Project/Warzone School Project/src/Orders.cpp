@@ -12,19 +12,6 @@
 
 namespace WZ
 {
-	static bool isNegotiating(const Player* p1, const Player* p2)
-	{
-		for (Player* p : p1->getNegotiatingPlayers())
-		{
-			if (*p == *p2)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	static bool HasTerritoryAdj(const Player* p, const Territory* t)
 	{
 		for (Territory* playerTerritory : *p)
@@ -51,8 +38,8 @@ namespace WZ
 		unsigned int atkCasualties = 0;
 		unsigned int defCasualties = 0;
 
-		//atk casualties
-		for (size_t i = 0; i < source->getArmies() && amount >= atkCasualties; i++)
+		//atk casualties (defenders killing attackers)
+		for (size_t i = 0; i < target->getArmies() && amount > atkCasualties; i++)
 		{
 			if (Random::GetFloat() >= DEF_WIN_RATE)
 			{
@@ -61,8 +48,8 @@ namespace WZ
 		}
 
 
-		//def casualties
-		for (size_t i = 0; i < amount && target->getArmies() >= defCasualties; i++)
+		//def casualties (attackers killing defenders)
+		for (size_t i = 0; i < amount && target->getArmies() > defCasualties; i++)
 		{
 			if (Random::GetFloat() >= ATK_WIN_RATE)
 			{
@@ -71,7 +58,7 @@ namespace WZ
 		}
 
 		//apply casualties to defenders
-		source->setArmies(source->getArmies() - defCasualties);
+		target->setArmies(target->getArmies() - defCasualties);
 		amount -= atkCasualties;
 
 
@@ -79,7 +66,7 @@ namespace WZ
 		{
 			target->setOwner(source->getOwner());
 			target->setArmies(amount);
-			source->setArmies(target->getArmies() - initialAmount);
+			source->setArmies(source->getArmies() - initialAmount);
 
 			GameManager::drawCard(source->getOwner());
 			return true;
@@ -151,6 +138,7 @@ namespace WZ
 
 	bool DeployOrder::validate() const
 	{
+		std::cout << "Validating DeployOrder\n";
 		return getPlayer()->ownsTerritory(m_destination);
 	}
 	
@@ -220,7 +208,8 @@ namespace WZ
 
 	bool AdvanceOrder::validate() const
 	{
-		if (!getPlayer()->ownsTerritory(m_source) || isNegotiating(getPlayer(), (const Player*) m_target->getOwner()))
+		std::cout << "Validating AdvanceOrder\n";
+		if (!getPlayer()->ownsTerritory(m_source) || GameManager::isNegotiating(getPlayer(), (const Player*) m_target->getOwner()))
 		{
 			return false;
 		}
@@ -325,6 +314,7 @@ namespace WZ
 
 	bool BombOrder::validate() const
 	{
+		std::cout << "Validating BombOrder\n";
 		if (getPlayer()->ownsTerritory(m_target))
 		{
 			return false;
@@ -394,6 +384,7 @@ namespace WZ
 
 	bool BlockadeOrder::validate() const
 	{	
+		std::cout << "Validating BlockadeOrder\n";
 		return getPlayer()->ownsTerritory(m_target);
 	}
 
@@ -463,7 +454,9 @@ namespace WZ
 
 	bool AirliftOrder::validate() const
 	{
-		return getPlayer()->ownsTerritory(m_source) && m_source->getArmies() >= m_amount;
+		std::cout << "Validating AirliftOrder\n";
+		return getPlayer()->ownsTerritory(m_source) && m_source->getArmies() >= m_amount 
+			&& !GameManager::isNegotiating(getPlayer(), m_destination->getOwner());
 	}
 
 	void AirliftOrder::execute()
@@ -552,6 +545,7 @@ namespace WZ
 
 	bool NegotiateOrder::validate() const
 	{
+		std::cout << "Validating NegotiateOrder\n";
 		return *getPlayer() != *const_cast<const Player*>(m_otherPlayer);
 	}
 

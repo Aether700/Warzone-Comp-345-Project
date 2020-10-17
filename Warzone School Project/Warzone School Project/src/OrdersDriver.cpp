@@ -2,172 +2,98 @@
 #include "Player.h"
 #include "Map.h"
 
+#include <vector>
+
+
+static WZ::Map* CreateMap(WZ::Player* players)
+{
+	std::vector<WZ::Continent*> v;
+
+	//do continent 1
+	WZ::Continent* c1 = new WZ::Continent("C1", 5);
+
+	WZ::Territory* t1 = new WZ::Territory("T1", 2, c1);
+	WZ::Territory* t2 = new WZ::Territory("T2", 3, c1);
+	WZ::Territory* t3 = new WZ::Territory("T3", 4, c1);
+	WZ::Territory* t4 = new WZ::Territory("T4", 5, c1);
+	WZ::Territory* t5 = new WZ::Territory("T5", 6, c1);
+
+	players[0].addTerritory(t1);
+	players[1].addTerritory(t2);
+	players[2].addTerritory(t3);
+	players[3].addTerritory(t4);
+	players[3].addTerritory(t5);
+	
+
+	t1->setArmies(20);
+	t5->setArmies(20);
+
+	t1->addAdjTerritory(t2);
+	t1->addAdjTerritory(t5);
+	t2->addAdjTerritory(t1);
+	t2->addAdjTerritory(t3);
+	t3->addAdjTerritory(t1);
+	t3->addAdjTerritory(t4);
+	t4->addAdjTerritory(t2);
+	t5->addAdjTerritory(t1);
+
+	c1->addTerritory(t1);
+	c1->addTerritory(t2);
+	c1->addTerritory(t3);
+	c1->addTerritory(t4);
+
+	v.push_back(c1);
+
+	return new WZ::Map(v);
+}
 
 void OrdersDriver()
 {
-	//set up variables
-	WZ::Player* p1 = new WZ::Player("Player 1", {});
-	WZ::Player* p2 = new WZ::Player("Player 2", {});
-	WZ::Player* p3 = new WZ::Player("Player 3", {});
+	//create players and set up map
+	WZ::Player players[] = { WZ::Player("P1"), WZ::Player("P2"), WZ::Player("P3"), WZ::Player("P4"), };
+	WZ::Map* m = CreateMap(players);
 
-	WZ::Territory* t1 = new WZ::Territory("T1", 1, nullptr, 5);
-	WZ::Territory* t2 = new WZ::Territory("T2", 2, nullptr, 10);
-	WZ::Territory* t3 = new WZ::Territory("T3", 3, nullptr, 15);
-	
-	t1->addAdjTerritory(t2);
-	t1->addAdjTerritory(t3);
-	t2->addAdjTerritory(t1);
-	t3->addAdjTerritory(t1);
+	//creating orders
+	WZ::DeployOrder deploy = WZ::DeployOrder(&players[3], players[3].getTerritory("T4"), 5);
+	WZ::AdvanceOrder advance = WZ::AdvanceOrder(&players[0], players[0].getTerritory("T1"), players[1].getTerritory("T2"), 5);
+	WZ::AirliftOrder airlift = WZ::AirliftOrder(&players[0], players[0].getTerritory("T1"), players[2].getTerritory("T3"), 5);
+	WZ::BombOrder bomb = WZ::BombOrder(&players[2], players[0].getTerritory("T1"));
+	WZ::NegotiateOrder negotiate = WZ::NegotiateOrder(&players[0], &players[3]);
+	WZ::AdvanceOrder advance2 = WZ::AdvanceOrder(&players[3], players[3].getTerritory("T5"), players[0].getTerritory("T1"), 5);
 
-	
+	//Test orders
 
-	p1->addTerritory(t1);
-	t1->setOwner(p1);
+	std::cout << "Initial state of the Map:\n";
+	std::cout << *m << "\n";
 
-	p2->addTerritory(t2);
-	t2->setOwner(p2);
+	//deploy
+	std::cout << "\n" << players[3].getPlayerName() << " deploys 5 armies on T4\n\n";
+	deploy.execute();
+	std::cout << *m << "\n";
 
-	p3->addTerritory(t3);
-	t3->setOwner(p3);
+	//advance
+	std::cout << "\n" << players[0].getPlayerName() << " advances 5 armies from T1 to T2\n\n";
+	advance.execute();
+	std::cout << *m << "\n";
 
-	WZ::DeployOrder deployVal = WZ::DeployOrder(p1, t1, 5);
+	//airlift
+	std::cout << "\n" << players[0].getPlayerName() << " airlifts 5 armies from T1 to T3\n\n";
+	airlift.execute();
+	std::cout << *m << "\n";
 
-	//create Orders
-	WZ::DeployOrder* deploy = new WZ::DeployOrder(p1, t1, 5);
-	WZ::AdvanceOrder* advance = new WZ::AdvanceOrder(p2, t2, t1, 5);
-	WZ::BombOrder* bomb = new WZ::BombOrder(p1, t2);
-	WZ::BlockadeOrder* blockade = new WZ::BlockadeOrder(p1, t1);
-	WZ::AirliftOrder* airlift = new WZ::AirliftOrder(p2, t2, t1, 2);
-	WZ::NegotiateOrder* negotiate = new WZ::NegotiateOrder(p1, p3);
-	
-	
-	//Set OrderList
+	//bomb
+	std::cout << "\n" << players[2].getPlayerName() << " bombs T1\n\n";
+	bomb.execute();
+	std::cout << *m << "\n";
 
-	WZ::OrderList* list = new WZ::OrderList();
-
-	list->addOrder(deploy);
-	list->addOrder(advance);
-	list->addOrder(bomb);
-	list->addOrder(blockade);
-	list->addOrder(airlift);
-	list->addOrder(negotiate);
-
-	//////////////////////////////
-	//Test OrderList//////////////
-	//////////////////////////////
-
-	//operator<< test + deleteOrder test
-	std::cout << "Initial OrderList: " << *list << "\n\n";
-	
-	{
-		WZ::Order* toRemove = (*list)[3];
-
-		std::cout << "deleting order: " << *toRemove << "\n\n";
-		list->deleteOrder(3);
-
-		std::cout << "list after delete operation: " << *list << "\n\n";
-		
-		list->addOrder(toRemove);
-	}
-
-	//move operation test
-	std::cout << "orders at index 0 & 3 before move operation:"
-		"\nindex 0: " << *(*list)[0] <<
-		"\nindex 3: "<< *(*list)[3] << "\n\n";
-
-	std::cout << "Moving order at index 0 to index 3\n\n";
-	list->move(0, 3);
-
-	std::cout << "orders at index 0 & 3 after move operation:"
-		"\nindex 3: " << *(*list)[3] << "\n\n";
-
-	////////////////////////////////////
-	//Test Order functions//////////////
-	////////////////////////////////////
-
-	//operator<< test (before executed)
-	std::cout << "printing Orders (before execution):\n";
-
-	for (WZ::Order* o : *list)
-	{
-		std::cout << *o << "\n";
-	}
+	//negotiate
+	std::cout << "\n" << players[0].getPlayerName() << " negotiates with " << players[3].getPlayerName() << "\n\n";
+	negotiate.execute();
+	std::cout << "\nnow " << players[3].getPlayerName() << " advances 5 armies from T5 to T1 which is owned by " 
+		<< players[0].getPlayerName() << "\n\n";
+	advance2.execute();
+	std::cout << *m << "\n";
 
 
-	//validate test (should be true)
-	std::cout << "\nChecking validity (all orders should be valid):\n";
-	for (WZ::Order* o : *list)
-	{
-		std::cout << *o << " is valid: " << o->validate() << "\n";
-	}
-
-	//execute test
-	std::cout << "\nexecuting orders:\n";
-	for (WZ::Order* o : *list)
-	{
-		o->execute();
-	}
-
-	//operator<< test (after executed)
-	std::cout << "\nprinting executed orders:\n";
-	for (WZ::Order* o : *list)
-	{
-		std::cout << *o << "\n";
-	}
-	
-
-	//validity test (should be false)
-
-	//initialize invalid orders
-	WZ::DeployOrder* invalidDeploy = new WZ::DeployOrder(p1, t2, 5);
-	WZ::AdvanceOrder* invalidAdvance = new WZ::AdvanceOrder(p2, t1, t3, 5);
-	WZ::BombOrder* invalidBomb = new WZ::BombOrder(p2, t2);
-	WZ::BlockadeOrder* invalidBlockade = new WZ::BlockadeOrder(p1, t2);
-	WZ::AirliftOrder* invalidAirlift = new WZ::AirliftOrder(p2, t2, t1, 200);
-	WZ::NegotiateOrder* invalidNegotiate = new WZ::NegotiateOrder(p1, p1);
-
-	std::cout << "\nTesting validate function with invalid orders (should all be false):\n";
-
-	std::cout << "Order being tested: " << *invalidDeploy << "\n";
-	std::cout << "is valid: " << invalidDeploy->validate() << "\n\n";
-
-	std::cout << "Order being tested: " << *invalidAdvance << "\n";
-	std::cout << "is valid: " << invalidAdvance->validate() << "\n\n";
-
-	std::cout << "Order being tested: " << *invalidBomb << "\n";
-	std::cout << "is valid: " << invalidBomb->validate() << "\n\n";
-
-	std::cout << "Order being tested: " << *invalidBlockade << "\n";
-	std::cout << "is valid: " << invalidBlockade->validate() << "\n\n";
-
-	std::cout << "Order being tested: " << *invalidAirlift << "\n";
-	std::cout << "is valid: " << invalidAirlift->validate() << "\n\n";
-
-	std::cout << "Order being tested: " << *invalidNegotiate << "\n";
-	std::cout << "is valid: " << invalidNegotiate->validate() << "\n\n";
-
-	//clean up
-	delete p1;
-	delete p2;
-	delete p3;
-
-	delete t1;
-	delete t2;
-	delete t3;
-
-	delete deploy;
-	delete advance;
-	delete bomb;
-	delete blockade;
-	delete airlift;
-	delete negotiate;
-
-	delete invalidDeploy;
-	delete invalidAdvance;
-	delete invalidBomb;
-	delete invalidBlockade;
-	delete invalidAirlift;
-	delete invalidNegotiate;
-
-	delete list;
+	delete m;
 }	

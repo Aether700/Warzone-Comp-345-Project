@@ -2,17 +2,18 @@
 #include "Orders.h"
 #include "Map.h"
 #include "Cards.h"
+#include "GameEngine.h"
 
 namespace WZ
 {
 	using namespace std;
 
-	Player::Player() {
+	Player::Player() : hasDrawnCard(false) {
 		hand = new Hand();
 		listOrders = new OrderList();
 	}
 
-	Player::Player(const Player& p) {
+	Player::Player(const Player& p) : hasDrawnCard(p.hasDrawnCard) {
 		hand = new Hand(*p.hand);
 		playerName = p.playerName;
 		territories = territories;
@@ -24,7 +25,7 @@ namespace WZ
 		delete listOrders;
 	}
 
-	Player::Player(string n, vector<Territory*> t) {
+	Player::Player(string n, vector<Territory*> t) : hasDrawnCard(false) {
 		playerName = n;
 		territories = t;
 		hand = new Hand();
@@ -53,13 +54,6 @@ namespace WZ
 
 	string Player::getPlayerName() const {
 		return playerName;
-	}
-
-	//for not just returns an empty vector<Player*>
-	std::vector<Player*> Player::getNegotiatingPlayers() const
-	{
-		std::vector<Player*> n;
-		return n;
 	}
 
 	const OrderList* Player::getOrderList() const { return listOrders; }
@@ -103,12 +97,14 @@ namespace WZ
 
 	void Player::addTerritory(Territory* newTerritory) {
 		territories.push_back(newTerritory);
+		newTerritory->setOwner(this);
 	}
 
 	void Player::removeTerritory(Territory* oldTerritory) {
 		for (size_t i = 0; i < territories.size(); i++) {
 			if (territories[i]->getName() == oldTerritory->getName()) {
 				territories.erase(territories.begin() + i);
+				territories[i]->setOwner(GameManager::getNeutralPlayer());
 			}
 		}
 	}

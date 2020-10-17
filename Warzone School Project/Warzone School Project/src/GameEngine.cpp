@@ -46,8 +46,12 @@ namespace WZ
 	{
 		if (p->hasDrawnCard)
 		{
+			std::cout << p->getPlayerName() << " tries to draws a card but they already drew this turn\n";
 			return;
 		}
+
+		std::cout << p->getPlayerName() << " draws a card\n";
+		p->hasDrawnCard = true;
 
 		Card* c = s_deck->draw();
 		if (c == nullptr)
@@ -55,7 +59,6 @@ namespace WZ
 			return;
 		}
 		p->getHand()->addCardToHand(c);
-		p->hasDrawnCard = true;
 	}
 
 	Player* GameManager::getNeutralPlayer()
