@@ -41,7 +41,7 @@ namespace WZ
 		//atk casualties (defenders killing attackers)
 		for (size_t i = 0; i < target->getArmies() && amount > atkCasualties; i++)
 		{
-			if (Random::GetFloat() >= DEF_WIN_RATE)
+			if (Random::GetFloat() <= DEF_WIN_RATE)
 			{
 				atkCasualties++;
 			}
@@ -51,7 +51,7 @@ namespace WZ
 		//def casualties (attackers killing defenders)
 		for (size_t i = 0; i < amount && target->getArmies() > defCasualties; i++)
 		{
-			if (Random::GetFloat() >= ATK_WIN_RATE)
+			if (Random::GetFloat() <= ATK_WIN_RATE)
 			{
 				defCasualties++;
 			}
@@ -64,6 +64,7 @@ namespace WZ
 
 		if (target->getArmies() == 0)
 		{
+			target->getOwner()->removeTerritory(target);
 			source->getOwner()->addTerritory(target);
 			target->setArmies(amount);
 			source->setArmies(source->getArmies() - initialAmount);

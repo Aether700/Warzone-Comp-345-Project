@@ -10,8 +10,6 @@ extern void CardsDriver();
 
 int main()
 {
-	WZ::GameManager::init();
-
 	std::array<const char*, 5> choices = {"Map", "Map Loader", "Player", "Orders", "Cards"};
 
 	bool done = false;
@@ -45,7 +43,5 @@ int main()
 		}
 		std::cout << "\n";
 	}
-
-	WZ::GameManager::close();
 }
 

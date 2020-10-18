@@ -103,8 +103,8 @@ namespace WZ
 	void Player::removeTerritory(Territory* oldTerritory) {
 		for (size_t i = 0; i < territories.size(); i++) {
 			if (territories[i]->getName() == oldTerritory->getName()) {
-				territories.erase(territories.begin() + i);
 				territories[i]->setOwner(GameManager::getNeutralPlayer());
+				territories.erase(territories.begin() + i);
 			}
 		}
 	}

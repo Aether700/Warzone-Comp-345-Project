@@ -5,29 +5,37 @@
 
 namespace WZ
 {
-	// initializing static member variables ////////////////////////////////////
-	std::vector<std::pair<const Player*, const Player*>> GameManager::s_negotiatingPlayers;
-	Deck* GameManager::s_deck = new Deck();
-	Player* GameManager::s_neutralPlayer = new Player("Neutral");
-	std::vector<Player*> GameManager::s_activePlayers;
-	////////////////////////////////////////////////////////////////////////////
+	bool GameManager::isNegotiating(const Player* p1, const Player* p2) { return GetManager().isNegotiatingImpl(p1, p2); }
 
-	void GameManager::init()
+	void GameManager::addNegotiatingPlayers(const Player* p1, const Player* p2) { GetManager().addNegotiatingPlayersImpl(p1, p2); }
+	
+	void GameManager::drawCard(Player* p) { GetManager().drawCardImpl(p); }
+
+	Player* GameManager::getNeutralPlayer() { return GetManager().getNeutralPlayerImpl(); }
+
+	GameManager::GameManager() : m_neutralPlayer(new Player("Neutral")), m_deck(new Deck())
 	{
-		//init deck here
 		Random::Init();
 	}
-
-	void GameManager::close()
+	
+	GameManager::~GameManager()
 	{
-		delete s_deck;
-		delete s_neutralPlayer;
+		delete m_neutralPlayer;
+		delete m_deck;
 	}
 
-
-	bool GameManager::isNegotiating(const Player* p1, const Player* p2)
+	
+	GameManager& GameManager::GetManager()
 	{
-		for (std::pair<const Player*, const Player*> pair : s_negotiatingPlayers)
+		//since the manager variable is static it will be kept in 
+		//static memory allowing use to reuse it everytime we call the GetManager function
+		static GameManager manager;
+		return manager;
+	}
+
+	bool GameManager::isNegotiatingImpl(const Player* p1, const Player* p2)
+	{
+		for (std::pair<const Player*, const Player*> pair : m_negotiatingPlayers)
 		{
 			if ((pair.first == p1 && pair.second == p2) || (pair.first == p2 && pair.second == p1))
 			{
@@ -37,12 +45,12 @@ namespace WZ
 		return false;
 	}
 
-	void GameManager::addNegotiatingPlayers(const Player* p1, const Player* p2)
+	void GameManager::addNegotiatingPlayersImpl(const Player* p1, const Player* p2)
 	{
-		s_negotiatingPlayers.push_back({ p1, p2 });
+		m_negotiatingPlayers.push_back({ p1, p2 });
 	}
 
-	void GameManager::drawCard(Player* p)
+	void GameManager::drawCardImpl(Player* p)
 	{
 		if (p->hasDrawnCard)
 		{
@@ -53,7 +61,7 @@ namespace WZ
 		std::cout << p->getPlayerName() << " draws a card\n";
 		p->hasDrawnCard = true;
 
-		Card* c = s_deck->draw();
+		Card* c = m_deck->draw();
 		if (c == nullptr)
 		{
 			return;
@@ -61,14 +69,14 @@ namespace WZ
 		p->getHand()->addCardToHand(c);
 	}
 
-	Player* GameManager::getNeutralPlayer()
+	Player* GameManager::getNeutralPlayerImpl()
 	{
-		return s_neutralPlayer;
+		return m_neutralPlayer;
 	}
 
 	void GameManager::resetPlayerDrawCard()
 	{
-		for (Player* p : s_activePlayers)
+		for (Player* p : m_activePlayers)
 		{
 			p->hasDrawnCard = false;
 		}
