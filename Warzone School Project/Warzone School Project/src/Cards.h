@@ -1,5 +1,3 @@
-
-
 #ifndef CARDS_H_
 #define CARDS_H_
 
@@ -13,27 +11,31 @@ namespace WZ
     class Player;
     class Order;
     
+
     //Card class
     class Card
     {
     public:
-        //default constructor of the Card class
-        Card(); 
+        enum class Type
+        {
+            Bomb, Reinforcement, Blockade, Airlift, Diplomacy
+        };
+        
+        //constructor of the Card class which takes the type as argument
+        Card(Type type); 
         //default destructor of the Order class
         ~Card();
         //Copy constructor of Card class which takes the other card we want to init
         Card(const Card& other);
-        //method to set the type of the card which takes an integer between 0 to 4
-        void setType(int random);
         //to return the type of a required Card
-        const char* getType() const;
+        Type getType() const;
         //play function which allows to play a card and returns the specified card order
         Order* play(Territory* start,Territory* dest,Player* p,Player* r,int amount);
         /* The assignement operator which Assigns the values of the provided Card object
         and returns the modified object */
         Card& operator=(const Card& other);
     private:
-        const char* type;
+        Type type;
     };
     //insertion operator for every Card object
     std::ostream& operator<<(std::ostream& stream, const Card& c);
@@ -48,8 +50,6 @@ namespace WZ
         ~Deck();
         //Copy constructor of Deck class which takes the other deck we want to init
         Deck(const Deck& other);
-        //Initialize our deck with 5 cards one of each type
-        void initDeck();
         //get the size of our deck
         size_t getCount () const;
         //to add a card to the deck
@@ -77,9 +77,13 @@ namespace WZ
         std::vector<Card*>::const_iterator end() const;
 
     private:
+        //Initialize deck with random cards (with at least one of each type)
+        void initDeck();
+
         std::vector<Card*> deck;
 
     };
+
     //insertion operator for every Deck object
     std::ostream& operator<<(std::ostream& stream, const Deck& d);
 

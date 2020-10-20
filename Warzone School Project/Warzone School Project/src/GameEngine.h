@@ -20,6 +20,9 @@ namespace WZ
 		GameManager(const GameManager& other) = delete;
 		GameManager& operator=(const GameManager& other) = delete;
 
+		//destructor of the GameManager class
+		~GameManager(); 
+		
 		/*returns true if the two players provided are negotiating this turn, false otherwise
 
 		  returns: true if the two players provided are negotiating this turn, false otherwise
@@ -47,9 +50,6 @@ namespace WZ
 
 		//private constructor of the GameManager class
 		GameManager(); 
-
-		//private constructor of the GameManager class
-		~GameManager(); 
 
 		/*private getter function which returns the single instance of the GameManager class.
 		  This getter is private because every static function of the class uses it to get 

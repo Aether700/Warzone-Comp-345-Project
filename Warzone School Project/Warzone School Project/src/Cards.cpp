@@ -6,12 +6,23 @@
 #include <sstream>
 
 #include "Orders.h"
+#include "Utils.h"
+
+#define DECK_NUM_CARDS 20
+
+#define CARD_PROB_BOMB 0.2f
+#define CARD_PROB_REINFORCEMENT 0.2f
+#define CARD_PROB_BLOCKADE 0.2f
+#define CARD_PROB_AIRLIFT 0.2f
+#define CARD_PROB_DIPLOMACY 0.2f
 
 namespace WZ
 {
     using namespace std;
 
-    Deck::Deck() {
+    Deck::Deck() 
+    {
+        initDeck();
     }
 
     Deck::~Deck()
@@ -32,12 +43,54 @@ namespace WZ
 
     void Deck::initDeck()
     {
-        for (int j = 0; j < 5; j++) { //Creating 5 cards for the 5 types we have
-            Card* c = new Card();
-            c->setType(j); // each card with a unique type
-            this->addCardToDeck(c); 
+        //add random cards depending on the probability of having those cards
+        //to make sure every card type has an equal chance of being choosen we might overload the deck in this phase
+        //but leave space for one of each type
+        while (deck.size() < DECK_NUM_CARDS - 5)
+        {
+            if (Random::GetFloat() <= CARD_PROB_AIRLIFT)
+            {
+                deck.push_back(new Card(Card::Type::Airlift));
+            }
+
+            if (Random::GetFloat() <= CARD_PROB_BLOCKADE)
+            {
+                deck.push_back(new Card(Card::Type::Blockade));
+            }
+
+            if (Random::GetFloat() <= CARD_PROB_BOMB)
+            {
+                deck.push_back(new Card(Card::Type::Bomb));
+            }
+
+            if (Random::GetFloat() <= CARD_PROB_DIPLOMACY)
+            {
+                deck.push_back(new Card(Card::Type::Diplomacy));
+            }
+
+            if (Random::GetFloat() <= CARD_PROB_REINFORCEMENT)
+            {
+                deck.push_back(new Card(Card::Type::Airlift));
+            }
         }
+
+        //removes random cards as long as the deck has too many cards
+        while (deck.size() > DECK_NUM_CARDS - 5)
+        {
+            deck.erase(deck.begin() + (Random::GetInt() % deck.size()));
+        }
+
+        //add one of each card type at the end to make sure there are one of each type
+        deck.push_back(new Card(Card::Type::Airlift));
+        deck.push_back(new Card(Card::Type::Blockade));
+        deck.push_back(new Card(Card::Type::Bomb));
+        deck.push_back(new Card(Card::Type::Diplomacy));
+        deck.push_back(new Card(Card::Type::Reinforcement));
+
+        //shrink deck so it fits the num of cards to save memory
+        deck.shrink_to_fit();
     }
+
 
     size_t Deck::getCount() const{
          return deck.size();
@@ -55,6 +108,7 @@ namespace WZ
             deck.erase(it);
         }
     }
+    
     Card* Deck::draw()
     {
         if(deck.empty())
@@ -79,7 +133,8 @@ namespace WZ
         }
         return *this;
     }
-    std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
+    
+std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
     std::vector<Card*>::iterator Deck::end(){return deck.end();}
     std::vector<Card*>::const_iterator Deck::begin() const{return deck.cbegin();}
     std::vector<Card*>::const_iterator Deck::end() const{return deck.cend();}
@@ -101,90 +156,80 @@ namespace WZ
     }
 
     // Card class
-    Card::Card()
-    {}
+    Card::Card(Card::Type t) : type(t) { }
 
-    Card::~Card()
-    {}
+    Card::~Card() { }
 
-    Card::Card(const Card& other): type(other.type){ }
-    void Card::setType(int random)
-    {
+    Card::Card(const Card& other): type(other.type) { }
 
-        if (random == 0)
-        {
-            type = "bomb";
-            return;
-        }
-        if (random == 1)
-        {
-            type = "reinforcement";
-            return;
-        }if (random == 2)
-        {
-            type = "blockade";
-            return;
-        }
-        if (random == 3)
-        {
-            type = "airlift";
-            return;
-        }
-        if (random == 4)
-        {
-            type = "diplomacy";
-            return;
-        }
-    }
-
-    const char* Card::getType() const
+    Card::Type Card::getType() const
     {
         return type;
     }
 
     Order* Card::play(Territory* start,Territory* dest,Player* p,Player* r,int amount){
          
-         if(type =="bomb"){
+         if(type == Card::Type::Bomb){
              std::cout<<"Playing Bomb card"<<std::endl;
              Order* O= new BombOrder(p,dest);
              return O;
          }
-         else if (type=="reinforcement"){
+         else if (type == Card::Type::Reinforcement){
              std::cout<<"Playing reinforcement card"<<std::endl;
              Order* O= new DeployOrder(p,dest,amount);
              return O; 
         }
-        else if  (type=="blockade"){
+        else if  (type == Card::Type::Blockade){
             std::cout<<"Playing blockade card"<<std::endl;
             Order* O= new BlockadeOrder(p,dest);
              return O; 
         }
-        else if (type=="airlift"){
+        else if (type == Card::Type::Airlift){
             std::cout<<"Playing airlift card"<<std::endl;
             Order* O= new AirliftOrder(p, start,dest, amount);
              return O; 
         } 
-            
-        else if(type=="diplomacy"){
+        else if(type == Card::Type::Diplomacy){
             std::cout<<"Playing diplomacy card"<<std::endl;
             Order* O= new NegotiateOrder(p,r);
              return O; 
         }
                
-     }
+    }
+
      Card& Card::operator=(const Card& other){
          type=other.type;
          return *this;
      }
      
      std::ostream& operator<<(std::ostream& stream, const Card& c){
-         stream<<c.getType();
+         switch(c.getType())
+         {
+            case Card::Type::Airlift:
+                stream << "Airlift";
+                break;
+            
+            case Card::Type::Blockade:
+                stream << "Blockade";
+                break;
+
+            case Card::Type::Bomb:
+                stream << "Bomb";
+                break;
+
+            case Card::Type::Diplomacy:
+                stream << "Diplomacy";
+                break;
+
+            case Card::Type::Reinforcement:
+                stream << "Reinforcement";
+                break;
+         }
          return stream;
      }
 
     //Hand class
-    Hand::Hand()
-    {}
+    Hand::Hand() { }
 
     Hand::~Hand()
     {
@@ -193,18 +238,17 @@ namespace WZ
             delete* it;    
         }
     }
+
     Hand::Hand(const Hand& other)  {
         hand.reserve(other.hand.size());
         for (Card* c:other.hand)
         {
             hand.push_back(new Card(*c));
         }
-        
      }
      
      size_t Hand::getCount() const{
          return hand.size();
-
      }
 
     void Hand::addCardToHand(Card* card) {
@@ -219,6 +263,7 @@ namespace WZ
             hand.erase(it);
         }
     }
+
     Hand& Hand::operator=(const Hand& other){
         for (vector<Card*>::iterator it = hand.begin(); it != hand.end(); it++)
         {
@@ -230,10 +275,15 @@ namespace WZ
         }
         return *this;
     }
+
     std::vector<Card*>::iterator Hand::begin(){return hand.begin();}
+
     std::vector<Card*>::iterator Hand::end(){return hand.end();}
+
     std::vector<Card*>::const_iterator Hand::begin() const{return hand.cbegin();}
+
     std::vector<Card*>::const_iterator Hand::end() const{return hand.cend();}
+
     std::ostream& operator<<(std::ostream& stream, const Hand& h){
         std::stringstream ss;
         ss<<"Hand:\n";
@@ -248,7 +298,6 @@ namespace WZ
         }
 		stream << str;
 		return stream;
-
     }
 }
    
