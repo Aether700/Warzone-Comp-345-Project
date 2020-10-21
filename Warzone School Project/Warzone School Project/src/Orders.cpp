@@ -6,12 +6,30 @@
 
 #include <sstream>
 #include <assert.h>
+#include <typeinfo>
 
 #define DEF_WIN_RATE 0.7f
 #define ATK_WIN_RATE 0.6f
 
 namespace WZ
 {
+	static int OrderToPriority(Order* o)
+	{
+		if (typeid(*o) == typeid(DeployOrder))
+		{
+			return 1;
+		}
+		else if (typeid(*o) == typeid(AirliftOrder))
+		{
+			return 2;
+		}
+		else if (typeid(*o) == typeid(BlockadeOrder))
+		{
+			return 3;
+		}
+		return 4;
+	}
+
 	static bool HasTerritoryAdj(const Player* p, const Territory* t)
 	{
 		for (Territory* playerTerritory : *p)
@@ -610,7 +628,20 @@ namespace WZ
 
 	size_t OrderList::getCount() const { return m_orders.size(); }
 
-	void OrderList::addOrder(Order* order) { m_orders.push_back(order); }
+	//->low Priority -> high priority -> (high priority is smaller number)
+	void OrderList::addOrder(Order* order) 
+	{ 
+		size_t i = 0;
+		for (; i < m_orders.size();)
+		{
+			if (OrderToPriority(order) >= OrderToPriority(m_orders[i]))
+			{
+				break;
+			}
+			i++;
+		}
+		m_orders.insert(m_orders.cbegin() + i, order);
+	}
 
 	void OrderList::deleteOrder(size_t index) { m_orders.erase(m_orders.begin() + index); }
 	
@@ -626,11 +657,40 @@ namespace WZ
 		}
 	}
 
+	Order* OrderList::dequeueOrder()
+	{
+		Order* toReturn = m_orders[m_orders.size() - 1];
+		deleteOrder(m_orders.size() - 1);
+		return toReturn;
+	}
+
 	void OrderList::move(size_t orderMoved, size_t dest)
 	{
 		Order* toMove = m_orders[orderMoved];
 		deleteOrder(orderMoved);
-		m_orders.insert(m_orders.cbegin() + dest, toMove);
+		size_t i = dest;
+		if (OrderToPriority(toMove) < OrderToPriority(m_orders[dest]))
+		{
+			for (; i < m_orders.size(); i++)
+			{
+				if (OrderToPriority(toMove) >= OrderToPriority(m_orders[i]))
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			for (; i > 0; i--)
+			{
+				if (OrderToPriority(toMove) <= OrderToPriority(m_orders[i]))
+				{
+					break;
+				}
+			}
+		}
+
+		m_orders.insert(m_orders.cbegin() + i, toMove);
 	}
 
 	std::vector<Order*>::iterator OrderList::begin() { return m_orders.begin(); }
