@@ -12,7 +12,7 @@ void CardsDriver() {
 
     
    
-    d1->initDeck();
+    //d1->initDeck();
     std::cout<<"Deck before drawing "<< *d1<<std::endl<<std::endl;
     std::cout<<"Hand before drawing "<< *h1 << std::endl<<std::endl;
     std::cout<<"Drawing cards and storing them to hand "<<std::endl;

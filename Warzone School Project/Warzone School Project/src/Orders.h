@@ -547,7 +547,7 @@ namespace WZ
 		Player* m_otherPlayer;
 	};
 
-	/*the OrderList class, a list of Orders allowing different
+	/*the OrderList class, a priority queue of Orders allowing different
 	  operations on these orders such as moving them inside the 
 	  list and removing/adding orders to the list
 	*/
@@ -601,7 +601,14 @@ namespace WZ
 		*/
 		void deleteOrder(const Order* order);
 
-		/*moves the order at the index specified to the desired index
+		/*removes the Order with the highest priority in the list and returns it
+
+		  returns: the Order with the highest priority
+		*/
+		Order* dequeueOrder();
+
+		/*moves the order at the index specified to the desired index 
+		  (will prioritize respecting the priority of the orders above moving them)
 
 		  orderMoved: the index of the order to move
 		  dest: the index to which the order should be moved
