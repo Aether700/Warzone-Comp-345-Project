@@ -737,9 +737,9 @@ namespace WZ
 
 		ss << "OrderList:";
 
-		for (Order* order : o)
+		for (int i = o.getCount() - 1; i >= 0; i--)
 		{
-			ss << "\t[" << *order << "],\n";
+			ss << "\t[" << *o[i] << "],\n";
 		}
 
 		std::string str = ss.str();
