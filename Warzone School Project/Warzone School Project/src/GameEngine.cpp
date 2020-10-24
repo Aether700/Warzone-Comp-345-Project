@@ -81,4 +81,9 @@ namespace WZ
 			p->hasDrawnCard = false;
 		}
 	}
+
+	//to be implemented
+	void GameManager::startupPhaseImpl(const Player* p, const Territory* t) {
+
+	}
 }
