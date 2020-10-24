@@ -13,6 +13,8 @@ namespace WZ
 
 	Player* GameManager::getNeutralPlayer() { return GetManager().getNeutralPlayerImpl(); }
 
+	void GameManager::startupPhase(const Player* p, const Territory* t) { GetManager().startupPhaseImpl(p, t); }
+
 	GameManager::GameManager() : m_neutralPlayer(new Player("Neutral")), m_deck(new Deck())
 	{
 		Random::Init();

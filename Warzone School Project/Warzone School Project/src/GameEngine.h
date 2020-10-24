@@ -5,6 +5,7 @@ namespace WZ
 {
 	class Player;
 	class Deck;
+	class Territory;
 
 	/* Main singleton class which is responsible for the state of the game. 
 	   Contains the game loop, the current players and so on

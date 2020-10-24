@@ -163,4 +163,14 @@ namespace WZ
 		returns: a valid int value provided by the user
 	*/
 	int AskInt();
+
+	/* returns a formatted string representation of the table provided
+
+	  table: a one dimensional representation of the table to draw (table[i][j] == table[i + width * j])
+	  width: the number of columns of the table
+	  height: the number of rows of the table
+
+	  returns: a formatted string representation of the table provided
+	*/
+	std::string DrawTable(std::string* table, size_t width, size_t height);
 }

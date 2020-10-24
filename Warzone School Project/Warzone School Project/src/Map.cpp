@@ -1,70 +1,17 @@
 #include "Map.h"
 #include "Player.h"
 #include "GameEngine.h"
+#include "Utils.h"
 
 #include <queue>
 #include <sstream>
 #include <unordered_map>
 #include <assert.h>
 
-
-#define ARMIES_SPACES 7
+#define NUM_COLUMN 5
 
 namespace WZ
 {
-	static std::string FitInTable(std::string_view str, unsigned int totalSpaces)
-	{
-		assert(str.size() <= totalSpaces);
-
-		int spacesLeft = totalSpaces - str.size();
-
-		int spacesBefore = spacesLeft / 2;
-		int spacesAfter = spacesLeft - spacesBefore;
-		std::stringstream ss;
-
-		for (int i = 0; i < spacesBefore; i++)
-		{
-			ss << " ";
-		}
-		
-		ss << str;
-
-		for (int i = 0; i < spacesAfter; i++)
-		{
-			ss << " ";
-		}
-
-		return ss.str();
-	}
-
-	static std::string SetTableEntry(Territory* t, int* entrySpaces)
-	{
-		std::stringstream ss;
-		std::stringstream adjStream;
-
-		//"|  Territory\t|  Continent\t|  Owner\t|  Armies\t| Adjacent Territories\t|\n"
-		ss << "|" << FitInTable(t->getName(), entrySpaces[0]) << "|" 
-			<< FitInTable(t->getContinent()->getName(), entrySpaces[1]) << "|"
-			<< FitInTable(t->getOwner()->getPlayerName(), entrySpaces[2]) << "|"
-			<< FitInTable(std::to_string(t->getArmies()), ARMIES_SPACES) << "|";
-
-		
-		for (Territory* adj : t->getAdjList())
-		{
-			adjStream << adj->getName() << ", ";
-		}
-
-		std::string str = adjStream.str();
-		if (t->getAdjList().size() != 0)
-		{
-			str.erase(str.size() - 2, 2);
-		}
-
-		ss << FitInTable(str, entrySpaces[3])<<"|\n";
-
-		return ss.str();
-	}
-
 	// Territory //////////////////////////////////////////////
 
 	Territory::Territory(const std::string& name, unsigned int id, Continent* continent, unsigned int armies)
@@ -555,89 +502,55 @@ namespace WZ
 	
 	std::ostream& operator<<(std::ostream& stream, const Map& m)
 	{
-		std::stringstream ss;
+		//calculate table height (width is fixed)
+		size_t height = 1;
+		
+		for (size_t i = 0; i < m.getCount(); i++)
+		{
+			height += m.getContinent(i)->getCount();
+		}
+		
+		//initialize table
+		std::string* table = new std::string[height * NUM_COLUMN];
 
-		int entrySpaces[4] = { 9, 9, 5, 20 };
+		//fill table header
+		table[0] = "Territory";
+		table[1] = "Continent";
+		table[2] = "Owner";
+		table[3] = "Armies";
+		table[4] = "Adjacent Territories";
 
-		//check max entry length for each column
-		for (std::pair<unsigned int, Territory*> pair : m)
+		//fill table entries
+		size_t i = 1; //height
+
+		for (auto pair : m)
 		{
 			Territory* curr = pair.second;
-			if (entrySpaces[0] < curr->getName().size())
+			table[0 + NUM_COLUMN * i] = curr->getName();
+			table[1 + NUM_COLUMN * i] = curr->getContinent()->getName();
+			table[2 + NUM_COLUMN * i] = curr->getOwner()->getPlayerName();
+			table[3 + NUM_COLUMN * i] = std::to_string(curr->getArmies());
+
+			std::stringstream ss;
+			ss.str("");
+			for (Territory* adj : curr->getAdjList())
 			{
-				entrySpaces[0] = curr->getName().size();
+				ss << adj->getName() << ", ";
 			}
 
-			if (entrySpaces[1] < curr->getContinent()->getName().size())
-			{
-				entrySpaces[1] = curr->getContinent()->getName().size();
-			}
-
-			if (entrySpaces[2] < curr->getOwner()->getPlayerName().size())
-			{
-				entrySpaces[2] = curr->getOwner()->getPlayerName().size();
-			}
-
-			int adjSize = 0;
-			for (Territory* t : curr->getAdjList())
-			{
-				adjSize += t->getName().size() + 2;
-			}
+			std::string adjList = ss.str();
 
 			if (curr->getAdjList().size() != 0)
 			{
-				adjSize -= 2;
+				adjList = adjList.erase(adjList.size() - 2, 2);
 			}
 
-			if (entrySpaces[3] < adjSize)
-			{
-				entrySpaces[3] = adjSize;
-			}
+			table[4 + NUM_COLUMN * i] = adjList;
+			i++;
 		}
 
-		int totalSpace = 0;
-
-		for (int i = 0; i < 4; i++)
-		{
-			entrySpaces[i] += 2;
-			totalSpace += entrySpaces[i];
-		}
-
-		totalSpace += 5 + ARMIES_SPACES;
-
-		//header of table
-		for (int i = 0; i < totalSpace; i++)
-		{
-			ss << "-";
-		}
-		ss << "\n";
-
-		ss << "|" << FitInTable("Territory", entrySpaces[0]) << "|" << FitInTable("Continent", entrySpaces[1]) 
-			<< "|" << FitInTable("Owner", entrySpaces[2]) 
-			<< "|" << FitInTable("Armies", ARMIES_SPACES) 
-			<< "|" << FitInTable("Adjacent Territories", entrySpaces[3]) << "|\n";
-
-		for (int i = 0; i < totalSpace; i++)
-		{
-			ss << "-";
-		}
-		ss << "\n";
-		
-		//territory entries
-		for (std::pair<unsigned int, Territory*> pair : m)
-		{
-			Territory* curr = pair.second;
-			ss << SetTableEntry(curr, entrySpaces);
-		}
-
-		//end of table
-		for (int i = 0; i < totalSpace; i++)
-		{
-			ss << "-";
-		}
-		ss << "\n";
-
-		stream << ss.str();
+		stream << DrawTable(table, NUM_COLUMN, height);
+		delete[] table;
 		return stream;
 	}
 

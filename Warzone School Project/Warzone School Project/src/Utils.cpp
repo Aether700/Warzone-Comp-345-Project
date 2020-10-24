@@ -6,6 +6,8 @@
 #include <iostream>
 #include <time.h>
 #include <random>
+#include <sstream>
+#include <assert.h>
 
 namespace WZ
 {
@@ -128,4 +130,119 @@ namespace WZ
 			}
 		}
 	}
+
+
+	static std::string FitInTable(std::string_view str, unsigned int totalSpaces)
+	{
+		assert(str.size() <= totalSpaces);
+
+		int spacesLeft = totalSpaces - str.size();
+
+		int spacesBefore = spacesLeft / 2;
+		int spacesAfter = spacesLeft - spacesBefore;
+		std::stringstream ss;
+
+		for (int i = 0; i < spacesBefore; i++)
+		{
+			ss << " ";
+		}
+
+		ss << str;
+
+		for (int i = 0; i < spacesAfter; i++)
+		{
+			ss << " ";
+		}
+
+		return ss.str();
+	}
+
+	static size_t FindMaxSpaceColumn(std::string* table, size_t width, size_t height, size_t column)
+	{
+		size_t max = 0;
+
+		for (size_t i = 0; i < height; i++)
+		{
+			size_t index = column + width * i;
+			std::string& curr = table[index];
+			if (table[index].size() > max)
+			{
+				max = table[index].size();
+			}
+		}
+		return max;
+	}
+
+	static std::string SetTableEntry(std::string* table, size_t width, size_t height, size_t row, size_t* spaceArr)
+	{
+		assert(width != 0);
+
+		std::stringstream ss;
+		ss << "|";
+
+		for (size_t i = 0; i < width; i++)
+		{
+			ss << FitInTable(table[i + width * row], spaceArr[i]) << "|";
+		}
+
+		ss << "\n";
+		return ss.str();
+	}
+
+	static std::string DrawLine(size_t space)
+	{
+		assert(space > 0);
+		std::stringstream ss;
+		for (size_t i = 0; i < space; i++)
+		{
+			ss << "-";
+		}
+		ss << "\n";
+		return ss.str();
+	}
+
+	std::string DrawTable(std::string* table, size_t width, size_t height)
+	{
+		assert(table != nullptr);
+		assert(width != 0);
+		assert(height != 0);
+
+		//measure space needed for column width for each column
+		size_t* colSpaces = new size_t[width];
+
+		for (size_t i = 0; i < width; i++)
+		{
+			colSpaces[i] = FindMaxSpaceColumn(table, width, height, i);
+		}
+
+		//calculate total table width
+		size_t totalSpace = 1;
+
+		for (size_t i = 0; i < width; i++)
+		{
+			totalSpace += colSpaces[i] + 1;
+		}
+
+		//build table in stringstream
+		std::stringstream ss;
+
+		//header
+		ss << DrawLine(totalSpace);
+		ss << SetTableEntry(table, width, height, 0, colSpaces);
+		ss << DrawLine(totalSpace);
+
+		//entries
+		for (size_t i = 1; i < height; i++)
+		{
+			ss << SetTableEntry(table, width, height, i, colSpaces);
+		}
+
+		delete[] colSpaces;
+
+		ss << DrawLine(totalSpace);
+
+
+		return ss.str();
+	}
+
 }
