@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "Map.h"
+#include "MapLoader.h"
 
 namespace WZ
 {
@@ -107,4 +109,44 @@ namespace WZ
 		Deck* m_deck;
 		Player* m_neutralPlayer;
 	};
+	
+	class GameEngine 
+	{
+
+	public:
+	
+		//default constructor
+		GameEngine();								
+		//destructor				
+		~GameEngine();
+		//Constructor that takes the map name and number of players
+		GameEngine(string,int);									
+		//accessor to get the selected map name
+		string getUserMap();					
+		//accessor to get the selected number of players
+		int getUserNumPlayers();			
+		//mutator to set prefered map name
+		void setUserMap(string);				
+		//mutator to set prefered number of players
+		void setUserNumPlayers(int);		
+		// function to initialize the game with the user's preferences
+		void gameStart();
+		//assignment operator	
+		GameEngine& operator = (const GameEngine&);							
+	
+	private:
+
+		//user selected map
+		string userMap;						
+		//user selected # of players
+		int userNumPlayers;				
+		//initialized map
+		Map* map;									
+		MapLoader* map_loader;						
+		//initialized players list
+		Player* listOfPlayers;			
+		// initialized game deck
+		Deck* deck;									
+};
+
 }

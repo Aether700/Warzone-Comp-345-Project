@@ -88,4 +88,60 @@ namespace WZ
 	void GameManager::startupPhaseImpl(const Player* p, const Territory* t) {
 
 	}
+
+	GameEngine::GameEngine() 
+	{ 
+		this->userMap = "";
+		this->userNumPlayers = 0;
+}
+	GameEngine::~GameEngine() 
+	{
+		delete map; 
+		delete map_loader; 
+		delete[] listOfPlayers; 
+		delete deck; 
+
+	}
+
+	GameEngine::GameEngine(string map, int numplyrs) 
+	{
+		this->userMap = map;
+		this->userNumPlayers = numplyrs;
+		//gameStart();
+	}
+	
+	string GameEngine::getUserMap() 
+	{
+		return this->userMap;
+	}
+
+	int GameEngine::getUserNumPlayers() 
+	{
+		return this->userNumPlayers;
+	}
+
+	void GameEngine::setUserMap(string mapname) 
+	{
+		this->userMap = mapname;
+	}
+
+	void GameEngine::setUserNumPlayers(int playersnum) 
+	{
+		this->userNumPlayers = playersnum;
+	}
+
+	void GameEngine::gameStart() 
+	{
+	}
+
+	GameEngine& GameEngine::operator=(const GameEngine& Other)
+	{
+    userMap = Other.userMap;
+    userNumPlayers = Other.userNumPlayers;
+    map = Other.map;
+    map_loader = Other.map_loader;
+    listOfPlayers = Other.listOfPlayers;
+    deck = Other.deck;
+    return *this;
+	}
 }
