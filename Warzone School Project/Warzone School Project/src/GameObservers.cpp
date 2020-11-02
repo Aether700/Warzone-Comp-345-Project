@@ -1,21 +1,13 @@
+#include "GameObservers.h"
+#include "GameEngine.h"
 #include <iostream>
-#include <vector>
 
-class Observer
+namespace WZ
 {
-public:
-	virtual void Update() = 0; 
-};
 
-class Subject
-{
-public:
-	virtual ~Subject() { }
+	void Subject::AddObserver(Observer* o) { m_observers.push_back(o); }
 
-	void AddObserver(Observer* o) { m_observers.push_back(o); }
-	
-	void RemoveObserver(Observer* o) 
-	{
+	void Subject::removeObserver(Observer* o) {
 		for (int i = 0; i < m_observers.size(); i++)
 		{
 			if (o == m_observers[i])
@@ -26,14 +18,26 @@ public:
 		}
 	}
 
-	void Notify() 
-	{
-		for (Observer* o : m_observers)
-		{
-			o->Update();
+	void Subject::notifyObservers() {
+		for (int i = 0; i < m_observers.size(); ++i) {
+			m_observers[i]->update();
 		}
 	}
 
-private:
-	std::vector<Observer*> m_observers;
-};
+
+	void PhaseObserver::update() {
+		currentphase = GameManager::getCurrentPhase();
+		p = GameManager::getCurrentPlayer();
+	}
+
+	void PhaseObserver::PrintPhaseAndPlayer() {
+		std::cout << "Current Phase: " << currentphase << "\n";
+		std::cout << "Current Player: " << *p << "\n";
+
+	}
+
+
+	void StatisticsObserver::update() {
+
+	}
+}

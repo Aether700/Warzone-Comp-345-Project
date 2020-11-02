@@ -1,7 +1,9 @@
 #pragma once
-#include <vector>
+#include "GameObservers.h"
 #include "Map.h"
 #include "MapLoader.h"
+
+#include <vector>
 
 namespace WZ
 {
@@ -56,6 +58,14 @@ namespace WZ
 		initial armies.  This method will return the player, the number of armies and its territories.*/;
 		static void startupPhase(const Player* p, const Territory* t);
 	
+		//Returns the current game manager phase
+		static GamePhase getCurrentPhase();
+
+		static const Player* getCurrentPlayer();
+
+		// function to initialize the game with the user's preferences
+		static void gameStart();
+
 	private:
 
 		//private constructor of the GameManager class
@@ -103,50 +113,22 @@ namespace WZ
 		//////////////////////////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////////////////////////
 
+		//asks the user to select a map file and creates that map (if the file is valid) and assigns 
+		//it to the map attribute of the GameManager
+		void getUserMap();
+
+		//Asks the user how many player will play and returns that number
+		int getUserNumPlayers();
+
 
 		std::vector<Player*> m_activePlayers;
 		std::vector<std::pair<const Player*, const Player*>> m_negotiatingPlayers;
 		Deck* m_deck;
 		Player* m_neutralPlayer;
+		GamePhase currentphase;
+		int CurrentPlayerIndex;
+		Map* map;
 	};
-	
-	class GameEngine 
-	{
 
-	public:
-	
-		//default constructor
-		GameEngine();								
-		//destructor				
-		~GameEngine();
-		//Constructor that takes the map name and number of players
-		GameEngine(string,int);									
-		//accessor to get the selected map name
-		string getUserMap();					
-		//accessor to get the selected number of players
-		int getUserNumPlayers();			
-		//mutator to set prefered map name
-		void setUserMap(string);				
-		//mutator to set prefered number of players
-		void setUserNumPlayers(int);		
-		// function to initialize the game with the user's preferences
-		void gameStart();
-		//assignment operator	
-		GameEngine& operator = (const GameEngine&);							
-	
-	private:
-
-		//user selected map
-		string userMap;						
-		//user selected # of players
-		int userNumPlayers;				
-		//initialized map
-		Map* map;									
-		MapLoader* map_loader;						
-		//initialized players list
-		Player* listOfPlayers;			
-		// initialized game deck
-		Deck* deck;									
-};
 
 }

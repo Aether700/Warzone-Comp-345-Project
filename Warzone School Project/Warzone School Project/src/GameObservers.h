@@ -8,57 +8,74 @@
 
 #ifndef OBSERVER_PATTERN_OBSERVER_HPP
 #define OBSERVER_PATTERN_OBSERVER_HPP
+#include <vector>
+#include "Player.h"
 
 
-namespace WZ{
+namespace WZ {
+    
+    enum class GamePhase {
+        Reinforcement, IssuingOrders, OrderExecution
+    };
 
-/**
- * Interface for the Observer
- */
-class Observer {
+    class Observer {
 
-public:
+    public:
 
-    //Update the state of this observer
-     
-    virtual void update() = 0;
-
-};
-
-
-#include "Observer.h"
-
-/**
- * Interface for the Subject
- * override this methods in classes that need observers
- */
-class Subject {
-
-public:
+        //Update the state of this observer
+        virtual void update() = 0;
+    };
 
     /**
-     * Register an observer
-     * observer the observer object to be registered
-     * observer pointer as an orgument
+     * Interface for the Subject
+     * override this methods in classes that need observers
      */
-    virtual void registerObserver();
+    class Subject {
 
-    /**
-     * Unregister an observer
-     * observer the observer object to be unregistered
-     */
-    virtual void removeObserver();
+    public:
 
-    /**
-     * Notify all the registered observers when a change happens
-     */
-    virtual void notifyObservers();
+        /**
+         * Register an observer
+         * observer the observer object to be registered
+         *
 
-private:
-    //List of Observer Object pointers
-    std::vector<Observer*> m_observers;
-};
+        /**
+         * Unregister an observer
+         * observer the observer object to be unregistered
+         */
+        void removeObserver(Observer* o);
 
+        /**
+         * Notify all the registered observers when a change happens
+         */
+        void notifyObservers();
+
+        //Adding Observer Object to the list
+        void AddObserver(Observer* o);
+
+    private:
+        //List of Observer Object pointers
+        std::vector<Observer*> m_observers;
+    };
+
+
+    class PhaseObserver :public Observer {
+    public:
+        void update();
+    private:
+        GamePhase currentphase;
+        const Player* p;
+        //Private function that is being called by update  Current Phase: Player who is playing
+        void PrintPhaseAndPlayer();
+    };
+
+
+    class StatisticsObserver :public Observer {
+    public:
+        void update();
+    private:
+
+    };
 
 
 

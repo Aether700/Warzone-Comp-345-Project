@@ -15,7 +15,8 @@ namespace WZ
 
 	void GameManager::startupPhase(const Player* p, const Territory* t) { GetManager().startupPhaseImpl(p, t); }
 
-	GameManager::GameManager() : m_neutralPlayer(new Player("Neutral")), m_deck(new Deck())
+	GameManager::GameManager() : m_neutralPlayer(new Player("Neutral")), m_deck(new Deck()),
+		map(nullptr), currentphase(GamePhase::Reinforcement)
 	{
 		Random::Init();
 	}
@@ -24,6 +25,7 @@ namespace WZ
 	{
 		delete m_neutralPlayer;
 		delete m_deck;
+		delete map;
 	}
 
 	
@@ -89,59 +91,35 @@ namespace WZ
 
 	}
 
-	GameEngine::GameEngine() 
-	{ 
-		this->userMap = "";
-		this->userNumPlayers = 0;
-}
-	GameEngine::~GameEngine() 
-	{
-		delete map; 
-		delete map_loader; 
-		delete[] listOfPlayers; 
-		delete deck; 
-
+	GamePhase GameManager::getCurrentPhase() {
+		return GetManager().currentphase;
 	}
 
-	GameEngine::GameEngine(string map, int numplyrs) 
+	const Player* GameManager::getCurrentPlayer() {
+		return GetManager().m_activePlayers[GetManager().CurrentPlayerIndex];
+	}
+
+	void GameManager::getUserMap()
 	{
-		this->userMap = map;
-		this->userNumPlayers = numplyrs;
-		//gameStart();
+		MapLoader loader;
+		delete map;
+		//will automatically ask the user to select a map file and generate the map from that file if it is valid
+		map = loader.mapGenerator(); 
 	}
 	
-	string GameEngine::getUserMap() 
+	int GameManager::getUserNumPlayers()
 	{
-		return this->userMap;
+		while(true)
+		{
+			std::cout << "Player with how many players?\n";
+			int num = Clamp(2, 5, AskInt());
+
+			std::cout << "Play with " << num << " players?\n";
+			if (AskYN())
+			{
+				return num;
+			}
+		}
 	}
 
-	int GameEngine::getUserNumPlayers() 
-	{
-		return this->userNumPlayers;
-	}
-
-	void GameEngine::setUserMap(string mapname) 
-	{
-		this->userMap = mapname;
-	}
-
-	void GameEngine::setUserNumPlayers(int playersnum) 
-	{
-		this->userNumPlayers = playersnum;
-	}
-
-	void GameEngine::gameStart() 
-	{
-	}
-
-	GameEngine& GameEngine::operator=(const GameEngine& Other)
-	{
-    userMap = Other.userMap;
-    userNumPlayers = Other.userNumPlayers;
-    map = Other.map;
-    map_loader = Other.map_loader;
-    listOfPlayers = Other.listOfPlayers;
-    deck = Other.deck;
-    return *this;
-	}
 }
