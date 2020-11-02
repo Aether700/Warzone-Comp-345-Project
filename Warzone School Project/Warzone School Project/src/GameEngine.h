@@ -14,7 +14,7 @@ namespace WZ
 	/* Main singleton class which is responsible for the state of the game. 
 	   Contains the game loop, the current players and so on
 	*/
-	class GameManager
+	class GameManager:public Subject <PhaseObserver>, public Subject<StatisticsObserver>
 	{
 	public:
 
@@ -66,7 +66,13 @@ namespace WZ
 		// function to initialize the game with the user's preferences
 		static void gameStart();
 
+		static void AddPhaseObserver(PhaseObserver* p);
+
+		static void RemovePhaseObserver(PhaseObserver* p);
+
 	private:
+
+
 
 		//private constructor of the GameManager class
 		GameManager(); 
@@ -119,6 +125,12 @@ namespace WZ
 
 		//Asks the user how many player will play and returns that number
 		int getUserNumPlayers();
+
+		void AddPhaseObserverImpl(PhaseObserver* p);
+
+		void RemovePhaseObserverImpl(PhaseObserver* p);
+
+		void NotifyPhaseObservers();
 
 
 		std::vector<Player*> m_activePlayers;

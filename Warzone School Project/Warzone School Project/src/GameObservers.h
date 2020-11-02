@@ -30,6 +30,9 @@ namespace WZ {
      * Interface for the Subject
      * override this methods in classes that need observers
      */
+
+
+    template <typename T>
     class Subject {
 
     public:
@@ -43,19 +46,32 @@ namespace WZ {
          * Unregister an observer
          * observer the observer object to be unregistered
          */
-        void removeObserver(Observer* o);
+        void  removeObserver(T* o) {
+		    for (int i = 0; i < m_observers.size(); i++)
+		    { 
+			    if (o == m_observers[i])
+			    {
+				    m_observers.erase(m_observers.begin() + i);
+				    break;
+			    }
+		}
+	}
 
         /**
          * Notify all the registered observers when a change happens
          */
-        void notifyObservers();
+        void notifyObservers() {
+		    for (int i = 0; i < m_observers.size(); ++i) {
+			    m_observers[i]->update();
+		    }
+	    }
 
         //Adding Observer Object to the list
-        void AddObserver(Observer* o);
+        void AddObserver(T* o) { m_observers.push_back(o); }
 
     private:
         //List of Observer Object pointers
-        std::vector<Observer*> m_observers;
+        std::vector<T*> m_observers;
     };
 
 
@@ -74,7 +90,7 @@ namespace WZ {
     public:
         void update();
     private:
-
+        string TableStat;
     };
 
 

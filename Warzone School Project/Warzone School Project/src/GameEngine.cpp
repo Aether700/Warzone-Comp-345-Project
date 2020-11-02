@@ -122,4 +122,25 @@ namespace WZ
 		}
 	}
 
+	void GameManager::AddPhaseObserver(PhaseObserver* p){
+		GetManager().AddPhaseObserverImpl(p);
+	}
+
+	void GameManager::RemovePhaseObserver(PhaseObserver* p){
+		GetManager().RemovePhaseObserverImpl(p);
+	}
+
+	void GameManager::AddPhaseObserverImpl(PhaseObserver* p){
+		Subject<PhaseObserver>::AddObserver(p);
+	}
+
+	void GameManager::RemovePhaseObserverImpl(PhaseObserver* p){
+		Subject<PhaseObserver>::removeObserver(p);
+	}
+
+	void GameManager::NotifyPhaseObservers(){
+		Subject<PhaseObserver>::notifyObservers();
+	}
+
+
 }
