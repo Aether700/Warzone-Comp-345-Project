@@ -69,10 +69,14 @@ namespace WZ
 		static void AddPhaseObserver(PhaseObserver* p);
 
 		static void RemovePhaseObserver(PhaseObserver* p);
+		
+		static void NotifyPhaseObserver();
 
 		static void AddStatisticsObserver(StatisticsObserver* p);
 
 		static void RemoveStatisticsObserver(StatisticsObserver* p);
+
+		static void NotifyStatisticsObserver();
 
 		static const std::vector <Player*>& getActivePlayers();
 
@@ -138,14 +142,14 @@ namespace WZ
 
 		void RemovePhaseObserverImpl(PhaseObserver* p);
 
-		void NotifyPhaseObservers();
+		void NotifyPhaseObserversImpl() const;
 
 
 		void AddStatisticsObserverImpl(StatisticsObserver* p);
 
 		void RemoveStatisticsObserverImpl(StatisticsObserver* p);
 
-		void NotifyStatisticsObserver();
+		void NotifyStatisticsObserverImpl() const;
 
 		const std::vector <Player*>& getActivePlayersImpl() const;
 

@@ -60,7 +60,7 @@ namespace WZ {
         /**
          * Notify all the registered observers when a change happens
          */
-        void notifyObservers() {
+        void notifyObservers() const {
 		    for (int i = 0; i < m_observers.size(); ++i) {
 			    m_observers[i]->update();
 		    }
