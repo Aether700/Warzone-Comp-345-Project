@@ -122,6 +122,7 @@ namespace WZ
 		}
 	}
 
+	//PHASE OBSERVER IMPLEMENTATION
 	void GameManager::AddPhaseObserver(PhaseObserver* p){
 		GetManager().AddPhaseObserverImpl(p);
 	}
@@ -140,6 +141,27 @@ namespace WZ
 
 	void GameManager::NotifyPhaseObservers(){
 		Subject<PhaseObserver>::notifyObservers();
+	}
+
+	//STATISTICS OBSERVER IMPLEMENTATION
+	void GameManager::AddStatisticsObserver(StatisticsObserver* p){
+		GetManager().AddStatisticsObserverImpl(p);
+	}
+
+	void GameManager::RemoveStatisticsObserver(StatisticsObserver* p){
+		GetManager().RemoveStatisticsObserverImpl(p);
+	}
+
+	void GameManager::AddStatisticsObserverImpl(StatisticsObserver* p){
+		Subject<StatisticsObserver>::AddObserver(p);
+	}
+
+	void GameManager::RemoveStatisticsObserverImpl(StatisticsObserver* p){
+		Subject<StatisticsObserver>::removeObserver(p);
+	}
+
+	void GameManager::NotifyPhaseObservers(){
+		Subject<StatisticsObserver>::notifyObservers();
 	}
 
 

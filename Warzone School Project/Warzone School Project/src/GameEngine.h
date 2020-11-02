@@ -70,6 +70,10 @@ namespace WZ
 
 		static void RemovePhaseObserver(PhaseObserver* p);
 
+		static void AddStatisticsObserver(StatisticsObserver* p);
+
+		static void RemoveStatisticsObserver(StatisticsObserver* p);
+
 	private:
 
 
@@ -131,6 +135,15 @@ namespace WZ
 		void RemovePhaseObserverImpl(PhaseObserver* p);
 
 		void NotifyPhaseObservers();
+
+
+		void AddStatisticsObserverImpl(StatisticsObserver* p);
+
+		void RemoveStatisticsObserverImpl(StatisticsObserver* p);
+
+		void NotifyStatisticsObserver();
+
+		
 
 
 		std::vector<Player*> m_activePlayers;
