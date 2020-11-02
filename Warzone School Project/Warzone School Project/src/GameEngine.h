@@ -149,6 +149,6 @@ namespace WZ
 		initial armies.  This method will return the player, the number of armies and its territories.*/;
 		void startupPhaseImpl(const Player* p, const Territory* t, int armies); 
 					
-};
+}; 
 
 }

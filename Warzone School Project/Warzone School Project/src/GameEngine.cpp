@@ -172,7 +172,7 @@ namespace WZ
 				std::cout << "Only 2 to 5 players are accepted in this game";
 
 	}
-
+ 
 	//determine the order of players randomly
 
 	//Randomly assign territories to players one by one in a round-robin fashion
