@@ -54,7 +54,7 @@ namespace WZ
 		map will be randomly assigned to the players in a round-robin fashion.
 		And finally, depending on the number of players, each player will start with a number of
 		initial armies.  This method will return the player, the number of armies and its territories.*/;
-		static void startupPhase(const Player* p, const Territory* t);
+		static void startupPhase(const Player* p, const Territory* t, int armies);
 	
 	private:
 
@@ -97,13 +97,6 @@ namespace WZ
 		*/
 		void resetPlayerDrawCard();
 
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-		void startupPhaseImpl(const Player* p, const Territory* t); //do comments for this function
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 		std::vector<Player*> m_activePlayers;
 		std::vector<std::pair<const Player*, const Player*>> m_negotiatingPlayers;
 		Deck* m_deck;
@@ -133,7 +126,8 @@ namespace WZ
 		void gameStart();
 		//assignment operator	
 		GameEngine& operator = (const GameEngine&);							
-	
+		int armies;
+
 	private:
 
 		//user selected map
@@ -146,7 +140,15 @@ namespace WZ
 		//initialized players list
 		Player* listOfPlayers;			
 		// initialized game deck
-		Deck* deck;									
+		Deck* deck;		
+
+		/*Method startupPhase is a method that will randomise the order of play of the player.
+		where the number of players can be between 2 and 5 inclusively. The territories in the
+		map will be randomly assigned to the players in a round-robin fashion.
+		And finally, depending on the number of players, each player will start with a number of
+		initial armies.  This method will return the player, the number of armies and its territories.*/;
+		void startupPhaseImpl(const Player* p, const Territory* t, int armies); 
+					
 };
 
 }
