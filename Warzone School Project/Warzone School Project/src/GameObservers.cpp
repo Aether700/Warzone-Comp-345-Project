@@ -11,8 +11,24 @@ namespace WZ
 	}
 
 	void PhaseObserver::PrintPhaseAndPlayer() {
-		std::cout << "Current Phase: " << currentphase << "\n";
+		//switch tring based on phase 
+		string phase_status;
+		switch(currentphase){
+			case GamePhase::Reinforcement:
+			phase_status = "Reinforcement"; 
+			break;
+			case GamePhase::IssuingOrders:
+			phase_status = "IssuingOrders"; 
+			break;
+			case GamePhase::OrderExecution:
+			phase_status = "OrderExecution"; 
+			break;
+
+		}
+
+		std::cout << "Current Phase: " << phase_status << "\n";
 		std::cout << "Current Player: " << *p << "\n";
+		
 
 	}
 
@@ -21,6 +37,7 @@ namespace WZ
 		//gathering info from other classes to build a table
 		//first build the string table
 		//call the function DrawTable, assign the received string to the one that is constructor (private), print it, stdcout = String
+		DrawTable(std::string* table, size_t width, size_t height)
 
 	}
 }
