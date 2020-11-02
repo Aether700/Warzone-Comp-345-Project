@@ -2,6 +2,8 @@
 #include "GameEngine.h"
 #include <iostream>
 
+#define NUM_COL 2
+
 namespace WZ
 {
 
@@ -46,17 +48,17 @@ namespace WZ
 		const std::vector <Player*> ActivePlayers = GameManager::getActivePlayers();
 		size_t height = ActivePlayers.size()+1;
 		//first build the string table
-		std::string* DataTable = new std::string[2*height];
+		std::string* DataTable = new std::string[NUM_COL*height];
 		DataTable[0]= "Player";
 		DataTable[1]= "Amount conquered (%)";
 
 		for (int i = 1; i<=ActivePlayers.size(); ++i){
 			const Player* current = ActivePlayers[i-1];
-			DataTable[0+2*i]= current->getPlayerName();
-			DataTable[1+2*i]= std::to_string(CalculatePercentage(current, map));
+			DataTable[0+ NUM_COL *i]= current->getPlayerName();
+			DataTable[1+ NUM_COL *i]= std::to_string(CalculatePercentage(current, map));
 		}
 
-		TableStat=DrawTable(DataTable, 2, height);
+		TableStat=DrawTable(DataTable, NUM_COL, height);
 		delete[] DataTable;
 		std::cout<<TableStat<<std::endl;
 	}
