@@ -4,6 +4,13 @@
 
 namespace WZ
 {
+
+	static float CalculatePercentage(const Player* p, const Map* a){
+		float total_number_of_territories = (float) a->getTerritoryCount();
+		float number_of_territories_owned_by_player = (float) p->getNumOfTerritories();
+		return (number_of_territories_owned_by_player*100.0f)/total_number_of_territories;
+	}
+
 	void PhaseObserver::update() {
 		currentphase = GameManager::getCurrentPhase();
 		p = GameManager::getCurrentPlayer();
@@ -35,9 +42,23 @@ namespace WZ
 
 	void StatisticsObserver::update() {
 		//gathering info from other classes to build a table
+		const Map* map = GameManager::getMap();
+		const std::vector <Player*> ActivePlayers = GameManager::getActivePlayers();
+		size_t height = ActivePlayers.size()+1;
 		//first build the string table
-		//call the function DrawTable, assign the received string to the one that is constructor (private), print it, stdcout = String
-		DrawTable(std::string* table, size_t width, size_t height)
+		std::string* DataTable = new std::string[2*height];
+		DataTable[0]= "Player";
+		DataTable[1]= "Amount conquered (%)";
 
+		for (int i = 1; i<=ActivePlayers.size(); ++i){
+			const Player* current = ActivePlayers[i-1];
+			DataTable[0+2*i]= current->getPlayerName();
+			DataTable[1+2*i]= std::to_string(CalculatePercentage(current, map));
+		}
+
+		TableStat=DrawTable(DataTable, 2, height);
+		delete[] DataTable;
+		std::cout<<TableStat<<std::endl;
 	}
+
 }

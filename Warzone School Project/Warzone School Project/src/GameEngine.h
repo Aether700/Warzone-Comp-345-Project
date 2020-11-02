@@ -74,6 +74,10 @@ namespace WZ
 
 		static void RemoveStatisticsObserver(StatisticsObserver* p);
 
+		static const std::vector <Player*>& getActivePlayers();
+
+		static const Map* getMap();
+
 	private:
 
 
@@ -143,7 +147,9 @@ namespace WZ
 
 		void NotifyStatisticsObserver();
 
-		
+		const std::vector <Player*>& getActivePlayersImpl() const;
+
+		const Map* getMapImpl() const;
 
 
 		std::vector<Player*> m_activePlayers;

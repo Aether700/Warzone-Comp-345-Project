@@ -165,4 +165,22 @@ namespace WZ
 	}
 
 
+	const std::vector <Player*>& GameManager::getActivePlayers(){
+		return GetManager().getActivePlayersImpl();
+	}
+
+	const std::vector <Player*>& GameManager::getActivePlayersImpl() const{
+		return m_activePlayers;
+	}
+
+	
+	const Map* GameManager::getMap(){
+		return GetManager().getMapImpl();
+	}
+
+	const Map* GameManager::getMapImpl() const{
+		return map;
+	}
+
+
 }
