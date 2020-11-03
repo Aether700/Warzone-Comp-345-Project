@@ -88,6 +88,7 @@ namespace WZ
 			source->setArmies(source->getArmies() - initialAmount);
 
 			GameManager::drawCard(source->getOwner());
+			GameManager::NotifyStatisticsObserver();
 			return true;
 		}
 
