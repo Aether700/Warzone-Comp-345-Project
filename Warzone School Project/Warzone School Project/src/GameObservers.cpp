@@ -46,9 +46,9 @@ namespace WZ
 		const std::vector <Player*> ActivePlayers = GameManager::getActivePlayers();
 
 		size_t number_of_players_check = ActivePlayers.size();
-		if (number_of_players_check == 1) {
+		if (number_of_players_check == 1){
 			const Player* current = ActivePlayers[0];
-			std::cout << "Congratulations to the winner!" << current->getPlayerName() << std::endl;
+			std::cout<< "Congratulations to the winner!"<< current->getPlayerName()<<std::endl;
 		}
 		else
 		{
@@ -69,5 +69,9 @@ namespace WZ
 			std::cout << TableStat << std::endl;
 		}
 	}
+
+		//getLastOrder returns a pointer to the last order, we nned to print out
+		//static // impl for now return NULL
+		//game manager 
 
 }
