@@ -577,6 +577,10 @@ namespace WZ
 		*/
 		OrderList(const OrderList& other);
 
+		/* OrderList destructor, deletes all the orders contained in the list
+		*/
+		~OrderList();
+
 		/*returns the number of orders stored inside the list
 		  returns: the number of orders stored inside the list
 		*/

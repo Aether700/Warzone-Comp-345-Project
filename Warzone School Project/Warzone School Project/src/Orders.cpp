@@ -627,6 +627,14 @@ namespace WZ
 	OrderList::OrderList(const std::initializer_list<Order*>& list) : m_orders(list) { }
 	OrderList::OrderList(const OrderList& other) : m_orders(other.m_orders) { }
 
+	OrderList::~OrderList()
+	{
+		for (Order* o : m_orders)
+		{
+			delete o;
+		}
+	}
+
 	size_t OrderList::getCount() const { return m_orders.size(); }
 
 	//->low Priority -> high priority -> (high priority is smaller number)
