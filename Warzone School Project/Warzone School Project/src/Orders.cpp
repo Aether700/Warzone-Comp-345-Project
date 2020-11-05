@@ -8,9 +8,6 @@
 #include <assert.h>
 #include <typeinfo>
 
-#define DEF_WIN_RATE 0.7f
-#define ATK_WIN_RATE 0.6f
-
 namespace WZ
 {
 	static int OrderToPriority(Order* o)
@@ -45,58 +42,6 @@ namespace WZ
 		return false;
 	}
 	
-	static bool Attack(Territory* source, Territory* target, unsigned int amount)
-	{
-		assert(amount != 0);
-		assert(source != nullptr);
-		assert(target != nullptr);
-
-		unsigned int initialAmount = amount;
-
-		unsigned int atkCasualties = 0;
-		unsigned int defCasualties = 0;
-
-		//atk casualties (defenders killing attackers)
-		for (size_t i = 0; i < target->getArmies() && amount > atkCasualties; i++)
-		{
-			if (Random::GetFloat() <= DEF_WIN_RATE)
-			{
-				atkCasualties++;
-			}
-		}
-
-
-		//def casualties (attackers killing defenders)
-		for (size_t i = 0; i < amount && target->getArmies() > defCasualties; i++)
-		{
-			if (Random::GetFloat() <= ATK_WIN_RATE)
-			{
-				defCasualties++;
-			}
-		}
-
-		//apply casualties to defenders
-		target->setArmies(target->getArmies() - defCasualties);
-		amount -= atkCasualties;
-
-
-		if (target->getArmies() == 0)
-		{
-			target->getOwner()->removeTerritory(target);
-			source->getOwner()->addTerritory(target);
-			target->setArmies(amount);
-			source->setArmies(source->getArmies() - initialAmount);
-
-			GameManager::drawCard(source->getOwner());
-			GameManager::NotifyStatisticsObserver();
-			return true;
-		}
-
-		source->setArmies(source->getArmies() - initialAmount + amount);
-
-		return false;
-	}
-
 	static void Move(Territory* source, Territory* target, unsigned int amount)
 	{
 		target->setArmies(target->getArmies() + amount);
@@ -257,7 +202,7 @@ namespace WZ
 			}
 			else
 			{
-				if (Attack(m_source, m_target, m_amount))
+				if (GameManager::Attack(m_source, m_target, m_amount))
 				{
 					m_outcome = Outcome::AttackWin;
 				}
@@ -490,7 +435,7 @@ namespace WZ
 			}
 			else
 			{
-				if (Attack(m_source, m_destination, m_amount))
+				if (GameManager::Attack(m_source, m_destination, m_amount))
 				{
 					m_outcome = Outcome::AttackWin;
 					return;

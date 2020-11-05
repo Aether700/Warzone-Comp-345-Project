@@ -90,7 +90,7 @@ namespace WZ {
     public:
         void update();
     private:
-        string TableStat;
+        std::string TableStat;
     };
 
 

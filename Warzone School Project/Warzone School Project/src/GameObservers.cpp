@@ -52,7 +52,7 @@ namespace WZ
 		DataTable[0]= "Player";
 		DataTable[1]= "Amount conquered (%)";
 
-		for (int i = 1; i<=ActivePlayers.size(); ++i){
+		for (size_t i = 1; i<=ActivePlayers.size(); ++i){
 			const Player* current = ActivePlayers[i-1];
 			DataTable[0+ NUM_COL *i]= current->getPlayerName();
 			DataTable[1+ NUM_COL *i]= std::to_string(CalculatePercentage(current, map));

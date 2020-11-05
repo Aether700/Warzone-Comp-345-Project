@@ -1,3 +1,5 @@
+#pragma once
+
 //include libraries
 #include <iostream>
 #include <vector>

@@ -78,9 +78,6 @@ namespace WZ
 		*/
 		static void RemovePhaseObserver(PhaseObserver* p);
 		
-		/* Notifies all Phase observers who are registered to the GameManager
-		*/
-		static void NotifyPhaseObserver();
 
 		/* Adds a StatisticObserver to "listen" to the GameManager
 
@@ -94,10 +91,6 @@ namespace WZ
 		*/
 		static void RemoveStatisticsObserver(StatisticsObserver* p);
 
-		/* Notifies all statistic observers who are registered to the GameManager
-		*/
-		static void NotifyStatisticsObserver();
-
 		/* returns a const reference to the vector of currently active players in the game
 		*/
 		static const std::vector <Player*>& getActivePlayers();
@@ -105,6 +98,8 @@ namespace WZ
 		/* returns a const ptr to the map currently used by the game
 		*/
 		static const Map* getMap();
+
+		static bool Attack(Territory* source, Territory* target, unsigned int amount);
 
 	private:
 
@@ -153,6 +148,10 @@ namespace WZ
 		//////////////////////////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////////////////////////
 
+		/* Notifies all statistic observers who are registered to the GameManager
+		*/
+		static void NotifyStatisticsObserver();
+
 		//asks the user to select a map file and creates that map (if the file is valid) and assigns 
 		//it to the map attribute of the GameManager
 		void getUserMap();
@@ -172,6 +171,10 @@ namespace WZ
 		*/
 		void NotifyPhaseObserversImpl() const;
 
+		/* Notifies all Phase observers who are registered to the GameManager
+		*/
+		static void NotifyPhaseObserver();
+		
 		/* underlyin implementation of AddStatisticsObserver
 		*/
 		void AddStatisticsObserverImpl(StatisticsObserver* p);

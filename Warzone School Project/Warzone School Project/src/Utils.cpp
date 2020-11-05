@@ -62,7 +62,7 @@ namespace WZ
 			{
 				return -1;
 			}
-			else if (choice > 0 && choice <= choices.size())
+			else if (choice > 0 && choice <= (int)choices.size())
 			{
 				return choice;
 			}
