@@ -1,3 +1,5 @@
+#pragma once
+
 //include libraries
 #include <iostream>
 #include <vector>
@@ -31,6 +33,7 @@ namespace WZ
 		//Getters
 		std::vector<Territory*> getTerritories() const;
 		Territory* getTerritory(std::string n);
+		size_t getNumOfTerritories() const;
 		Hand* getHand();
 		std::string getPlayerName() const;
 		const OrderList* getOrderList() const;

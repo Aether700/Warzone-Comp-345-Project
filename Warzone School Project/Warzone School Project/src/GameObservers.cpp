@@ -1,39 +1,66 @@
+#include "GameObservers.h"
+#include "GameEngine.h"
 #include <iostream>
-#include <vector>
 
-class Observer
+#define NUM_COL 2
+
+namespace WZ
 {
-public:
-	virtual void Update() = 0; 
-};
 
-class Subject
-{
-public:
-	virtual ~Subject() { }
-
-	void AddObserver(Observer* o) { m_observers.push_back(o); }
-	
-	void RemoveObserver(Observer* o) 
-	{
-		for (int i = 0; i < m_observers.size(); i++)
-		{
-			if (o == m_observers[i])
-			{
-				m_observers.erase(m_observers.begin() + i);
-				break;
-			}
-		}
+	static float CalculatePercentage(const Player* p, const Map* a){
+		float total_number_of_territories = (float) a->getTerritoryCount();
+		float number_of_territories_owned_by_player = (float) p->getNumOfTerritories();
+		return (number_of_territories_owned_by_player*100.0f)/total_number_of_territories;
 	}
 
-	void Notify() 
-	{
-		for (Observer* o : m_observers)
-		{
-			o->Update();
-		}
+	void PhaseObserver::update() {
+		currentphase = GameManager::getCurrentPhase();
+		p = GameManager::getCurrentPlayer();
+		PrintPhaseAndPlayer();
 	}
 
-private:
-	std::vector<Observer*> m_observers;
-};
+	void PhaseObserver::PrintPhaseAndPlayer() {
+		//switch tring based on phase 
+		string phase_status;
+		switch(currentphase){
+			case GamePhase::Reinforcement:
+			phase_status = "Reinforcement"; 
+			break;
+			case GamePhase::IssuingOrders:
+			phase_status = "IssuingOrders"; 
+			break;
+			case GamePhase::OrderExecution:
+			phase_status = "OrderExecution"; 
+			break;
+
+		}
+
+		std::cout << "Current Phase: " << phase_status << "\n";
+		std::cout << "Current Player: " << *p << "\n";
+		
+
+	}
+
+
+	void StatisticsObserver::update() {
+		//gathering info from other classes to build a table
+		const Map* map = GameManager::getMap();
+		const std::vector <Player*> ActivePlayers = GameManager::getActivePlayers();
+		size_t height = ActivePlayers.size()+1;
+		//first build the string table
+		std::string* DataTable = new std::string[NUM_COL*height];
+		DataTable[0]= "Player";
+		DataTable[1]= "Amount conquered (%)";
+
+		for (size_t i = 1; i<=ActivePlayers.size(); ++i){
+			const Player* current = ActivePlayers[i-1];
+			DataTable[0+ NUM_COL *i]= current->getPlayerName();
+			DataTable[1+ NUM_COL *i]= std::to_string(CalculatePercentage(current, map));
+		}
+
+		TableStat=DrawTable(DataTable, NUM_COL, height);
+		delete[] DataTable;
+		std::cout<<TableStat<<std::endl;
+	}
+
+}

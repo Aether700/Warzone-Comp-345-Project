@@ -47,6 +47,8 @@ namespace WZ
 		return NULL;
 	}
 
+	size_t Player::getNumOfTerritories() const { return territories.size(); }
+
 	Hand* Player::getHand()
 	{
 		return hand;

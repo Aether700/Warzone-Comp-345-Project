@@ -393,8 +393,10 @@ namespace WZ
 	
 	const Continent* Map::getContinent(size_t index) const { return m_continents[index]; }
 
-	size_t Map::getCount() const { return m_continents.size(); }
+	size_t Map::getContinentCount() const { return m_continents.size(); }
 	
+	size_t Map::getTerritoryCount() const { return m_territoryHash.size(); }
+
 	void Map::addContinent(Continent* c) 
 	{ 
 		m_continents.push_back(c); 
@@ -503,13 +505,8 @@ namespace WZ
 	std::ostream& operator<<(std::ostream& stream, const Map& m)
 	{
 		//calculate table height (width is fixed)
-		size_t height = 1;
-		
-		for (size_t i = 0; i < m.getCount(); i++)
-		{
-			height += m.getContinent(i)->getCount();
-		}
-		
+		size_t height = m.getTerritoryCount() + 1;
+
 		//initialize table
 		std::string* table = new std::string[height * NUM_COLUMN];
 

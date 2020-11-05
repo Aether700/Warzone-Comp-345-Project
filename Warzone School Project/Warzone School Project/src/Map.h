@@ -369,7 +369,14 @@ namespace WZ
 
           returns: the number of Continent object stored inside this map object
         */
-        size_t getCount() const;
+        size_t getContinentCount() const;
+
+        /* getter function that returns the number of Territory object stored
+          inside this map object
+
+          returns: the number of Territory object stored inside this map object
+        */
+        size_t getTerritoryCount() const;
 
         /*Adds a Continent object to this map object
 
