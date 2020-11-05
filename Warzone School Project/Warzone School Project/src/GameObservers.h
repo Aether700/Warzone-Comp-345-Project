@@ -83,6 +83,7 @@ namespace WZ {
         const Player* p;
         //Private function that is being called by update  Current Phase: Player who is playing
         void PrintPhaseAndPlayer();
+       
     };
 
 

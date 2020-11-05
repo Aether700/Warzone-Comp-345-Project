@@ -178,6 +178,14 @@ namespace WZ
 		Subject<StatisticsObserver>::notifyObservers();
 	}
 
+	void GameManager::getLastOrder(){
+		GetManager().getLastOrderImpl();
+	}
+
+	const Player* GameManager::getLastOrderImpl(){
+		return null;
+	}
+
 
 	const std::vector <Player*>& GameManager::getActivePlayers(){
 		return GetManager().getActivePlayersImpl();

@@ -101,6 +101,8 @@ namespace WZ
 
 		static bool Attack(Territory* source, Territory* target, unsigned int amount);
 
+		static void getLastOrder();
+
 	private:
 
 		//private constructor of the GameManager class
@@ -198,6 +200,8 @@ namespace WZ
 		/* main game loop
 		*/
 		void mainGameLoop();
+
+		static const Player* getLastOrderImpl() const;
 
 
 		std::vector<Player*> m_activePlayers;
