@@ -177,8 +177,8 @@ namespace WZ
 		GetManager().getLastOrderImpl();
 	}
 
-	const Player* GameManager::getLastOrderImpl(){
-		return null;
+	const Player* GameManager::getLastOrderImpl() const{
+		return nullptr;
 	}
 
 
