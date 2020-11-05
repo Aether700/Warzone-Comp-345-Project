@@ -143,7 +143,7 @@ namespace WZ
 		void resetPlayerDrawCard();
 
 		/* Underlying implementation of the startupPhase functions.
-    */
+		*/
 		void startupPhaseImpl(const Player* p, const Territory* t, int armies); 
 
 		/* Notifies all statistic observers who are registered to the GameManager

@@ -37,8 +37,6 @@ namespace WZ
 
 		std::cout << "Current Phase: " << phase_status << "\n";
 		std::cout << "Current Player: " << *p << "\n";
-		
-
 	}
 
 
@@ -46,21 +44,30 @@ namespace WZ
 		//gathering info from other classes to build a table
 		const Map* map = GameManager::getMap();
 		const std::vector <Player*> ActivePlayers = GameManager::getActivePlayers();
-		size_t height = ActivePlayers.size()+1;
-		//first build the string table
-		std::string* DataTable = new std::string[NUM_COL*height];
-		DataTable[0]= "Player";
-		DataTable[1]= "Amount conquered (%)";
 
-		for (size_t i = 1; i<=ActivePlayers.size(); ++i){
-			const Player* current = ActivePlayers[i-1];
-			DataTable[0+ NUM_COL *i]= current->getPlayerName();
-			DataTable[1+ NUM_COL *i]= std::to_string(CalculatePercentage(current, map));
+		size_t number_of_players_check = ActivePlayers.size();
+		if (number_of_players_check == 1) {
+			const Player* current = ActivePlayers[0];
+			std::cout << "Congratulations to the winner!" << current->getPlayerName() << std::endl;
 		}
+		else
+		{
+			size_t height = ActivePlayers.size() + 1;
+			//first build the string table
+			std::string* DataTable = new std::string[NUM_COL * height];
+			DataTable[0] = "Player";
+			DataTable[1] = "Amount conquered (%)";
 
-		TableStat=DrawTable(DataTable, NUM_COL, height);
-		delete[] DataTable;
-		std::cout<<TableStat<<std::endl;
+			for (size_t i = 1; i <= ActivePlayers.size(); ++i) {
+				const Player* current = ActivePlayers[i - 1];
+				DataTable[0 + NUM_COL * i] = current->getPlayerName();
+				DataTable[1 + NUM_COL * i] = std::to_string(CalculatePercentage(current, map));
+			}
+
+			TableStat = DrawTable(DataTable, NUM_COL, height);
+			delete[] DataTable;
+			std::cout << TableStat << std::endl;
+		}
 	}
 
 }

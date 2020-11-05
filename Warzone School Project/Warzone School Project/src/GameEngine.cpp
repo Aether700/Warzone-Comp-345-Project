@@ -273,45 +273,45 @@ namespace WZ
 			}
 		}
 	}
-  */
+	*/
   
-  /*
+	/*
 	//to be implemented
-	void GameManager::startupPhaseImpl(const Player* p, const Territory* t, int armies) {
-	
-		  //get number of players to assign armies
-		  std::cout << p->getPlayerName() << " players are playing this round.\n";
+	void GameManager::startupPhaseImpl(const Player* p, const Territory* t, int armies) 
+	{
+		//get number of players to assign armies
+		std::cout << p->getPlayerName() << " players are playing this round.\n";
 		
-		  switch (userNumPlayers)
-		  {
-			  case 2:
-				  std::cout << "Each player will be given 40 armies\n ";
-				  armies = 40;
-				  break;
+		switch (userNumPlayers)
+		{
+			case 2:
+			  std::cout << "Each player will be given 40 armies\n ";
+			  armies = 40;
+			  break;
 
-			  case 3:
-				  std::cout << "Each player will be given 35 armies\n ";
-				  armies = 35;
-				  break;
+			case 3:
+			  std::cout << "Each player will be given 35 armies\n ";
+			  armies = 35;
+			  break;
 
-  			case 4:
+	  		case 4:
 	  			std::cout << "Each player will be given 30 armies\n ";
-		  		armies = 30;
+				armies = 30;
 			  	break;
 
   			case 5:
 	  			std::cout << "Each player will be given 25 armies\n ";
-		  		armies = 25;
+				armies = 25;
 			  	break;
 
   			default:
 	  			std::cout << "Only 2 to 5 players are accepted in this game";
 
-	  }
+		}
  
-	  //determine the order of players randomly
+		//determine the order of players randomly
 
-	  //Randomly assign territories to players one by one in a round-robin fashion
+		//Randomly assign territories to players one by one in a round-robin fashion
 
-  }*/
+	}*/
 }
