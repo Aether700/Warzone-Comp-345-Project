@@ -249,4 +249,34 @@ namespace WZ
 	}
 
 
+	/* This is mostly pseudocode and will be implemented
+	void mainGameLoop(vector<Player>& players) {
+		bool ordersLeft = true;					//	condition for the execution loop to go on
+		while (players.size() != 1) {
+			for (Player currentPlayer : players) {
+				currentPlayer.receiveReinforcements();	//	calculate and distribute reinforcements for each player
+				currentPlayer.receiveCards();		//	calculate and distribute cards for each player
+				currentPlayer.deploy();			//	deploy reinforcements and (eventually) play cards
+			}
+			while (ordersLeft) {				//	the orders execution loop depends on the condition if there are any orders left in the order list
+				for (Player currentPlayer : players) {			//	for each player in the game
+					if (currentPlayer.orderList[0] != NULL) {
+						currentPlayer.orderList.executeFirstOrder();	//	we execute the first order in the queue
+						currentPlayer.orderList.popFirstOrder();	//	remove executed order from list
+					}
+					else
+						ordersLeft = false;
+					currentPlayer.orderList.popFirstOrder();	//	we remove the executed order from the queue
+				}
+				for (Player currentPlayer : players) {			//	After each round played, we check if any player has been eliminated
+					if (currentPlayer.getTerritory() == NULL) {
+						cout << currentPlayer.getPlayerName() << " has been eliminated." << endl;
+						delete currentPlayer;			//	we eliminate the player from the current the running game
+
+					}
+				}
+			}
+		}
+	}
+	*/
 }

@@ -195,6 +195,10 @@ namespace WZ
 		*/
 		const Map* getMapImpl() const;
 
+		/* main game loop
+		*/
+		void mainGameLoop();
+
 
 		std::vector<Player*> m_activePlayers;
 		std::vector<std::pair<const Player*, const Player*>> m_negotiatingPlayers;

@@ -505,7 +505,7 @@ namespace WZ
 	std::ostream& operator<<(std::ostream& stream, const Map& m)
 	{
 		//calculate table height (width is fixed)
-		size_t height = m.getTerritoryCount();
+		size_t height = m.getTerritoryCount() + 1;
 
 		//initialize table
 		std::string* table = new std::string[height * NUM_COLUMN];
