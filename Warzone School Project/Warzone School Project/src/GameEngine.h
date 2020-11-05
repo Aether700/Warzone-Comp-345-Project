@@ -56,7 +56,7 @@ namespace WZ
 		map will be randomly assigned to the players in a round-robin fashion.
 		And finally, depending on the number of players, each player will start with a number of
 		initial armies.  This method will return the player, the number of armies and its territories.*/;
-		static void startupPhase(const Player* p, const Territory* t);
+		static void startupPhase(const Player* p, const Territory* t, int armies);
 	
 		//Returns the current game manager phase
 		static GamePhase getCurrentPhase();
@@ -144,11 +144,9 @@ namespace WZ
 		*/
 		void resetPlayerDrawCard();
 
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-		void startupPhaseImpl(const Player* p, const Territory* t); //do comments for this function
-		//////////////////////////////////////////////////////////////////////////////////////////////////
-		//////////////////////////////////////////////////////////////////////////////////////////////////
+		/* Underlying implementation of the startupPhase functions.
+    */
+		void startupPhaseImpl(const Player* p, const Territory* t, int armies); 
 
 		/* Notifies all statistic observers who are registered to the GameManager
 		*/
@@ -200,10 +198,14 @@ namespace WZ
 		/* main game loop
 		*/
 		void mainGameLoop();
+<<<<<<< HEAD
 
 		static const Player* getLastOrderImpl() const;
 
 
+=======
+    
+>>>>>>> cf5eb7d4b8ff335f9c6b3b1cdb0154c53400060d
 		std::vector<Player*> m_activePlayers;
 		std::vector<std::pair<const Player*, const Player*>> m_negotiatingPlayers;
 		Deck* m_deck;
@@ -212,6 +214,4 @@ namespace WZ
 		int CurrentPlayerIndex;
 		Map* map;
 	};
-
-
 }
