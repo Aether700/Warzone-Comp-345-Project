@@ -66,25 +66,47 @@ namespace WZ
 		// function to initialize the game with the user's preferences
 		static void gameStart();
 
+		/* Adds a PhaseObserver to "listen" to the GameManager
+
+		  p: phase observer to add
+		*/
 		static void AddPhaseObserver(PhaseObserver* p);
 
+		/* Removes a PhaseObserver from the "listen" of the GameManager
+
+		  p: phase observer to remove
+		*/
 		static void RemovePhaseObserver(PhaseObserver* p);
 		
+		/* Notifies all Phase observers who are registered to the GameManager
+		*/
 		static void NotifyPhaseObserver();
 
+		/* Adds a StatisticObserver to "listen" to the GameManager
+
+		  p: statistic observer to add
+		*/
 		static void AddStatisticsObserver(StatisticsObserver* p);
 
+		/* Removes a StatisticsObserver from the "listen" of the GameManager
+
+		  p: statistic observer to remove
+		*/
 		static void RemoveStatisticsObserver(StatisticsObserver* p);
 
+		/* Notifies all statistic observers who are registered to the GameManager
+		*/
 		static void NotifyStatisticsObserver();
 
+		/* returns a const reference to the vector of currently active players in the game
+		*/
 		static const std::vector <Player*>& getActivePlayers();
 
+		/* returns a const ptr to the map currently used by the game
+		*/
 		static const Map* getMap();
 
 	private:
-
-
 
 		//private constructor of the GameManager class
 		GameManager(); 
@@ -138,21 +160,36 @@ namespace WZ
 		//Asks the user how many player will play and returns that number
 		int getUserNumPlayers();
 
+		/* underlyin implementation of AddPhaseObserver
+		*/
 		void AddPhaseObserverImpl(PhaseObserver* p);
 
+		/* underlyin implementation of RemovePhaseObserver
+		*/
 		void RemovePhaseObserverImpl(PhaseObserver* p);
 
+		/* underlyin implementation of NotifyPhaseObserver
+		*/
 		void NotifyPhaseObserversImpl() const;
 
-
+		/* underlyin implementation of AddStatisticsObserver
+		*/
 		void AddStatisticsObserverImpl(StatisticsObserver* p);
 
+		/* underlyin implementation of RemoveStatisticsObserver
+		*/
 		void RemoveStatisticsObserverImpl(StatisticsObserver* p);
 
+		/* underlyin implementation of NotifyStatisticsObserver
+		*/
 		void NotifyStatisticsObserverImpl() const;
 
+		/* underlyin implementation of getActivePlayers
+		*/
 		const std::vector <Player*>& getActivePlayersImpl() const;
 
+		/* underlyin implementation of getMap
+		*/
 		const Map* getMapImpl() const;
 
 
