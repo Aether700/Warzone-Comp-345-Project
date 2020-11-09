@@ -21,7 +21,7 @@ namespace WZ
 	//void GameEngine::startupPhase(const Player* p, const Territory* t, int armies) { GetManager().startupPhaseImpl(p, t, armies); }
 
 	GameManager::GameManager() : m_neutralPlayer(new Player("Neutral")), m_deck(new Deck()),
-		map(nullptr), currentphase(GamePhase::Reinforcement)
+		map(nullptr), currentphase(GamePhase::Reinforcement), m_lastOrder(nullptr)
 	{
 		Random::Init();
 	}
@@ -173,12 +173,12 @@ namespace WZ
 		Subject<StatisticsObserver>::notifyObservers();
 	}
 
-	void GameManager::getLastOrder(){
-		GetManager().getLastOrderImpl();
+	const Order* GameManager::getLastOrder(){
+		return GetManager().getLastOrderImpl();
 	}
 
-	const Player* GameManager::getLastOrderImpl() const{
-		return nullptr;
+	const Order* GameManager::getLastOrderImpl() const{
+		return m_lastOrder;
 	}
 
 

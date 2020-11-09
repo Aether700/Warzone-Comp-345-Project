@@ -78,20 +78,12 @@ namespace WZ {
     class PhaseObserver :public Observer {
     public:
         void update();
-    private:
-        GamePhase currentphase;
-        const Player* p;
-        //Private function that is being called by update  Current Phase: Player who is playing
-        void PrintPhaseAndPlayer();
-       
     };
 
 
     class StatisticsObserver :public Observer {
     public:
         void update();
-    private:
-        std::string TableStat;
     };
 
 
