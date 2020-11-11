@@ -162,6 +162,9 @@ namespace WZ
 		/* underlyin implementation of AddPhaseObserver
 		*/
 		void AddPhaseObserverImpl(PhaseObserver* p);
+		
+		/*function to get the number of players and initialize them in the m_activePlayers */
+		void InitializePlayers();
 
 		/* underlyin implementation of RemovePhaseObserver
 		*/

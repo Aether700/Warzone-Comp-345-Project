@@ -104,7 +104,17 @@ namespace WZ
 		MapLoader loader;
 		delete map;
 		//will automatically ask the user to select a map file and generate the map from that file if it is valid
-		map = loader.mapGenerator(); 
+		map = loader.mapGenerator();
+		
+		while(true){
+			if(!map->validate() || map==NULL){
+				std::cout<<"Invalid map"<<std::endl;
+			}
+			else{
+				break;
+			}
+			
+	}
 	}
 	
 	int GameManager::getUserNumPlayers()
@@ -119,6 +129,18 @@ namespace WZ
 			{
 				return num;
 			}
+		}
+	}
+
+	void GameManager::InitializePlayers(){
+		int num=getUserNumPlayers();
+		m_activePlayers.reserve(num);
+
+		for(int i = 0 ; i < num ; i++){
+			string name="";
+			std::cout<<"Please enter player "<<(i+1)<<"name: ";
+			std::cin>>name;
+			m_activePlayers.push_back(new Player(name));
 		}
 	}
 
