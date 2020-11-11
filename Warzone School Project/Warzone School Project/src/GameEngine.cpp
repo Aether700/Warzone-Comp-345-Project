@@ -107,15 +107,19 @@ namespace WZ
 	{
 		MapLoader loader;
 		delete map;
-		//will automatically ask the user to select a map file and generate the map from that file if it is valid
-		map = loader.mapGenerator();
-		
 		while(true){
-			if(!map->validate() || map==NULL){
-				std::cout<<"Invalid map"<<std::endl;
-			}
-			else{
+			//will automatically ask the user to select a map file and generate the map from that file if it is valid
+			map = loader.mapGenerator();
+			if(map!=nullptr)
+			{
+				if(map->validate())
+				{
 				break;
+				}
+			}
+			else
+			{
+				std::cout<<"Invalid map"<<std::endl;
 			}
 			
 		}
@@ -170,7 +174,10 @@ namespace WZ
 	}
 
 	void GameManager::NotifyPhaseObserversImpl() const{
+		if(PhaseObsOn)
+		{
 		Subject<PhaseObserver>::notifyObservers();
+		}
 	}
 
 	//STATISTICS OBSERVER IMPLEMENTATION
@@ -188,7 +195,10 @@ namespace WZ
 	}
 
 	void GameManager::AddStatisticsObserverImpl(StatisticsObserver* p){
+		if(StatsObsOn)
+		{
 		Subject<StatisticsObserver>::AddObserver(p);
+		}
 	}
 
 	void GameManager::RemoveStatisticsObserverImpl(StatisticsObserver* p){

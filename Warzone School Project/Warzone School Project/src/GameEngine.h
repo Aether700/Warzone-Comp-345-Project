@@ -216,5 +216,7 @@ namespace WZ
 		int CurrentPlayerIndex;
 		Map* map;
 		Order* m_lastOrder;
+		bool PhaseObsOn=true;
+		bool StatsObsOn=true;
 	};
 }
