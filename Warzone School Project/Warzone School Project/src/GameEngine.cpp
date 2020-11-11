@@ -4,6 +4,7 @@
 #include "Utils.h"
 
 #include <assert.h>
+#include <sstream>
 
 #define DEF_WIN_RATE 0.7f
 #define ATK_WIN_RATE 0.6f
@@ -14,6 +15,23 @@ using std::cin;
 
 namespace WZ
 {
+	std::string FormatBoolOption(const std::string& option, bool val)
+	{
+		std::stringstream ss;
+		ss << option << ": ";
+
+		if (val)
+		{
+			ss << "On";
+		}
+		else
+		{
+			ss << "Off";
+		}
+
+		return ss.str();
+	}
+
 	bool GameManager::isNegotiating(const Player* p1, const Player* p2) { return GetManager().isNegotiatingImpl(p1, p2); }
 
 	void GameManager::addNegotiatingPlayers(const Player* p1, const Player* p2) { GetManager().addNegotiatingPlayersImpl(p1, p2); }
@@ -114,14 +132,13 @@ namespace WZ
 			{
 				if(map->validate())
 				{
-				break;
+					break;
 				}
 			}
 			else
 			{
 				std::cout<<"Invalid map"<<std::endl;
 			}
-			
 		}
 	}
 	
@@ -176,7 +193,7 @@ namespace WZ
 	void GameManager::NotifyPhaseObserversImpl() const{
 		if(PhaseObsOn)
 		{
-		Subject<PhaseObserver>::notifyObservers();
+			Subject<PhaseObserver>::notifyObservers();
 		}
 	}
 
@@ -195,10 +212,7 @@ namespace WZ
 	}
 
 	void GameManager::AddStatisticsObserverImpl(StatisticsObserver* p){
-		if(StatsObsOn)
-		{
 		Subject<StatisticsObserver>::AddObserver(p);
-		}
 	}
 
 	void GameManager::RemoveStatisticsObserverImpl(StatisticsObserver* p){
@@ -206,11 +220,19 @@ namespace WZ
 	}
 
 	void GameManager::NotifyStatisticsObserverImpl() const {
-		Subject<StatisticsObserver>::notifyObservers();
+		if (StatsObsOn)
+		{
+			Subject<StatisticsObserver>::notifyObservers();
+		}
 	}
 
 	const Order* GameManager::getLastOrder(){
 		return GetManager().getLastOrderImpl();
+	}
+
+	void GameManager::SettingsMenu()
+	{
+		GetManager().SettingsMenuImpl();
 	}
 
 	const Order* GameManager::getLastOrderImpl() const{
@@ -233,6 +255,47 @@ namespace WZ
 
 	const Map* GameManager::getMapImpl() const{
 		return map;
+	}
+
+	void GameManager::SettingsMenuImpl()
+	{
+		std::vector<std::string> options;
+		options.reserve(2);
+
+		/*pushing back elements so we can modify them in the loop.
+		  the value of those elements doesn't matter since they 
+		  will be overwritten in the loop before being displayed
+		*/
+		options.push_back("");
+		options.push_back("");
+
+		bool done = false;
+
+		while (!done)
+		{
+			//update display of values for the booleans
+			options[0] = FormatBoolOption("Phase Observers", PhaseObsOn);
+			options[1] = FormatBoolOption("Statistic Observers", StatsObsOn);
+
+			std::cout << "\tSettings\n\n";
+
+			//ask user input and toggle the correct phase observer bool or exit the menu
+			switch(AskInput(options, "Back"))
+			{
+			case 1:
+				PhaseObsOn = !PhaseObsOn;
+				break;
+
+			case 2:
+				StatsObsOn = !StatsObsOn;
+				break;
+
+			case -1:
+				done = true;
+				break;
+			}
+
+		}
 	}
 
 	bool GameManager::Attack(Territory* source, Territory* target, unsigned int amount)

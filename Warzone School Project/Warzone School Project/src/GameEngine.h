@@ -103,6 +103,10 @@ namespace WZ
 
 		static const Order* getLastOrder();
 
+		/* displays a menu to the user allowing them to toggle the observers on and off
+		*/
+		static void SettingsMenu();
+
 		/*	Function that calculates the number of reinforcements
 		for a given player and returns it */
 		unsigned int reinforcementPhase(Player& p);
@@ -201,6 +205,10 @@ namespace WZ
 		/* underlyin implementation of getMap
 		*/
 		const Map* getMapImpl() const;
+
+		/* underlyin implementation of SettingsMenu function
+		*/
+		void SettingsMenuImpl();
 
 		/* main game loop
 		*/
