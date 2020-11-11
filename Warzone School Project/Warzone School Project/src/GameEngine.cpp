@@ -8,6 +8,10 @@
 #define DEF_WIN_RATE 0.7f
 #define ATK_WIN_RATE 0.6f
 
+using std::cout;
+using std::endl;
+using std::cin;
+
 namespace WZ
 {
 	bool GameManager::isNegotiating(const Player* p1, const Player* p2) { return GetManager().isNegotiatingImpl(p1, p2); }
@@ -114,7 +118,7 @@ namespace WZ
 				break;
 			}
 			
-	}
+		}
 	}
 	
 	int GameManager::getUserNumPlayers()
@@ -273,18 +277,41 @@ namespace WZ
 		return false;
 	}
 
+	/* This is mostly pseudocode and will be implemented*/
+	//void mainGameLoop(vector<Player>& players) {								players == m_activePlayers
 
-	/* This is mostly pseudocode and will be implemented
-	void mainGameLoop(vector<Player>& players) {
-		bool ordersLeft = true;					//	condition for the execution loop to go on
-		while (players.size() != 1) {
-			for (Player currentPlayer : players) {
-				currentPlayer.receiveReinforcements();	//	calculate and distribute reinforcements for each player
-				currentPlayer.receiveCards();		//	calculate and distribute cards for each player
-				currentPlayer.deploy();			//	deploy reinforcements and (eventually) play cards
+	unsigned int reinforcementPhase(Player& currentPlayer) {
+		int bonus = 0;
+		for (Continent c : GameManager::getMap()) {							//	loop for each continent in current map
+			for (size_t count = 0; count < c.getCount(); count++) {			//	loop for each territory in current continent
+				if (!(currentPlayer.ownsTerritory(c.getTerritory(count))))	//	if the territory is not hold by player
+					break;															//	break the loop, go to next continent													
+				if (count == (c.getCount() - 1))							//	if the number of checked territories equals the size of continent
+					bonus += c.getBonus();											//	give reinforcement bonus
 			}
-			while (ordersLeft) {				//	the orders execution loop depends on the condition if there are any orders left in the order list
-				for (Player currentPlayer : players) {			//	for each player in the game
+		}
+		if (currentPlayer.getNumOfTerritories() < 11)						//	getting a minimum of 3 reinforcements
+			return (3 + bonus);
+		else
+			return (bonus + (currentPlayer.getNumOfTerritories() / 3);		//	getting the (int) number_of_territories/3 as reinforcement (+ bonus)
+	}
+
+	//	this function needs to implement the player_view lines
+	void issueOrdersPhase(Player& currentPlayer) {
+
+	}
+
+
+
+	void mainGameLoop() {
+		bool ordersLeft = true;									//	condition for the execution loop to go on
+		vector<Player*> activePlayers = GameManager::getActivePlayers();
+		while (activePlayers.size() != 1) {
+			for (Player* currentPlayer : activePlayers) {
+				reinforcementPhase(*currentPlayer);
+			}
+			while (ordersLeft) {								//	the orders execution loop depends on the condition if there are any orders left in the order list
+				for (Player currentPlayer : activePlayers) {			//	for each player in the game
 					if (currentPlayer.orderList[0] != NULL) {
 						currentPlayer.orderList.executeFirstOrder();	//	we execute the first order in the queue
 						currentPlayer.orderList.popFirstOrder();	//	remove executed order from list
@@ -297,13 +324,11 @@ namespace WZ
 					if (currentPlayer.getTerritory() == NULL) {
 						cout << currentPlayer.getPlayerName() << " has been eliminated." << endl;
 						delete currentPlayer;			//	we eliminate the player from the current the running game
-
 					}
 				}
 			}
 		}
 	}
-	*/
   
 	/*
 	//to be implemented

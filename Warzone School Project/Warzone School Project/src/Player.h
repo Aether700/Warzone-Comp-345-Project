@@ -65,7 +65,7 @@ namespace WZ
 		void removeTerritory(Territory* oldTerritory);// method to remove a territory
 		std::vector<Territory*>  toDefend(); //method toDefend that returns a list of territories that are defended.
 		std::vector<Territory*> toAttack();//method toAttack that returns a list of territories that are attacked.
-		void issueOrder(Order* order);
+		void issueOrder(int&);
 
 		// assignement operator. Assigns the values of the provided Player object and returns the modified object 
 		Player& operator=(const Player&);

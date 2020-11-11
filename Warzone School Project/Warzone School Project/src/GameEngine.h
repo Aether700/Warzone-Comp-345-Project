@@ -103,6 +103,10 @@ namespace WZ
 
 		static const Order* getLastOrder();
 
+		/*	Function that calculates the number of reinforcements
+		for a given player and returns it */
+		unsigned int reinforcementPhase(Player& p);
+
 	private:
 
 		//private constructor of the GameManager class
