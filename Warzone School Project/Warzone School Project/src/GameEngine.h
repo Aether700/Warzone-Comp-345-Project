@@ -143,8 +143,12 @@ namespace WZ
 		void resetPlayerDrawCard();
 
 		/* Underlying implementation of the startupPhase functions.
-    */
-		void startupPhaseImpl(const Player* p, const Territory* t, int armies); 
+    	*/
+		void startupPhaseImpl(); 
+
+		/* Round Robin function  NOT YET DONE 
+		*/
+		void RoundRobin();
 
 		/* Notifies all statistic observers who are registered to the GameManager
 		*/
@@ -204,5 +208,6 @@ namespace WZ
 		GamePhase currentphase;
 		int CurrentPlayerIndex;
 		Map* map;
+		int armies;
 	};
 }
