@@ -228,6 +228,10 @@ namespace WZ
 		*/
 		void mainGameLoop();
 
+		/* runs the issue orders phase
+		*/
+		void issueOrdersPhase();
+
 		const Order* getLastOrderImpl() const;
 
 		std::vector<Player*> m_activePlayers;

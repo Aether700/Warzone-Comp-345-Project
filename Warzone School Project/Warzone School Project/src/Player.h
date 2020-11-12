@@ -3,6 +3,7 @@
 //include libraries
 #include <iostream>
 #include <vector>
+#include "Cards.h"
 
 namespace WZ
 {
@@ -10,17 +11,39 @@ namespace WZ
 	class Territory;
 	class OrderList;
 	class Order;
-	class Hand;
 	
 	// Player class
 	class Player {
 		friend class GameManager;
 	private:
 		std::vector<Territory*> territories;
+		std::vector<Territory*> m_toDef;
+		std::vector<Territory*> m_toAtk;
 		Hand* hand;
 		std::string playerName;
 		OrderList* listOrders;
 		bool hasDrawnCard;
+		unsigned int m_reinforcements;
+
+		Territory* GetSourceTerritory(Territory* target = nullptr) const;
+
+		bool IsToDefend(Territory* t) const;
+
+		unsigned int GetNumArmiesToSend(Territory* t);
+
+		Card* GetCardOfType(Card::Type type);
+
+		Player* GetNegotiatingTarget(Territory* t) const;
+
+		bool ShouldBlockade(Territory* target) const;
+
+		/* Generates both the toAtk and toDef lists
+		*/
+		void GenerateToTerritoryLists();
+
+		void GenerateToDef();
+		void GenerateToAtk();
+
 	public:
 		//default constructor of the Player class
 		Player();
@@ -65,7 +88,19 @@ namespace WZ
 		void removeTerritory(Territory* oldTerritory);// method to remove a territory
 		std::vector<Territory*>  toDefend(); //method toDefend that returns a list of territories that are defended.
 		std::vector<Territory*> toAttack();//method toAttack that returns a list of territories that are attacked.
-		void issueOrder(int&);
+		
+		/* generates an order to add to the order list, returns null if no more orders should be played this turn
+
+		  returns: an order to add to the order list or null if no more orders should be played this turn
+		*/
+		Order* issueOrder();
+
+		/* returns true if this player has a card of the specified type in their hand
+		  
+		  type: the type of card we are looking for
+		  returns: true if this player has a card of the specified type in their hand, false otherwise
+		*/
+		bool hasCardType(Card::Type type) const;
 
 		// assignement operator. Assigns the values of the provided Player object and returns the modified object 
 		Player& operator=(const Player&);

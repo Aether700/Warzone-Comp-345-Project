@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 #include "Player.h"
+#include "Orders.h"
 #include "Cards.h"
 #include "Utils.h"
 
@@ -371,9 +372,42 @@ namespace WZ
 			return (bonus + (currentPlayer.getNumOfTerritories() / 3);		//	getting the (int) number_of_territories/3 as reinforcement (+ bonus)
 	}
 
-	//	this function needs to implement the player_view lines
-	void issueOrdersPhase(Player& currentPlayer) {
+	void GameManager::issueOrdersPhase()
+	{
+		//reset all the toDefend and toAttack vectors
+		for (Player* p : m_activePlayers)
+		{
+			p->GenerateToTerritoryLists();
+		}
 
+		//reset the available armies of all the territories on the map
+		for (auto pair : *map)
+		{
+			Territory* curr = pair.second;
+
+			curr->m_availableArmies = curr->m_armies;
+		}
+
+		std::vector<Player*> issuingPlayers = m_activePlayers;
+
+		while (!issuingPlayers.empty())
+		{
+			for (size_t i = 0; i < issuingPlayers.size(); i++)
+			{
+				Order* currOrder = issuingPlayers[i]->issueOrder();
+
+				if (currOrder == nullptr)
+				{
+					issuingPlayers.erase(issuingPlayers.begin() + i);
+				}
+				else
+				{
+					delete m_lastOrder;
+					m_lastOrder = currOrder;
+					issuingPlayers[i]->listOrders->addOrder(m_lastOrder);
+				}
+			}
+		}
 	}
 
 

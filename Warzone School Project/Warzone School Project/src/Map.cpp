@@ -15,11 +15,11 @@ namespace WZ
 	// Territory //////////////////////////////////////////////
 
 	Territory::Territory(const std::string& name, unsigned int id, Continent* continent, unsigned int armies)
-		: m_name(name), m_id(id), m_armies(armies), m_continent(continent), 
+		: m_name(name), m_id(id), m_armies(armies), m_availableArmies(m_armies), m_continent(continent), 
 		m_owner(GameManager::getNeutralPlayer()), m_visited(false) { }
 
 	Territory::Territory(const Territory& other)
-		: m_name(other.m_name), m_id(other.m_id), m_armies(other.m_armies),
+		: m_name(other.m_name), m_id(other.m_id), m_armies(other.m_armies), m_availableArmies(other.m_availableArmies),
 		m_continent(other.m_continent), m_owner(other.m_owner), m_adjList(other.m_adjList), m_visited(false) { }
 
 	const std::string& Territory::getName() const { return m_name; }
@@ -57,6 +57,24 @@ namespace WZ
 	}
 	
 	const std::vector<Territory*>& Territory::getAdjList() const { return m_adjList; }
+
+	bool Territory::isAdjTo(Territory* t) const
+	{
+		if (t == this)
+		{
+			return false;
+		}
+
+		for (Territory* adj : m_adjList)
+		{
+			if (adj == t)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	Territory& Territory::operator=(const Territory& other)
 	{
@@ -424,6 +442,22 @@ namespace WZ
 				break;
 			}
 		}
+	}
+
+	std::vector<Territory*> Map::getAccessList(Territory* t) const
+	{
+		std::vector<Territory*> accessList;
+
+		for (auto pair : m_territoryHash)
+		{
+			Territory* curr = pair.second;
+			if (curr->isAdjTo(t))
+			{
+				accessList.push_back(curr);
+			}
+		}
+
+		return accessList;
 	}
 
 	std::unordered_map<unsigned int, Territory*>::iterator Map::begin() { return m_territoryHash.begin(); }

@@ -16,6 +16,8 @@ namespace WZ
     */
     class Territory
     {
+        friend class GameManager;
+        friend class Player;
         friend class Continent;
         friend class Map;
         friend class MapLoader;
@@ -116,6 +118,13 @@ namespace WZ
         */
         const std::vector<Territory*>& getAdjList() const;
 
+        /* returns true if the provided territory can be accessed by this territory, false otherwise
+
+           t: the territory to access from this one
+           returns: true if the provided territory can be accessed by this territory, false otherwise
+        */
+        bool isAdjTo(Territory* t) const;
+
         /*assignment operator. copies the values of the territory provided into this territory. 
            does not do a deep copy of the adjancency list since it would create an infinite loop of creation
            The indepth copy is made by the Map class
@@ -159,6 +168,7 @@ namespace WZ
         Player* m_owner;
 
         unsigned int m_armies;
+        unsigned int m_availableArmies;
     };
 
     /* insertion operator for Territory objects. 
@@ -389,6 +399,13 @@ namespace WZ
           c: the map to remove
         */
         void removeContinent(Continent* c);
+
+        /* returns a vector list of all the territories on the map which can access the provided territory
+
+          t: the territory to access
+          returns: a vector list of all the territories on the map which can access the provided territory
+        */
+        std::vector<Territory*> getAccessList(Territory* t) const;
 
         /*assignment operator. copies the values of the Map provided into this map.
            makes a deep copy of all the Continents and 
