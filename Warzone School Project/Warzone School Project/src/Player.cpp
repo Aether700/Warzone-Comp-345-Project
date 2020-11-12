@@ -424,7 +424,11 @@ namespace WZ
 		//calculate heuristic of each player
 		for (Territory* curr : accessList)
 		{
-			if (curr->getOwner() != t->getOwner())
+			if(curr->getOwner() == GameManager::getNeutralPlayer())
+			{
+				continue;
+			}
+			else if (curr->getOwner() != t->getOwner())
 			{
 				for (size_t i = 0; i < activePlayers.size(); i++)
 				{
@@ -478,7 +482,11 @@ namespace WZ
 
 		for (Territory* t : accessList)
 		{
-			if (t->getOwner() == target->getOwner())
+			if (t->getOwner() == GameManager::getNeutralPlayer())
+			{
+				continue;
+			}
+			else if (t->getOwner() == target->getOwner())
 			{
 				heuristic -= t->getArmies();
 			}
@@ -509,7 +517,11 @@ namespace WZ
 
 			for (Territory* adj : accessList)
 			{
-				if (adj->getOwner() != this)
+				if (adj->getOwner() == GameManager::getNeutralPlayer())
+				{
+					continue;
+				}
+				else if (adj->getOwner() != this)
 				{
 					heuristic += adj->getArmies();
 				}
