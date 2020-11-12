@@ -116,14 +116,14 @@ namespace WZ
 		}
 	}
 
-	vector<Territory*> Player::toDefend()
+	vector<Territory*>& Player::toDefend()
 	{
-		return territories;
+		return m_toDef;
 	}
 
-	vector<Territory*> Player::toAttack()
+	vector<Territory*>& Player::toAttack()
 	{
-		return territories;
+		return m_toAtk;
 	}
 
 	//returns null if done playing for this turn

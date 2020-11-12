@@ -86,8 +86,8 @@ namespace WZ
 		bool ownsTerritory(Territory* t) const; //method to check if a territory is owned or not.
 		void addTerritory(Territory* newTerritory); // method to add a territory
 		void removeTerritory(Territory* oldTerritory);// method to remove a territory
-		std::vector<Territory*>  toDefend(); //method toDefend that returns a list of territories that are defended.
-		std::vector<Territory*> toAttack();//method toAttack that returns a list of territories that are attacked.
+		std::vector<Territory*>&  toDefend(); //method toDefend that returns a list of territories that are defended.
+		std::vector<Territory*>& toAttack();//method toAttack that returns a list of territories that are attacked.
 		
 		/* generates an order to add to the order list, returns null if no more orders should be played this turn
 
