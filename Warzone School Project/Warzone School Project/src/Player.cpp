@@ -130,7 +130,7 @@ namespace WZ
 	Order* Player::issueOrder() {
 		if (m_reinforcements != 0)
 		{
-			std::vector<Territory*> def = toDefend();
+			std::vector<Territory*>& def = toDefend();
 			Territory* destination = def[0];
 			def.erase(def.begin());
 			m_toDef.push_back(destination);
@@ -158,7 +158,7 @@ namespace WZ
 			if (!m_toAtk.empty() && randVal <= OFFENSIVE_PLAY)
 			{
 				//do offensive play
-				std::vector<Territory*> atk = toAttack();
+				std::vector<Territory*>& atk = toAttack();
 				Territory* target = atk[0];
 				atk.erase(atk.begin());
 
@@ -227,7 +227,7 @@ namespace WZ
 				}
 
 				//do defensive play
-				std::vector<Territory*> def = toDefend();
+				std::vector<Territory*>& def = toDefend();
 				Territory* target = def[0];
 				def.erase(def.begin());
 
