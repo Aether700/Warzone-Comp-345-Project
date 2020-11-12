@@ -5,6 +5,8 @@
 
 #include <assert.h>
 #include <sstream>
+#include <random>
+using namespace std; 
 
 #define DEF_WIN_RATE 0.7f
 #define ATK_WIN_RATE 0.6f
@@ -403,26 +405,35 @@ namespace WZ
 		}
 	}
   
-	/*
-	//to be implemented
-	void GameManager::startupPhaseImpl(const Player* p, const Territory* t, int armies) 
-	{
-		//get number of players to assign armies
-		std::cout << p->getPlayerName() << " players are playing this round.\n";
-		
-		switch (userNumPlayers)
-		{
-			case 2:
-			  std::cout << "Each player will be given 40 armies\n ";
-			  armies = 40;
-			  break;
+	void GameManager::startupPhaseImpl() {
+	
+		  //Randomize the order of the player
+		  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+		   std::default_random_engine default_random_engine(seed);
+		   std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
+		  
+		  //Assign Players some territories
+		   const std::vector<Territory*>* territories = map->getContinent();
+		   std::shuffle(territories->begin(), territories->end(), default_random_engine);
 
-			case 3:
-			  std::cout << "Each player will be given 35 armies\n ";
-			  armies = 35;
-			  break;
+			for (int i = 0; i < territories->size(); i++) {
+				m_activePlayers.at(i % m_activePlayers.size())->addTerritory(territories->at(i));
+			}
 
-	  		case 4:
+		  switch (m_activePlayers.size())
+		  {
+			  case 2:
+				  std::cout << "Each player will be given 40 armies\n ";
+				  armies = 40;
+				  break;
+
+			  case 3:
+				  std::cout << "Each player will be given 35 armies\n ";
+				  armies = 35;
+				  break;
+
+  			case 4:
+
 	  			std::cout << "Each player will be given 30 armies\n ";
 				armies = 30;
 			  	break;
@@ -440,6 +451,5 @@ namespace WZ
 		//determine the order of players randomly
 
 		//Randomly assign territories to players one by one in a round-robin fashion
-
-	}*/
+  }
 }
