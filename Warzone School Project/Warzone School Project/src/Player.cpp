@@ -121,10 +121,60 @@ namespace WZ
 		return territories;
 	}
 
-	void Player::issueOrder(Order* order)
-	{
-		listOrders->addOrder(order);
+	void Player::issueOrder(int& reinforcements) {
+		int playerChoice = 0, amount;						//	menu variable to enable the player to choose between options
+		vector<Territory*> t = this->getTerritories();		//	territories the player holds
+		while (reinforcements > 0) {						//	deploy reinforcements
+			cout << reinforcements << " reinforcements available. Choose a location to deploy: ";
+			for (size_t i = 0; i < this->toDefend().size(); i++) {			//	looping through the player's own territories
+				cout << i << "\t" << t[i]->getName();
+			}
+			cin >> playerChoice;							//	player choose territory
+			cout << "Number of troops to deploy: ";
+			cin >> amount;									//	quantity to deploy
+			DeployOrder* ord = new DeployOrder(this, t[playerChoice], amount);	//	create an order to deploy
+			listOrders->addOrder(ord);						//	add the order
+			delete ord;
+		}
+		cout << "What are your orders?\n";
+		cout << "1\tPlay Card\n2\tAttack\n3\tDefend\n4\tBlockade" << endl;		//	player can choose the type of action to add to the queue orders
+		cin >> playerChoice;
+		while (playerChoice < 1 || playerChoice > 4) {
+			cout << "Wrong input. Try again:" << endl;
+			cin >> playerChoice;
+		}
+
+		switch (playerChoice) {
+		case 1:
+			Hand * playersHand = this->getHand();
+			if (playersHand->getCount() < 1)
+				cout << "No cards to play.";
+			else {
+				for (size_t i = 0; i < playersHand->getCount(); i++)
+					cout << i << "\t" << playersHand[i];
+				cout << "\nChoose the index of your card: ";
+				cin >> playerChoice;
+				while (playerChoice < 0 || playerChoice > playersHand->getCount()) {
+					cout << "Invalid entry. Try again: " << endl;
+					cin >> playerChoice;
+				}
+				if (*playersHand[playerChoice] == BombOrder)
+			}
+			break;
+
+		case 2:
+			cout << "Enter the territory index where the deploy should occure: " << endl;
+			for (size_t i = 0; i < t->size(); i++)
+				cout << i << "\t" << *(t + i).getName() << endl;
+			cin >> playerChoice;
+			currentPlayer.issueOrder();
+			break;
+		default:
+			break;
+		}
+		currentPlayer.setOrderList(DeployOrder(&currentPlayer, ));
 	}
+
 
 	Player& Player::operator=(const Player& p) {
 		delete hand;

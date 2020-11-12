@@ -4,14 +4,36 @@
 #include "Utils.h"
 
 #include <assert.h>
+#include <sstream>
 #include <random>
 using namespace std; 
 
 #define DEF_WIN_RATE 0.7f
 #define ATK_WIN_RATE 0.6f
 
+using std::cout;
+using std::endl;
+using std::cin;
+
 namespace WZ
 {
+	std::string FormatBoolOption(const std::string& option, bool val)
+	{
+		std::stringstream ss;
+		ss << option << ": ";
+
+		if (val)
+		{
+			ss << "On";
+		}
+		else
+		{
+			ss << "Off";
+		}
+
+		return ss.str();
+	}
+
 	bool GameManager::isNegotiating(const Player* p1, const Player* p2) { return GetManager().isNegotiatingImpl(p1, p2); }
 
 	void GameManager::addNegotiatingPlayers(const Player* p1, const Player* p2) { GetManager().addNegotiatingPlayersImpl(p1, p2); }
@@ -23,7 +45,7 @@ namespace WZ
 	//void GameEngine::startupPhase(const Player* p, const Territory* t, int armies) { GetManager().startupPhaseImpl(p, t, armies); }
 
 	GameManager::GameManager() : m_neutralPlayer(new Player("Neutral")), m_deck(new Deck()),
-		map(nullptr), currentphase(GamePhase::Reinforcement)
+		map(nullptr), currentphase(GamePhase::Reinforcement), m_lastOrder(nullptr)
 	{
 		Random::Init();
 	}
@@ -105,8 +127,21 @@ namespace WZ
 	{
 		MapLoader loader;
 		delete map;
-		//will automatically ask the user to select a map file and generate the map from that file if it is valid
-		map = loader.mapGenerator(); 
+		while(true){
+			//will automatically ask the user to select a map file and generate the map from that file if it is valid
+			map = loader.mapGenerator();
+			if(map!=nullptr)
+			{
+				if(map->validate())
+				{
+					break;
+				}
+			}
+			else
+			{
+				std::cout<<"Invalid map"<<std::endl;
+			}
+		}
 	}
 	
 	int GameManager::getUserNumPlayers()
@@ -121,6 +156,18 @@ namespace WZ
 			{
 				return num;
 			}
+		}
+	}
+
+	void GameManager::InitializePlayers(){
+		int num=getUserNumPlayers();
+		m_activePlayers.reserve(num);
+
+		for(int i = 0 ; i < num ; i++){
+			string name="";
+			std::cout<<"Please enter player "<<(i+1)<<"name: ";
+			std::cin>>name;
+			m_activePlayers.push_back(new Player(name));
 		}
 	}
 
@@ -146,7 +193,10 @@ namespace WZ
 	}
 
 	void GameManager::NotifyPhaseObserversImpl() const{
-		Subject<PhaseObserver>::notifyObservers();
+		if(PhaseObsOn)
+		{
+			Subject<PhaseObserver>::notifyObservers();
+		}
 	}
 
 	//STATISTICS OBSERVER IMPLEMENTATION
@@ -172,7 +222,23 @@ namespace WZ
 	}
 
 	void GameManager::NotifyStatisticsObserverImpl() const {
-		Subject<StatisticsObserver>::notifyObservers();
+		if (StatsObsOn)
+		{
+			Subject<StatisticsObserver>::notifyObservers();
+		}
+	}
+
+	const Order* GameManager::getLastOrder(){
+		return GetManager().getLastOrderImpl();
+	}
+
+	void GameManager::SettingsMenu()
+	{
+		GetManager().SettingsMenuImpl();
+	}
+
+	const Order* GameManager::getLastOrderImpl() const{
+		return m_lastOrder;
 	}
 
 
@@ -191,6 +257,47 @@ namespace WZ
 
 	const Map* GameManager::getMapImpl() const{
 		return map;
+	}
+
+	void GameManager::SettingsMenuImpl()
+	{
+		std::vector<std::string> options;
+		options.reserve(2);
+
+		/*pushing back elements so we can modify them in the loop.
+		  the value of those elements doesn't matter since they 
+		  will be overwritten in the loop before being displayed
+		*/
+		options.push_back("");
+		options.push_back("");
+
+		bool done = false;
+
+		while (!done)
+		{
+			//update display of values for the booleans
+			options[0] = FormatBoolOption("Phase Observers", PhaseObsOn);
+			options[1] = FormatBoolOption("Statistic Observers", StatsObsOn);
+
+			std::cout << "\tSettings\n\n";
+
+			//ask user input and toggle the correct phase observer bool or exit the menu
+			switch(AskInput(options, "Back"))
+			{
+			case 1:
+				PhaseObsOn = !PhaseObsOn;
+				break;
+
+			case 2:
+				StatsObsOn = !StatsObsOn;
+				break;
+
+			case -1:
+				done = true;
+				break;
+			}
+
+		}
 	}
 
 	bool GameManager::Attack(Territory* source, Territory* target, unsigned int amount)
@@ -245,18 +352,41 @@ namespace WZ
 		return false;
 	}
 
+	/* This is mostly pseudocode and will be implemented*/
+	//void mainGameLoop(vector<Player>& players) {								players == m_activePlayers
 
-	/* This is mostly pseudocode and will be implemented
-	void mainGameLoop(vector<Player>& players) {
-		bool ordersLeft = true;					//	condition for the execution loop to go on
-		while (players.size() != 1) {
-			for (Player currentPlayer : players) {
-				currentPlayer.receiveReinforcements();	//	calculate and distribute reinforcements for each player
-				currentPlayer.receiveCards();		//	calculate and distribute cards for each player
-				currentPlayer.deploy();			//	deploy reinforcements and (eventually) play cards
+	unsigned int reinforcementPhase(Player& currentPlayer) {
+		int bonus = 0;
+		for (Continent c : GameManager::getMap()) {							//	loop for each continent in current map
+			for (size_t count = 0; count < c.getCount(); count++) {			//	loop for each territory in current continent
+				if (!(currentPlayer.ownsTerritory(c.getTerritory(count))))	//	if the territory is not hold by player
+					break;															//	break the loop, go to next continent													
+				if (count == (c.getCount() - 1))							//	if the number of checked territories equals the size of continent
+					bonus += c.getBonus();											//	give reinforcement bonus
 			}
-			while (ordersLeft) {				//	the orders execution loop depends on the condition if there are any orders left in the order list
-				for (Player currentPlayer : players) {			//	for each player in the game
+		}
+		if (currentPlayer.getNumOfTerritories() < 11)						//	getting a minimum of 3 reinforcements
+			return (3 + bonus);
+		else
+			return (bonus + (currentPlayer.getNumOfTerritories() / 3);		//	getting the (int) number_of_territories/3 as reinforcement (+ bonus)
+	}
+
+	//	this function needs to implement the player_view lines
+	void issueOrdersPhase(Player& currentPlayer) {
+
+	}
+
+
+
+	void mainGameLoop() {
+		bool ordersLeft = true;									//	condition for the execution loop to go on
+		vector<Player*> activePlayers = GameManager::getActivePlayers();
+		while (activePlayers.size() != 1) {
+			for (Player* currentPlayer : activePlayers) {
+				reinforcementPhase(*currentPlayer);
+			}
+			while (ordersLeft) {								//	the orders execution loop depends on the condition if there are any orders left in the order list
+				for (Player currentPlayer : activePlayers) {			//	for each player in the game
 					if (currentPlayer.orderList[0] != NULL) {
 						currentPlayer.orderList.executeFirstOrder();	//	we execute the first order in the queue
 						currentPlayer.orderList.popFirstOrder();	//	remove executed order from list
@@ -269,15 +399,12 @@ namespace WZ
 					if (currentPlayer.getTerritory() == NULL) {
 						cout << currentPlayer.getPlayerName() << " has been eliminated." << endl;
 						delete currentPlayer;			//	we eliminate the player from the current the running game
-
 					}
 				}
 			}
 		}
 	}
-  */
   
- 
 	void GameManager::startupPhaseImpl() {
 	
 		  //Randomize the order of the player
@@ -306,23 +433,23 @@ namespace WZ
 				  break;
 
   			case 4:
+
 	  			std::cout << "Each player will be given 30 armies\n ";
-		  		armies = 30;
+				armies = 30;
 			  	break;
 
   			case 5:
 	  			std::cout << "Each player will be given 25 armies\n ";
-		  		armies = 25;
+				armies = 25;
 			  	break;
 
   			default:
 	  			std::cout << "Only 2 to 5 players are accepted in this game";
 
-	  }
+		}
  
-	  //determine the order of players randomly
+		//determine the order of players randomly
 
-	  //Randomly assign territories to players one by one in a round-robin fashion
-
+		//Randomly assign territories to players one by one in a round-robin fashion
   }
 }

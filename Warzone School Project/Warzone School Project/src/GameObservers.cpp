@@ -1,5 +1,6 @@
 #include "GameObservers.h"
 #include "GameEngine.h"
+#include "Orders.h"
 #include <iostream>
 
 #define NUM_COL 2
@@ -14,53 +15,64 @@ namespace WZ
 	}
 
 	void PhaseObserver::update() {
-		currentphase = GameManager::getCurrentPhase();
-		p = GameManager::getCurrentPlayer();
-		PrintPhaseAndPlayer();
-	}
-
-	void PhaseObserver::PrintPhaseAndPlayer() {
-		//switch tring based on phase 
-		string phase_status;
-		switch(currentphase){
-			case GamePhase::Reinforcement:
-			phase_status = "Reinforcement"; 
-			break;
-			case GamePhase::IssuingOrders:
-			phase_status = "IssuingOrders"; 
-			break;
-			case GamePhase::OrderExecution:
-			phase_status = "OrderExecution"; 
-			break;
-
-		}
-
-		std::cout << "Current Phase: " << phase_status << "\n";
-		std::cout << "Current Player: " << *p << "\n";
+		const Player* p = GameManager::getCurrentPlayer();
 		
+		const char* currentphase;
+		switch(GameManager::getCurrentPhase())
+		{
+		case GamePhase::Reinforcement:
+			currentphase = "Reinforcement phase";
+			break;
 
+		case GamePhase::IssuingOrders:
+			currentphase = "Issuing Orders phase";
+			break;
+
+		case GamePhase::OrderExecution:
+			currentphase = "Order Execution phase";
+			break;
+		}
+		std::cout << *p << ": " << currentphase << "\n";
+		const Order* lastOrder = GameManager::getLastOrder();
+
+		if (lastOrder != nullptr)
+		{
+			std::cout << *lastOrder << "\n";
+		}
 	}
-
 
 	void StatisticsObserver::update() {
 		//gathering info from other classes to build a table
 		const Map* map = GameManager::getMap();
 		const std::vector <Player*> ActivePlayers = GameManager::getActivePlayers();
-		size_t height = ActivePlayers.size()+1;
-		//first build the string table
-		std::string* DataTable = new std::string[NUM_COL*height];
-		DataTable[0]= "Player";
-		DataTable[1]= "Amount conquered (%)";
 
-		for (size_t i = 1; i<=ActivePlayers.size(); ++i){
-			const Player* current = ActivePlayers[i-1];
-			DataTable[0+ NUM_COL *i]= current->getPlayerName();
-			DataTable[1+ NUM_COL *i]= std::to_string(CalculatePercentage(current, map));
+		size_t number_of_players_check = ActivePlayers.size();
+		if (number_of_players_check == 1){
+			const Player* current = ActivePlayers[0];
+			std::cout<< "Congratulations to the winner!"<< current->getPlayerName()<<std::endl;
 		}
+		else
+		{
+			size_t height = ActivePlayers.size() + 1;
+			//first build the string table
+			std::string* DataTable = new std::string[NUM_COL * height];
+			DataTable[0] = "Player";
+			DataTable[1] = "Amount conquered (%)";
 
-		TableStat=DrawTable(DataTable, NUM_COL, height);
-		delete[] DataTable;
-		std::cout<<TableStat<<std::endl;
+			for (size_t i = 1; i <= ActivePlayers.size(); ++i) {
+				const Player* current = ActivePlayers[i - 1];
+				DataTable[0 + NUM_COL * i] = current->getPlayerName();
+				DataTable[1 + NUM_COL * i] = std::to_string(CalculatePercentage(current, map));
+			}
+
+			std::string tableStr = DrawTable(DataTable, NUM_COL, height);
+			std::cout << tableStr << std::endl;
+			delete[] DataTable;
+		}
 	}
+
+		//getLastOrder returns a pointer to the last order, we nned to print out
+		//static // impl for now return NULL
+		//game manager 
 
 }

@@ -101,6 +101,16 @@ namespace WZ
 
 		static bool Attack(Territory* source, Territory* target, unsigned int amount);
 
+		static const Order* getLastOrder();
+
+		/* displays a menu to the user allowing them to toggle the observers on and off
+		*/
+		static void SettingsMenu();
+
+		/*	Function that calculates the number of reinforcements
+		for a given player and returns it */
+		unsigned int reinforcementPhase(Player& p);
+
 	private:
 
 		//private constructor of the GameManager class
@@ -143,6 +153,7 @@ namespace WZ
 		void resetPlayerDrawCard();
 
 		/* Underlying implementation of the startupPhase functions.
+
     	*/
 		void startupPhaseImpl(); 
 
@@ -164,6 +175,9 @@ namespace WZ
 		/* underlyin implementation of AddPhaseObserver
 		*/
 		void AddPhaseObserverImpl(PhaseObserver* p);
+		
+		/*function to get the number of players and initialize them in the m_activePlayers */
+		void InitializePlayers();
 
 		/* underlyin implementation of RemovePhaseObserver
 		*/
@@ -197,10 +211,16 @@ namespace WZ
 		*/
 		const Map* getMapImpl() const;
 
+		/* underlyin implementation of SettingsMenu function
+		*/
+		void SettingsMenuImpl();
+
 		/* main game loop
 		*/
 		void mainGameLoop();
-    
+
+		const Order* getLastOrderImpl() const;
+
 		std::vector<Player*> m_activePlayers;
 		std::vector<std::pair<const Player*, const Player*>> m_negotiatingPlayers;
 		Deck* m_deck;
@@ -209,5 +229,8 @@ namespace WZ
 		int CurrentPlayerIndex;
 		Map* map;
 		int armies;
+		Order* m_lastOrder;
+		bool PhaseObsOn=true;
+		bool StatsObsOn=true;
 	};
 }
