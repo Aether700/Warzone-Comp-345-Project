@@ -21,6 +21,8 @@ namespace WZ {
     class Observer {
 
     public:
+        //default virtual observer destructor to avoid memory leaks
+        virtual ~Observer() { }
 
         //Update the state of this observer
         virtual void update() = 0;
@@ -42,10 +44,14 @@ namespace WZ {
             return m_observers.size();
         }
 
-        /**
-         * Register an observer
-         * observer the observer object to be registered
-         *
+        //virtual destructor of the Subject class
+        virtual ~Subject()
+        {
+            for (T* obs : m_observers)
+            {
+                delete obs;
+            }
+        }
 
         /**
          * Unregister an observer
@@ -82,12 +88,16 @@ namespace WZ {
 
     class PhaseObserver :public Observer {
     public:
+        //update function of the PhaseObserver type. 
+        //Prints information relating to the phases as required by the assignment guidelines
         void update();
     };
 
 
     class StatisticsObserver :public Observer {
     public:
+        //update function of the StatisticsObserver type. 
+        //Prints information relating to the territories owned as required by the assignment guidelines
         void update();
     };
 
