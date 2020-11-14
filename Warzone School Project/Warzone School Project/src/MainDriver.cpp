@@ -2,7 +2,7 @@
 #include "GameEngine.h"
 
 extern void MapDriver();
-extern void MapLoaderDriver();
+extern void mainGameLoopDriver();
 extern void PlayerDriver();
 extern void OrdersDriver();
 extern void CardsDriver();
@@ -10,7 +10,7 @@ extern void CardsDriver();
 
 int main()
 {
-	std::array<const char*, 5> choices = {"Map", "Map Loader", "Player", "Orders", "Cards"};
+	std::array<const char*, 5> choices = {"Map", "Main Game Loop", "Player", "Orders", "Cards"};
 
 	bool done = false;
 	while(!done)
@@ -22,7 +22,7 @@ int main()
 			break;
 
 		case 2:
-			MapLoaderDriver();
+			mainGameLoopDriver();
 			break;
 
 		case 3:
