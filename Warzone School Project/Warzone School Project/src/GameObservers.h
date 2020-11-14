@@ -36,6 +36,11 @@ namespace WZ {
     class Subject {
 
     public:
+        /*  Temporary for MainGameLoopDriver
+        */
+        size_t getCount() const {
+            return m_observers.size();
+        }
 
         /**
          * Register an observer

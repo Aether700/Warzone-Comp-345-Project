@@ -18,6 +18,10 @@ using std::cin;
 
 namespace WZ
 {
+	void GameManager::callMainGameLoop() {
+		GetManager().mainGameLoop();
+	}
+
 	std::string FormatBoolOption(const std::string& option, bool val)
 	{
 		std::stringstream ss;

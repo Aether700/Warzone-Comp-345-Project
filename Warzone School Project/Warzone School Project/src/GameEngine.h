@@ -17,6 +17,11 @@ namespace WZ
 	class GameManager:public Subject <PhaseObserver>, public Subject<StatisticsObserver>
 	{
 	public:
+		friend void mainGameLoopSetup();
+		friend void mainGameLoopCleanup();
+
+		static void callMainGameLoop();		//	temporary function that calls the main game 
+												//	>>	loop from outside
 
 		/* Given that GameManager is a singleton we delete both the copy constructor 
 		  and the assignment operator to avoid having other objects of type GameManager 
@@ -251,5 +256,6 @@ namespace WZ
 		Order* m_lastOrder;
 		bool PhaseObsOn=true;
 		bool StatsObsOn=true;
+		
 	};
 }
