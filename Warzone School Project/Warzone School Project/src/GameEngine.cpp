@@ -502,50 +502,49 @@ namespace WZ
 
 		vector<Player*> activePlayers = GameManager::getActivePlayers();
 	
-		  //Randomize the order of the player
-		  cout << "\nBefore randomizing the order of players, thats our list of players: \n" << endl;
-		    for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
-        		cout << "Player" << i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
+		//Randomize the order of the player
+		cout << "\nBefore randomizing the order of players, thats our list of players: \n" << endl;
+		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
+        	cout << "Player" << i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
 
-		  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-		   std::default_random_engine default_random_engine(seed);
-		   std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
+		unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+		std::default_random_engine default_random_engine(seed);
+		std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
+		
+		cout << "\nAfter randomizing the order of players, thats our list of players: \n" << endl;
+		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
+			cout << "Player" <<  i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
+
+		// TO WORK ON! 
+		//Assign Players some territories using the Round Robin fashion (similar to FCFS).
+		vector<Player*> activePlayers = GameManager::getActivePlayers();
+		vector<Territory*> territories = Player::getTerritories();
+		//const std::vector<Territory*>* territories = map->getContinent();
 		 
-		  cout << "\nAfter randomizing the order of players, thats our list of players: \n" << endl;
-		    for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
-        		cout << "Player" <<  i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
-
-		  // TO WORK ON! 
-		  //Assign Players some territories using the Round Robin fashion (similar to FCFS).
-		  vector<Player*> activePlayers = GameManager::getActivePlayers();
-		  vector<Territory*> territories = Player::getTerritories();
-		   //const std::vector<Territory*>* territories = map->getContinent();
-		   
-			int terriroySize = GameManager::map->getContinent();
-			
+		int terriroySize = GameManager::map->getContinent();
+		
 	
-    		for (int i = 0; i < territories; i++)
-       	 		territories[i] = i;
-			std::shuffle(territories->begin(), territories->end(), default_random_engine);
+    	for (int i = 0; i < territories; i++)
+       	 	territories[i] = i;
+		std::shuffle(territories->begin(), territories->end(), default_random_engine);
 
-			for (int i = 0; i < terriroySize; i++) {
-				m_activePlayers.at(i % m_activePlayers.size())->addTerritory(territories->at(i));
-			}
+		for (int i = 0; i < terriroySize; i++) {
+			m_activePlayers.at(i % m_activePlayers.size())->addTerritory(territories->at(i));
+		}
  		int armies;
-		  switch (m_activePlayers.size())
-		  {
-			  case 2:
-				  std::cout << "Each player will be given 40 armies\n ";
-				  armies = 40;
-				  break;
+		switch (m_activePlayers.size())
+		{
+			case 2:
+			  std::cout << "Each player will be given 40 armies\n ";
+			  armies = 40;
+			  break;
 
-			  case 3:
-				  std::cout << "Each player will be given 35 armies\n ";
-				  armies = 35;
-				  break;
+			case 3:
+				std::cout << "Each player will be given 35 armies\n ";
+				armies = 35;
+				break;
 
   			case 4:
-
 	  			std::cout << "Each player will be given 30 armies\n ";
 				armies = 30;
 			  	break;
