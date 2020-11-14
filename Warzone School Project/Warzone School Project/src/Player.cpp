@@ -4,8 +4,8 @@
 #include "Cards.h"
 #include "GameEngine.h"
 
-#define OFFENSIVE_PLAY 0.4f
-#define CARD_PLAY 0.6f
+#define OFFENSIVE_PLAY 0.6f
+#define CARD_PLAY 0.75f
 #define BLOCKADE_THRESHOLD 15
 #define DEF_THRESHOLD 10
 
@@ -147,13 +147,10 @@ namespace WZ
 
 			Territory* destination = (*def)[0];
 			def->erase(def->begin());
-			m_toDef.push_back(destination);
-			unsigned int amount = m_reinforcements / def->size();
+			def->push_back(destination);
 
-			if (amount == 0)
-			{
-				amount = 1;
-			}
+			unsigned int amount = Clamp(1, m_reinforcements, Random::GetInt() % m_reinforcements);
+
 
 			m_reinforcements -= amount;
 
@@ -212,20 +209,32 @@ namespace WZ
 
 					if (typeToPlay == Card::Type::Bomb)
 					{
-						return toPlay->play(nullptr, target, this, nullptr, 0);
+						hand->removeCardFromHand(toPlay);
+						Order* o = toPlay->play(nullptr, target, this, nullptr, 0);
+						delete toPlay;
+						return o;
 					}
 					else
 					{
+						hand->removeCardFromHand(toPlay);
 						unsigned int armiesToSend = GetNumArmiesToSend(src);
-						return toPlay->play(src, target, this, nullptr, armiesToSend);
+						Order* o = toPlay->play(src, target, this, nullptr, armiesToSend);
+						delete toPlay;
+						return o;
 					}
 				}
 				else
 				{
 					//do other order (here only advance)
+					
 					if (src == nullptr)
 					{
-						return nullptr;
+						src = GetSourceTerritory(target);
+
+						if (src == nullptr)
+						{
+							return nullptr;
+						}
 					}
 
 					unsigned int armiesToSend = GetNumArmiesToSend(src);
@@ -258,7 +267,7 @@ namespace WZ
 					src = GetSourceTerritory(target);
 				}
 
-				if (src != nullptr || playerTarget != nullptr && Random::GetFloat() <= CARD_PLAY)
+				if ((src != nullptr || playerTarget != nullptr) && Random::GetFloat() <= CARD_PLAY)
 				{
 					//play card
 					Card::Type typeToPlay;
@@ -266,7 +275,7 @@ namespace WZ
 					{
 						typeToPlay = Card::Type::Diplomacy;
 					}
-					else if (playerTarget)
+					else if (playerTarget == nullptr)
 					{
 						typeToPlay = Card::Type::Airlift;
 					}
@@ -287,13 +296,18 @@ namespace WZ
 
 					if (typeToPlay == Card::Type::Diplomacy)
 					{
-						return toPlay->play(nullptr, nullptr, this, playerTarget, 0);
+						hand->removeCardFromHand(toPlay);
+						Order* o = toPlay->play(nullptr, nullptr, this, playerTarget, 0);
+						delete toPlay;
+						return o;
 					}
 					else
 					{
+						hand->removeCardFromHand(toPlay);
 						unsigned int armiesToSend = GetNumArmiesToSend(src);
-
-						return toPlay->play(src, target, this, nullptr, armiesToSend);
+						Order* o = toPlay->play(src, target, this, nullptr, armiesToSend);
+						delete toPlay;
+						return o;
 					}
 
 				}
@@ -310,7 +324,12 @@ namespace WZ
 					//otherwise we try to advance
 					if (src == nullptr)
 					{
-						return nullptr;
+						src = GetSourceTerritory(target);
+
+						if (src == nullptr)
+						{
+							return nullptr;
+						}
 					}
 
 					unsigned int armiesToSend = GetNumArmiesToSend(src);
@@ -403,8 +422,8 @@ namespace WZ
 			return 0;
 		}
 
-		unsigned int armiesToSend = (unsigned int)(Random::GetFloat() * t->m_availableArmies) + 1;
-		armiesToSend = Clamp(1, t->m_availableArmies, armiesToSend);
+		//temporarily taking all the available armies to make game run faster
+		unsigned int armiesToSend = t->m_availableArmies;
 		t->m_availableArmies -= armiesToSend;
 		return armiesToSend;
 	}
@@ -485,6 +504,11 @@ namespace WZ
 
 	bool Player::ShouldBlockade(Territory* target) const
 	{
+		if (territories.size() == 1)
+		{
+			return false;
+		}
+
 		std::vector<Territory*> accessList = GameManager::getMap()->getAccessList(target);
 
 		if (accessList.size() == 0)
@@ -571,10 +595,7 @@ namespace WZ
 			return nullptr;
 		Order* o = listOrders->dequeueOrder();
 
-		if (o != nullptr)
-		{
-			o->execute();
-		}
+		o->execute();
 		return o;
 	}
 }

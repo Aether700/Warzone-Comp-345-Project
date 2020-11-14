@@ -358,7 +358,7 @@ namespace WZ
 		if (validate())
 		{
 			m_target->setArmies(m_target->getArmies() * 2);
-			m_target->setOwner(GameManager::getNeutralPlayer());
+			m_target->getOwner()->removeTerritory(m_target);
 			m_isExecuted = true;
 		}
 	}
@@ -594,7 +594,7 @@ namespace WZ
 			}
 			i++;
 		}
-		m_orders.insert(m_orders.cbegin() + i, order);
+		m_orders.insert(m_orders.begin() + i, order);
 	}
 
 	void OrderList::deleteOrder(size_t index) { m_orders.erase(m_orders.begin() + index); }

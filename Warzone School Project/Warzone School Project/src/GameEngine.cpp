@@ -61,6 +61,11 @@ namespace WZ
 		delete m_deck;
 		delete m_lastOrder;
 		delete map;
+
+		for (Player* p : m_activePlayers)
+		{
+			delete p;
+		}
 	}
 
 	
@@ -303,6 +308,7 @@ namespace WZ
 		assert(amount != 0);
 		assert(source != nullptr);
 		assert(target != nullptr);
+		assert(source->getOwner() != GameManager::getNeutralPlayer());
 
 		unsigned int initialAmount = amount;
 
@@ -356,8 +362,12 @@ namespace WZ
 			for (size_t count = 0; count < map->getContinent(i)->getCount(); count++) {		//	loop for each territory in current continent
 				if (!(currentPlayer->ownsTerritory(map->getContinent(i)->getTerritory(count))))	//	if the territory is not hold by player
 					break;																			// >>	break the loop, go to next continent													
-				if (count == (map->getContinent(i)->getCount() - 1))						//	if the number of checked territories equals the size of continent
+				if (count == (map->getContinent(i)->getCount() - 1))					//	if the number of checked territories equals the size of continent
+				{
 					bonus += map->getContinent(i)->getBonus();									// >>	give reinforcement bonus
+					std::cout << currentPlayer->getPlayerName() 
+						<< " earned the army bonus of continent: " << map->getContinent(i) << "\n";
+				}
 			}
 		}
 		if (currentPlayer->getNumOfTerritories() < 11)							//	if player has < 11 territories
@@ -374,6 +384,10 @@ namespace WZ
 			CurrentPlayer = m_activePlayers[i];
 			m_activePlayers[i]->setReinforcements(reinforcementCalculator(m_activePlayers[i])
 				+ m_activePlayers[i]->m_reinforcements);	//	generate reinforcements
+
+			std::cout << m_activePlayers[i]->getPlayerName() << " now has " 
+				<< m_activePlayers[i]->m_reinforcements << " reinforcements for this turn\n";
+
 			GameManager::NotifyPhaseObserver();
 		}
 	}
@@ -409,7 +423,6 @@ namespace WZ
 				else
 				{
 					CurrentPlayer = issuingPlayers[i];
-					delete m_lastOrder;
 					m_lastOrder = currOrder;
 					issuingPlayers[i]->listOrders->addOrder(m_lastOrder);
 					GameManager::NotifyPhaseObserver();
@@ -424,9 +437,12 @@ namespace WZ
 	void GameManager::executeOrderPhase(){
 		bool ordersLeft = true;		/*	control variable for the Round-Robin execution loop. 
 										True initial value starts the loop.*/
+
+		m_lastOrder = nullptr;
 		while (ordersLeft) {
 			ordersLeft = false;			//	False value allows OR operations over each player
 			for (Player* p : m_activePlayers) {	
+				CurrentPlayer = p;
 				Order* currOrder = p->executeTopOrder();
 				ordersLeft |= currOrder != nullptr;
 				/*	if there are order executions happening, the loop will go on.
@@ -447,29 +463,42 @@ namespace WZ
 		while (m_activePlayers.size() > 1) {			
 			currentphase = GamePhase::Reinforcement;
 			reinforcementPhase();					
+			std::cout << "\n";
 
 			currentphase = GamePhase::IssuingOrders;
 			issueOrdersPhase();				
+			std::cout << "\n";
 
 			currentphase = GamePhase::OrderExecution;
 			executeOrderPhase();						
+			std::cout << "\n";
 
 			//	eliminate players with no territories left
 			for (size_t i = 0; i < m_activePlayers.size(); i++) {	
 				if (m_activePlayers[i]->getNumOfTerritories() == 0) {
 					cout << m_activePlayers[i]->getPlayerName() << " was eliminated. " << endl;
+					Player* eliminated = m_activePlayers[i];
 					m_activePlayers.erase(m_activePlayers.begin() + i);
+					GameManager::NotifyStatisticsObserver();
+					delete eliminated;
 				}
+			}
+
+			//reset hasDrawnCard
+			for (Player* p : m_activePlayers)
+			{
+				p->hasDrawnCard = false;
 			}
 
 			//update negotiating players
 			m_negotiatingPlayers = m_bufferList;
 			m_bufferList.clear();
+			std::cout << "=======================New Turn==========================\n";
 		}
 	}
 
 	void GameManager::startupPhaseImpl() {
-	
+		/*
 		  //Randomize the order of the player
 		  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 		   std::default_random_engine default_random_engine(seed);
@@ -514,5 +543,6 @@ namespace WZ
 		//determine the order of players randomly
 
 		//Randomly assign territories to players one by one in a round-robin fashion
+		*/
   }
 }

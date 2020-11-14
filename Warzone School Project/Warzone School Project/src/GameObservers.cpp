@@ -41,12 +41,12 @@ namespace WZ
 	void StatisticsObserver::update() {
 		//gathering info from other classes to build a table
 		const Map* map = GameManager::getMap();
-		const std::vector <Player*> ActivePlayers = GameManager::getActivePlayers();
+		const std::vector<Player*>& ActivePlayers = GameManager::getActivePlayers();
 
 		size_t number_of_players_check = ActivePlayers.size();
 		if (number_of_players_check == 1){
 			const Player* current = ActivePlayers[0];
-			std::cout<< "Congratulations to the winner!"<< current->getPlayerName()<<std::endl;
+			std::cout<< "Congratulations to the winner! "<< current->getPlayerName()<<std::endl;
 		}
 		else
 		{

@@ -607,7 +607,7 @@ namespace WZ
 
 		/*removes the Order with the highest priority in the list and returns it
 
-		  returns: the Order with the highest priority
+		  returns: the Order with the highest priority or null if there is no orders in the list
 		*/
 		Order* dequeueOrder();
 
