@@ -16,7 +16,7 @@ namespace WZ
 	*/
 	void Random::Init()
 	{
-		srand(time(nullptr));
+		srand((unsigned int)time(nullptr));
 	}
 
 	//wrapper function for the c function rand

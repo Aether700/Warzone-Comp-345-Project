@@ -560,10 +560,11 @@ namespace WZ
 		}
 	}
 
-	bool Player::executeTopOrder() {
+	Order* Player::executeTopOrder() {
 		if (listOrders->getCount() == 0)
-			return false;
-		listOrders->dequeueOrder()->execute();
-		return true;
+			return nullptr;
+		Order* o = listOrders->dequeueOrder();
+		o->execute();
+		return o;
 	}
 }

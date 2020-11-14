@@ -241,10 +241,11 @@ namespace WZ
 
 		std::vector<Player*> m_activePlayers;
 		std::vector<std::pair<const Player*, const Player*>> m_negotiatingPlayers;
+		std::vector<std::pair<const Player*, const Player*>> m_bufferList;
 		Deck* m_deck;
 		Player* m_neutralPlayer;
 		GamePhase currentphase;
-		int CurrentPlayerIndex;
+		Player* CurrentPlayer;
 		Map* map;
 		int armies;
 		Order* m_lastOrder;

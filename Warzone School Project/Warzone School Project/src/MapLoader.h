@@ -63,7 +63,7 @@ namespace WZ {
 		MapLoader& operator=(const MapLoader&);				//	assign operator overwriter
 		Map* mapGenerator();								//	default map generator - user picks a map from the predefined map folder
 		Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
-		string menu_loader(const string& path = "\Maps");	//	menu function to navigate through the menu option
+		string menu_loader(const string& path = "/Maps");	//	menu function to navigate through the menu option
 	};
 	/*
 		overwriter of the insertion operator

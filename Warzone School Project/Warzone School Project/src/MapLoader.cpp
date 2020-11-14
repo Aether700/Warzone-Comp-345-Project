@@ -91,7 +91,7 @@ namespace WZ {
 	void MapLoader::setAdjList() {
 		for (Borders b : borders) {
 			Territory* curentTerritory = territories[b.getBorder()[0] - 1];
-			for (int i = 1; i < b.getBorder().size(); i++)
+			for (size_t i = 1; i < b.getBorder().size(); i++)
 				curentTerritory->addAdjTerritory(territories[b.getBorder()[i] - 1]);
 		}
 	}

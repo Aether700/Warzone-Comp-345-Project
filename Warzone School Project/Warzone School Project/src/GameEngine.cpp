@@ -55,6 +55,7 @@ namespace WZ
 	{
 		delete m_neutralPlayer;
 		delete m_deck;
+		delete m_lastOrder;
 		delete map;
 	}
 
@@ -81,7 +82,7 @@ namespace WZ
 
 	void GameManager::addNegotiatingPlayersImpl(const Player* p1, const Player* p2)
 	{
-		m_negotiatingPlayers.push_back({ p1, p2 });
+		m_bufferList.push_back({ p1, p2 });
 	}
 
 	void GameManager::drawCardImpl(Player* p)
@@ -121,7 +122,7 @@ namespace WZ
 	}
 
 	const Player* GameManager::getCurrentPlayer() {
-		return GetManager().m_activePlayers[GetManager().CurrentPlayerIndex];
+		return GetManager().CurrentPlayer;
 	}
 
 	void GameManager::getUserMap()
@@ -262,16 +263,8 @@ namespace WZ
 
 	void GameManager::SettingsMenuImpl()
 	{
-		std::vector<std::string> options;
-		options.reserve(2);
-
-		/*pushing back elements so we can modify them in the loop.
-		  the value of those elements doesn't matter since they 
-		  will be overwritten in the loop before being displayed
-		*/
-		options.push_back("");
-		options.push_back("");
-
+		std::vector<std::string> options = { "", "" };
+		
 		bool done = false;
 
 		while (!done)
@@ -370,8 +363,14 @@ namespace WZ
 	}
 
 	void GameManager::reinforcementPhase() {
-		for (size_t i = 0; i < m_activePlayers.size(); i++) {					//	for all active players in the game
-			m_activePlayers[i]->setReinforcements(reinforcementCalculator(m_activePlayers[i]));	//	generate reinforcements
+		delete m_lastOrder;
+		m_lastOrder = nullptr;
+		//	for all active players in the game
+		for (size_t i = 0; i < m_activePlayers.size(); i++) {					
+			CurrentPlayer = m_activePlayers[i];
+			m_activePlayers[i]->setReinforcements(reinforcementCalculator(m_activePlayers[i])
+				+ m_activePlayers[i]->m_reinforcements);	//	generate reinforcements
+			GameManager::NotifyPhaseObserver();
 		}
 	}
 
@@ -405,9 +404,11 @@ namespace WZ
 				}
 				else
 				{
+					CurrentPlayer = issuingPlayers[i];
 					delete m_lastOrder;
 					m_lastOrder = currOrder;
 					issuingPlayers[i]->listOrders->addOrder(m_lastOrder);
+					GameManager::NotifyPhaseObserver();
 				}
 			}
 		}
@@ -422,27 +423,44 @@ namespace WZ
 		while (ordersLeft) {
 			ordersLeft = false;			//	False value allows OR operations over each player
 			for (Player* p : m_activePlayers) {	
-					ordersLeft |= p->executeTopOrder();
-					/*	if there are order executions happening, the loop will go on.
-					Loop will run a last empty round when all players will have their 
-							order lists empty to set variable ordersLeft to false*/
+				Order* currOrder = p->executeTopOrder();
+				ordersLeft |= currOrder != nullptr;
+				/*	if there are order executions happening, the loop will go on.
+				Loop will run a last empty round when all players will have their 
+						order lists empty to set variable ordersLeft to false*/
+
+				if (currOrder != nullptr)
+				{
+					delete m_lastOrder;
+					m_lastOrder = currOrder;
+					GameManager::NotifyPhaseObserver();
+				}
 			}
 		}
 	}
 
 	void GameManager::mainGameLoop() {
-		while (m_activePlayers.size() > 1) {		//	
-			reinforcementPhase();					//	
-			issueOrdersPhase();						//	
-			executeOrderPhase();					//	
+		while (m_activePlayers.size() > 1) {			
+			currentphase = GamePhase::Reinforcement;
+			reinforcementPhase();					
 
-		//	eliminate players with no territories left
+			currentphase = GamePhase::IssuingOrders;
+			issueOrdersPhase();				
+
+			currentphase = GamePhase::OrderExecution;
+			executeOrderPhase();						
+
+			//	eliminate players with no territories left
 			for (size_t i = 0; i < m_activePlayers.size(); i++) {	
 				if (m_activePlayers[i]->getNumOfTerritories() == 0) {
-					cout << m_activePlayers[i]->getPlayerName() << " has left the game. " << endl;
+					cout << m_activePlayers[i]->getPlayerName() << " was eliminated. " << endl;
 					m_activePlayers.erase(m_activePlayers.begin() + i);
 				}
 			}
+
+			//update negotiating players
+			m_negotiatingPlayers = m_bufferList;
+			m_bufferList.clear();
 		}
 	}
 
@@ -457,7 +475,7 @@ namespace WZ
 		   const std::vector<Territory*>* territories = map->getContinent();
 		   std::shuffle(territories->begin(), territories->end(), default_random_engine);
 
-			for (int i = 0; i < territories->size(); i++) {
+			for (size_t i = 0; i < territories->size(); i++) {
 				m_activePlayers.at(i % m_activePlayers.size())->addTerritory(territories->at(i));
 			}
 

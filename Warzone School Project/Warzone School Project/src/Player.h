@@ -97,9 +97,10 @@ namespace WZ
 		*/
 		Order* issueOrder();
 		
-		/*	Executes the top order
-			*/
-		bool executeTopOrder();
+		/*	tries to execute the top order and returns that order. 
+			Returns null if there are no orders left in the order list of this player
+		*/
+		Order* executeTopOrder();
 
 		/* returns true if this player has a card of the specified type in their hand
 		  
