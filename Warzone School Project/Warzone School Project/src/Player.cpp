@@ -65,6 +65,10 @@ namespace WZ
 
 	const OrderList* Player::getOrderList() const { return listOrders; }
 
+	unsigned int Player::getReinforcements() const {
+		return m_reinforcements;
+	}
+
 	std::vector<Territory*>::iterator Player::begin() {
 		return territories.begin();
 	}
@@ -100,6 +104,10 @@ namespace WZ
 	void Player::setHand() {
 		Hand h;
 		hand = &h;
+	}
+
+	void Player::setReinforcements(unsigned int troops) {
+		m_reinforcements = troops;
 	}
 
 	void Player::addTerritory(Territory* newTerritory) {
@@ -550,5 +558,12 @@ namespace WZ
 				}
 			}
 		}
+	}
+
+	bool Player::executeTopOrder() {
+		if (listOrders->getCount() == 0)
+			return false;
+		listOrders->dequeueOrder()->execute();
+		return true;
 	}
 }

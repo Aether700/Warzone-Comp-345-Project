@@ -106,9 +106,6 @@ namespace WZ
 		*/
 		static void SettingsMenu();
 
-		/*	Function that calculates the number of reinforcements
-		for a given player and returns it */
-		unsigned int reinforcementPhase(Player& p);
 
 	private:
 
@@ -155,10 +152,6 @@ namespace WZ
 
     	*/
 		void startupPhaseImpl(); 
-
-		/* Round Robin function  NOT YET DONE 
-		*/
-		void RoundRobin();
 
 		/* Notifies all statistic observers who are registered to the GameManager
 		*/
@@ -224,13 +217,25 @@ namespace WZ
 		*/
 		static bool Attack(Territory* source, Territory* target, unsigned int amount);
 
-		/* main game loop
-		*/
-		void mainGameLoop();
+		/*	Function that calculates the number of reinforcements for a given player
+		 */
+		unsigned int reinforcementCalculator(Player* p);
+
+		/*	Calculate and distribute reinforcements for all active players in game.
+			This phase is sole for the begining of the round. */
+		void reinforcementPhase();
 
 		/* runs the issue orders phase
 		*/
 		void issueOrdersPhase();
+		
+		/*	runs the execution order phase
+		*/
+		void executeOrderPhase();
+
+		/* main game loop
+		*/
+		void mainGameLoop();
 
 		const Order* getLastOrderImpl() const;
 

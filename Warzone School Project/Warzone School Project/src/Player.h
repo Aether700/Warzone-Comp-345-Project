@@ -60,6 +60,7 @@ namespace WZ
 		Hand* getHand();
 		std::string getPlayerName() const;
 		const OrderList* getOrderList() const;
+		unsigned int getReinforcements() const;
 		
 		/* default begin function to allow use of ranged for loops
 		returns: an iterator pointing to the beginning of the list
@@ -81,6 +82,7 @@ namespace WZ
 		//Setters
 		void setPlayerName(std::string name);
 		void setHand();
+		void setReinforcements(unsigned int);
 
 		//Methods 
 		bool ownsTerritory(Territory* t) const; //method to check if a territory is owned or not.
@@ -94,6 +96,10 @@ namespace WZ
 		  returns: an order to add to the order list or null if no more orders should be played this turn
 		*/
 		Order* issueOrder();
+		
+		/*	Executes the top order
+			*/
+		bool executeTopOrder();
 
 		/* returns true if this player has a card of the specified type in their hand
 		  

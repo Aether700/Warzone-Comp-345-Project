@@ -353,23 +353,26 @@ namespace WZ
 		return false;
 	}
 
-	/* This is mostly pseudocode and will be implemented*/
-	//void mainGameLoop(vector<Player>& players) {								players == m_activePlayers
-
-	unsigned int reinforcementPhase(Player& currentPlayer) {
-		int bonus = 0;
-		for (Continent c : GameManager::getMap()) {							//	loop for each continent in current map
-			for (size_t count = 0; count < c.getCount(); count++) {			//	loop for each territory in current continent
-				if (!(currentPlayer.ownsTerritory(c.getTerritory(count))))	//	if the territory is not hold by player
-					break;															//	break the loop, go to next continent													
-				if (count == (c.getCount() - 1))							//	if the number of checked territories equals the size of continent
-					bonus += c.getBonus();											//	give reinforcement bonus
+	unsigned int GameManager::reinforcementCalculator(Player* currentPlayer) {
+		int bonus = 0;															//	bonus base
+		for (size_t i = 0; i < map->getContinentCount(); i++) {								//	loop for each continent in current map
+			for (size_t count = 0; count < map->getContinent(i)->getCount(); count++) {		//	loop for each territory in current continent
+				if (!(currentPlayer->ownsTerritory(map->getContinent(i)->getTerritory(count))))	//	if the territory is not hold by player
+					break;																			// >>	break the loop, go to next continent													
+				if (count == (map->getContinent(i)->getCount() - 1))						//	if the number of checked territories equals the size of continent
+					bonus += map->getContinent(i)->getBonus();									// >>	give reinforcement bonus
 			}
 		}
-		if (currentPlayer.getNumOfTerritories() < 11)						//	getting a minimum of 3 reinforcements
-			return (3 + bonus);
+		if (currentPlayer->getNumOfTerritories() < 11)							//	if player has < 11 territories
+			return (3 + bonus);														// >>fs	there is a minimum amount of reinforcements guaranteed (= 3)
 		else
-			return (bonus + (currentPlayer.getNumOfTerritories() / 3);		//	getting the (int) number_of_territories/3 as reinforcement (+ bonus)
+			return bonus + (currentPlayer->getNumOfTerritories() / 3);			//	returning the (int) number_of_territories/3 as reinforcement (+ bonus)
+	}
+
+	void GameManager::reinforcementPhase() {
+		for (size_t i = 0; i < m_activePlayers.size(); i++) {					//	for all active players in the game
+			m_activePlayers[i]->setReinforcements(reinforcementCalculator(m_activePlayers[i]));	//	generate reinforcements
+		}
 	}
 
 	void GameManager::issueOrdersPhase()
@@ -410,35 +413,39 @@ namespace WZ
 		}
 	}
 
-
-
-	void mainGameLoop() {
-		bool ordersLeft = true;									//	condition for the execution loop to go on
-		vector<Player*> activePlayers = GameManager::getActivePlayers();
-		while (activePlayers.size() != 1) {
-			for (Player* currentPlayer : activePlayers) {
-				reinforcementPhase(*currentPlayer);
-			}
-			while (ordersLeft) {								//	the orders execution loop depends on the condition if there are any orders left in the order list
-				for (Player currentPlayer : activePlayers) {			//	for each player in the game
-					if (currentPlayer.orderList[0] != NULL) {
-						currentPlayer.orderList.executeFirstOrder();	//	we execute the first order in the queue
-						currentPlayer.orderList.popFirstOrder();	//	remove executed order from list
-					}
-					else
-						ordersLeft = false;
-					currentPlayer.orderList.popFirstOrder();	//	we remove the executed order from the queue
-				}
-				for (Player currentPlayer : players) {			//	After each round played, we check if any player has been eliminated
-					if (currentPlayer.getTerritory() == NULL) {
-						cout << currentPlayer.getPlayerName() << " has been eliminated." << endl;
-						delete currentPlayer;			//	we eliminate the player from the current the running game
-					}
-				}
+	/*	This function will execute orders in priority order - from each player 
+			in a Round-Robin sequence. Each succesfull execution will return a true value
+			which will set the control variable to true - keeping the loop active*/
+	void GameManager::executeOrderPhase(){
+		bool ordersLeft = true;		/*	control variable for the Round-Robin execution loop. 
+										True initial value starts the loop.*/
+		while (ordersLeft) {
+			ordersLeft = false;			//	False value allows OR operations over each player
+			for (Player* p : m_activePlayers) {	
+					ordersLeft |= p->executeTopOrder();
+					/*	if there are order executions happening, the loop will go on.
+					Loop will run a last empty round when all players will have their 
+							order lists empty to set variable ordersLeft to false*/
 			}
 		}
 	}
-  
+
+	void GameManager::mainGameLoop() {
+		while (m_activePlayers.size() > 1) {		//	
+			reinforcementPhase();					//	
+			issueOrdersPhase();						//	
+			executeOrderPhase();					//	
+
+		//	eliminate players with no territories left
+			for (size_t i = 0; i < m_activePlayers.size(); i++) {	
+				if (m_activePlayers[i]->getNumOfTerritories() == 0) {
+					cout << m_activePlayers[i]->getPlayerName() << " has left the game. " << endl;
+					m_activePlayers.erase(m_activePlayers.begin() + i);
+				}
+			}
+		}
+	}	//******************** Where exactly will we implement the reinforcement distribution? In the reinforcementPhase or issueOrdersPhase?******************************
+
 	void GameManager::startupPhaseImpl() {
 	
 		  //Randomize the order of the player
