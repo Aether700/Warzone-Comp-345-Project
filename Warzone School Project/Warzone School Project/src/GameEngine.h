@@ -61,7 +61,7 @@ namespace WZ
 		map will be randomly assigned to the players in a round-robin fashion.
 		And finally, depending on the number of players, each player will start with a number of
 		initial armies.  This method will return the player, the number of armies and its territories.*/;
-		static void startupPhase(const Player* p, const Territory* t, int armies);
+		static void startupPhase(const Player* p, const Territory* t);
 	
 		//Returns the current game manager phase
 		static GamePhase getCurrentPhase();
@@ -252,7 +252,6 @@ namespace WZ
 		GamePhase currentphase;
 		Player* CurrentPlayer;
 		Map* map;
-		int armies;
 		Order* m_lastOrder;
 		bool PhaseObsOn=true;
 		bool StatsObsOn=true;
