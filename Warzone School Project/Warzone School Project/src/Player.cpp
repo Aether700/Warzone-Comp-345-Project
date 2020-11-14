@@ -570,7 +570,11 @@ namespace WZ
 		if (listOrders->getCount() == 0)
 			return nullptr;
 		Order* o = listOrders->dequeueOrder();
-		o->execute();
+
+		if (o != nullptr)
+		{
+			o->execute();
+		}
 		return o;
 	}
 }

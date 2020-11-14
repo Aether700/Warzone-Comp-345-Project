@@ -613,6 +613,11 @@ namespace WZ
 
 	Order* OrderList::dequeueOrder()
 	{
+		if (m_orders.empty())
+		{
+			return nullptr;
+		}
+
 		Order* toReturn = m_orders[m_orders.size() - 1];
 		deleteOrder(m_orders.size() - 1);
 		return toReturn;
