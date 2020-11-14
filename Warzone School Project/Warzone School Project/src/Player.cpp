@@ -138,11 +138,17 @@ namespace WZ
 	Order* Player::issueOrder() {
 		if (m_reinforcements != 0)
 		{
-			std::vector<Territory*>& def = toDefend();
-			Territory* destination = def[0];
-			def.erase(def.begin());
+			std::vector <Territory*>* def = &toDefend();
+
+			if (def->empty())
+			{
+				def = &territories;
+			}
+
+			Territory* destination = (*def)[0];
+			def->erase(def->begin());
 			m_toDef.push_back(destination);
-			unsigned int amount = m_reinforcements / def.size();
+			unsigned int amount = m_reinforcements / def->size();
 
 			if (amount == 0)
 			{
