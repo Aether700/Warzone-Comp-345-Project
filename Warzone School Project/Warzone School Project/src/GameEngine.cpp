@@ -444,7 +444,7 @@ namespace WZ
 				}
 			}
 		}
-	}	//******************** Where exactly will we implement the reinforcement distribution? In the reinforcementPhase or issueOrdersPhase?******************************
+	}
 
 	void GameManager::startupPhaseImpl() {
 	

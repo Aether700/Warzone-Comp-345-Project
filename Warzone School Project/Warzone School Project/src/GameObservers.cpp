@@ -17,13 +17,10 @@ namespace WZ
 	void PhaseObserver::update() {
 		const Player* p = GameManager::getCurrentPlayer();
 		
-		const char* currentphase;
+		//by default assume Reinforcement Phase
+		const char* currentphase = "Reinforcement phase";
 		switch(GameManager::getCurrentPhase())
 		{
-		case GamePhase::Reinforcement:
-			currentphase = "Reinforcement phase";
-			break;
-
 		case GamePhase::IssuingOrders:
 			currentphase = "Issuing Orders phase";
 			break;

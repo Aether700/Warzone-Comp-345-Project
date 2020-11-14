@@ -106,6 +106,15 @@ namespace WZ
 		*/
 		static void SettingsMenu();
 
+		/* Static function responsible of running an attack
+
+		  source: the territory from which the attacking armies come from
+		  target: the territory that is being attacked
+		  amount: the number of armies that the source territory sends to attack
+
+		  return: true if the attackers have successfully captured the territory, false otherwise
+		*/
+		static bool Attack(Territory* source, Territory* target, unsigned int amount);
 
 	private:
 
@@ -207,15 +216,6 @@ namespace WZ
 		*/
 		void SettingsMenuImpl();
 
-		/* Static function responsible of running an attack
-
-		  source: the territory from which the attacking armies come from
-		  target: the territory that is being attacked
-		  amount: the number of armies that the source territory sends to attack
-
-		  return: true if the attackers have successfully captured the territory, false otherwise
-		*/
-		static bool Attack(Territory* source, Territory* target, unsigned int amount);
 
 		/*	Function that calculates the number of reinforcements for a given player
 		 */

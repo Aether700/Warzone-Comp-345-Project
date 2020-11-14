@@ -47,9 +47,9 @@ void PlayerDriver() {
     std::cout << *o2 << "\n";
     std::cout << *o3 << "\n";
 
-    p1->issueOrder(o1);
-    p1->issueOrder(o2);
-    p1->issueOrder(o3);
+    p1->issueOrder();
+    p1->issueOrder();
+    p1->issueOrder();
 
     std::cout << "\nPrinting order list: ";
     std::cout << *p1->getOrderList() << "\n";

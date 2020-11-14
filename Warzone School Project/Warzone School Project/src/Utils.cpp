@@ -23,7 +23,7 @@ namespace WZ
 	int Random::GetInt() { return rand(); }
 
 	/* takes the value returned by rand as a float and divides it by 
-		32000.0f (this specific value was obtained through trial and errors
+		32000.0f (this specific value was obtained through trial and errors)
 	*/
 	float Random::GetFloat()
 	{
