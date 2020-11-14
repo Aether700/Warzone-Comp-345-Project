@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <sstream>
 #include <random>
+#include <chrono>
 using namespace std; 
 
 #define DEF_WIN_RATE 0.7f
@@ -498,20 +499,39 @@ namespace WZ
 	}
 
 	void GameManager::startupPhaseImpl() {
-		/*
+
+		vector<Player*> activePlayers = GameManager::getActivePlayers();
+	
 		  //Randomize the order of the player
+		  cout << "\nBefore randomizing the order of players, thats our list of players: \n" << endl;
+		    for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
+        		cout << "Player" << i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
+
 		  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 		   std::default_random_engine default_random_engine(seed);
 		   std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
-		  
-		  //Assign Players some territories
-		   const std::vector<Territory*>* territories = map->getContinent();
-		   std::shuffle(territories->begin(), territories->end(), default_random_engine);
+		 
+		  cout << "\nAfter randomizing the order of players, thats our list of players: \n" << endl;
+		    for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
+        		cout << "Player" <<  i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
 
-			for (size_t i = 0; i < territories->size(); i++) {
+		  // TO WORK ON! 
+		  //Assign Players some territories using the Round Robin fashion (similar to FCFS).
+		  vector<Player*> activePlayers = GameManager::getActivePlayers();
+		  vector<Territory*> territories = Player::getTerritories();
+		   //const std::vector<Territory*>* territories = map->getContinent();
+		   
+			int terriroySize = GameManager::map->getContinent();
+			
+	
+    		for (int i = 0; i < territories; i++)
+       	 		territories[i] = i;
+			std::shuffle(territories->begin(), territories->end(), default_random_engine);
+
+			for (int i = 0; i < terriroySize; i++) {
 				m_activePlayers.at(i % m_activePlayers.size())->addTerritory(territories->at(i));
 			}
-
+ 		int armies;
 		  switch (m_activePlayers.size())
 		  {
 			  case 2:
@@ -543,6 +563,5 @@ namespace WZ
 		//determine the order of players randomly
 
 		//Randomly assign territories to players one by one in a round-robin fashion
-		*/
   }
 }
