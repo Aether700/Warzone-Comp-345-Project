@@ -21,6 +21,7 @@ namespace WZ
 		//temporary friend functions for the drivers
 		friend void mainGameLoopSetup();
 		friend void startupPhaseSetup(std::vector<Player*>& players);
+		friend void gameObserversSetup();
 		friend void externalCleanup();
 
 		static void callMainGameLoop();		//	temporary function that calls the main game 
