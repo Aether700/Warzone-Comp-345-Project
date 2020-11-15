@@ -231,6 +231,13 @@ namespace WZ
 					{
 						src = GetSourceTerritory(target);
 
+						while (!m_toAtk.empty() && src == nullptr)
+						{
+							target = atk[0];
+							atk.erase(atk.begin());
+							src = GetSourceTerritory(target);
+						}
+
 						if (src == nullptr)
 						{
 							return nullptr;
@@ -326,6 +333,13 @@ namespace WZ
 					{
 						src = GetSourceTerritory(target);
 
+						while (!m_toDef.empty() && src == nullptr)
+						{
+							target = def[0];
+							def.erase(def.begin());
+							src = GetSourceTerritory(target);
+						}
+
 						if (src == nullptr)
 						{
 							return nullptr;
@@ -383,7 +397,7 @@ namespace WZ
 	{
 		for (Territory* t : territories)
 		{
-			if (t->m_availableArmies > 0 && !IsToDefend(t))
+			if (t->m_availableArmies > 0)
 			{
 				if (target == nullptr)
 				{
@@ -401,18 +415,6 @@ namespace WZ
 		}
 
 		return nullptr;
-	}
-
-	bool Player::IsToDefend(Territory* t) const
-	{
-		for (Territory* curr : m_toDef)
-		{
-			if (curr == t)
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	unsigned int Player::GetNumArmiesToSend(Territory* t)
@@ -553,6 +555,12 @@ namespace WZ
 
 			int heuristic = 0;
 
+			if (owned->getArmies() == 0)
+			{
+				m_toDef.push_back(owned);
+				continue;
+			}
+
 			for (Territory* adj : accessList)
 			{
 				if (adj->getOwner() == GameManager::getNeutralPlayer())
@@ -578,9 +586,7 @@ namespace WZ
 
 		for (Territory* owned : territories)
 		{
-			std::vector<Territory*> accessList = GameManager::getMap()->getAccessList(owned);
-
-			for (Territory* adj : accessList)
+			for (Territory* adj : owned->getAdjList())
 			{
 				if (adj->getOwner() != this)
 				{

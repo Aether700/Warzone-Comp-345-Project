@@ -367,7 +367,7 @@ namespace WZ
 				{
 					bonus += map->getContinent(i)->getBonus();									// >>	give reinforcement bonus
 					std::cout << currentPlayer->getPlayerName() 
-						<< " earned the army bonus of continent: " << map->getContinent(i) << "\n";
+						<< " earned the army bonus of continent: " << map->getContinent(i)->getName() << "\n";
 				}
 			}
 		}
@@ -461,7 +461,11 @@ namespace WZ
 	}
 
 	void GameManager::mainGameLoop() {
-		while (m_activePlayers.size() > 1) {			
+		while (m_activePlayers.size() > 1) {
+
+			//temp map print
+			std::cout << *map;
+
 			currentphase = GamePhase::Reinforcement;
 			reinforcementPhase();					
 			std::cout << "\n";

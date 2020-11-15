@@ -233,9 +233,9 @@ std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
 
     Hand::~Hand()
     {
-        for (vector<Card*>::iterator it = hand.begin(); it != hand.end(); it++)
+        for (Card* c : hand)
         {
-            delete* it;    
+            delete c;    
         }
     }
 

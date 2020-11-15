@@ -27,8 +27,6 @@ namespace WZ
 
 		Territory* GetSourceTerritory(Territory* target = nullptr) const;
 
-		bool IsToDefend(Territory* t) const;
-
 		unsigned int GetNumArmiesToSend(Territory* t);
 
 		Card* GetCardOfType(Card::Type type);
