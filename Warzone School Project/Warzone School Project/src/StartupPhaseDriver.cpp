@@ -58,8 +58,6 @@ namespace WZ
 		GameManager& demo = GameManager::GetManager();
 		demo.m_activePlayers = players;
 		demo.m_deck = new Deck();
-		demo.PhaseObsOn = true;
-		demo.StatsObsOn = true;
 		demo.map = CreateMap();
 
 		std::cout << "Starting map:\n\n" << *demo.map;

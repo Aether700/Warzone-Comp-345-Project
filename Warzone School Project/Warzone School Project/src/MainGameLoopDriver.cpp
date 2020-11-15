@@ -61,12 +61,6 @@ namespace WZ {
 		demo.PhaseObsOn = true;
 		demo.StatsObsOn = true;
 		demo.map = CreateMap(demo.m_activePlayers);
-		if (demo.Subject<PhaseObserver>::getCount() == 0) {
-			GameManager::AddPhaseObserver(new PhaseObserver());
-		}
-		if (demo.Subject<StatisticsObserver>::getCount() == 0) {
-			GameManager::AddStatisticsObserver(new StatisticsObserver());
-		}
 	}
 }
 

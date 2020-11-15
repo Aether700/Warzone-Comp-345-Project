@@ -54,6 +54,8 @@ namespace WZ
 		map(nullptr), currentphase(GamePhase::Reinforcement), m_lastOrder(nullptr)
 	{
 		Random::Init();
+		GameManager::AddPhaseObserver(new PhaseObserver());
+		GameManager::AddStatisticsObserver(new StatisticsObserver());
 	}
 	
 	GameManager::~GameManager()
