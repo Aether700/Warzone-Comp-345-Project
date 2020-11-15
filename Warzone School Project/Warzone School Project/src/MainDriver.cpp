@@ -1,7 +1,7 @@
 #include "Utils.h"
 #include "GameEngine.h"
 
-extern void MapDriver();
+extern void gameObserversDriver();
 extern void mainGameLoopDriver();
 extern void startupPhaseDriver();
 extern void OrdersDriver();
@@ -10,7 +10,7 @@ extern void CardsDriver();
 
 int main()
 {
-	std::array<const char*, 5> choices = {"Map", "Main Game Loop", "Startup Phase", "Orders", "Cards"};
+	std::array<const char*, 5> choices = {"Observers", "Main Game Loop", "Startup Phase", "Orders", "Cards"};
 
 	bool done = false;
 	while(!done)
@@ -18,7 +18,7 @@ int main()
 		switch (WZ::AskInput(choices, "Exit"))
 		{
 		case 1:
-			MapDriver();
+			gameObserversDriver();
 			break;
 
 		case 2:
