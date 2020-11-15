@@ -54,6 +54,8 @@ namespace WZ
 		map(nullptr), currentphase(GamePhase::Reinforcement), m_lastOrder(nullptr)
 	{
 		Random::Init();
+		GameManager::AddPhaseObserver(new PhaseObserver());
+		GameManager::AddStatisticsObserver(new StatisticsObserver());
 	}
 	
 	GameManager::~GameManager()
@@ -504,8 +506,6 @@ namespace WZ
 
 	void GameManager::startupPhaseImpl() {
 
-		vector<Player*> activePlayers = GameManager::getActivePlayers();
-	
 		//Randomize the order of the player
 		cout << "\nBefore randomizing the order of players, thats our list of players: \n" << endl;
 		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
@@ -515,13 +515,26 @@ namespace WZ
 		std::default_random_engine default_random_engine(seed);
 		std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
 		
+		cout << "\nAfter randomizing the order of players, thats our list of players: \n" << endl;
+		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
+			cout << m_activePlayers[i]->getPlayerName()<< endl;
+
 		std::cout << "\n";
-		//assign territories
-		int playerIndex = 0;
+
+		//get territories
+		std::vector<Territory*> territories;
+		territories.reserve(map->getTerritoryCount());
 		for (std::pair<unsigned int, Territory*> pair : *map)
 		{
-			Territory* curr = pair.second;
+			territories.push_back(pair.second);
+		}
+		//randomize the territories
+		std::shuffle(territories.begin(), territories.end(), default_random_engine);
 
+		//assign territories
+		int playerIndex = 0;
+		for (Territory* curr : territories)
+		{
 			std::cout << m_activePlayers[playerIndex]->getPlayerName()
 				<< " is assigned territory: " << curr->getName() << "\n";
 
@@ -529,13 +542,8 @@ namespace WZ
 			playerIndex = (playerIndex + 1) % m_activePlayers.size();
 		}
 
-		std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
-
-		cout << "\nAfter randomizing the order of players, thats our list of players: \n" << endl;
-		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
-			cout << m_activePlayers[i]->getPlayerName()<< endl;
-
 		std::cout << "\n";
+
 
  		int armies;
 		switch (m_activePlayers.size())

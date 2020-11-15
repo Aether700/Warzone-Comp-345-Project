@@ -58,20 +58,10 @@ namespace WZ
 		GameManager& demo = GameManager::GetManager();
 		demo.m_activePlayers = players;
 		demo.m_deck = new Deck();
-		demo.PhaseObsOn = true;
-		demo.StatsObsOn = true;
 		demo.map = CreateMap();
 
 		std::cout << "Starting map:\n\n" << *demo.map;
     }
-}
-
-void DeletePlayers(std::vector<WZ::Player*>& players)
-{
-	for (WZ::Player* p : players)
-	{
-		delete p;
-	}
 }
 
 void startupPhaseDriver()
@@ -80,13 +70,11 @@ void startupPhaseDriver()
 	std::vector<WZ::Player*> players = { new WZ::Player("P1"), new WZ::Player("P2") };
 	WZ::startupPhaseSetup(players);
 	WZ::GameManager::startupPhase();
-	DeletePlayers(players);
 	
 	std::cout << "3 player example\n\n";
 	players = { new WZ::Player("P1"), new WZ::Player("P2"), new WZ::Player("P3") };
 	WZ::startupPhaseSetup(players);
 	WZ::GameManager::startupPhase();
-	DeletePlayers(players);
 
 	std::cout << "5 player example\n\n";
 	players = { new WZ::Player("P1"), new WZ::Player("P2"), new WZ::Player("P3"), new WZ::Player("P4"), new WZ::Player("P5") };
