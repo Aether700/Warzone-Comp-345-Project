@@ -55,7 +55,7 @@ static WZ::Map* CreateMap(std::vector<WZ::Player*>& players)
 }
 
 namespace WZ {
-	void mainGameLoopCleanup(){
+	void externalCleanup(){
 		GameManager& demo = GameManager::GetManager();
 		for (Player* p : demo.m_activePlayers) {
 			delete p;
@@ -66,7 +66,7 @@ namespace WZ {
 	}
 
 	void mainGameLoopSetup() {
-		mainGameLoopCleanup();
+		externalCleanup();
 		GameManager& demo = GameManager::GetManager();
 		demo.m_activePlayers = { new Player("player1"), new Player("player2"), new Player("player3") };
 		demo.m_deck = new Deck();

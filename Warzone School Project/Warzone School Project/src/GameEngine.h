@@ -17,8 +17,11 @@ namespace WZ
 	class GameManager:public Subject <PhaseObserver>, public Subject<StatisticsObserver>
 	{
 	public:
+
+		//temporary friend functions for the drivers
 		friend void mainGameLoopSetup();
-		friend void mainGameLoopCleanup();
+		friend void startupPhaseSetup(std::vector<Player*>& players);
+		friend void externalCleanup();
 
 		static void callMainGameLoop();		//	temporary function that calls the main game 
 												//	>>	loop from outside
@@ -61,7 +64,7 @@ namespace WZ
 		map will be randomly assigned to the players in a round-robin fashion.
 		And finally, depending on the number of players, each player will start with a number of
 		initial armies.  This method will return the player, the number of armies and its territories.*/;
-		static void startupPhase(const Player* p, const Territory* t);
+		static void startupPhase();
 	
 		//Returns the current game manager phase
 		static GamePhase getCurrentPhase();

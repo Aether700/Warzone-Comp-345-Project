@@ -48,7 +48,7 @@ namespace WZ
 
 	Player* GameManager::getNeutralPlayer() { return GetManager().getNeutralPlayerImpl(); }
 
-	//void GameEngine::startupPhase(const Player* p, const Territory* t, int armies) { GetManager().startupPhaseImpl(p, t, armies); }
+	void GameManager::startupPhase() { GetManager().startupPhaseImpl(); }
 
 	GameManager::GameManager() : m_neutralPlayer(new Player("Neutral")), m_deck(new Deck()),
 		map(nullptr), currentphase(GamePhase::Reinforcement), m_lastOrder(nullptr)
@@ -505,62 +505,59 @@ namespace WZ
 		//Randomize the order of the player
 		cout << "\nBefore randomizing the order of players, thats our list of players: \n" << endl;
 		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
-        	cout << "Player" << i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
+        	cout << m_activePlayers[i]->getPlayerName()<< endl;
 
-		unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+		unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
 		std::default_random_engine default_random_engine(seed);
 		std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
 		
+		std::cout << "\n";
+		//assign territories
+		int playerIndex = 0;
+		for (std::pair<unsigned int, Territory*> pair : *map)
+		{
+			Territory* curr = pair.second;
+
+			std::cout << m_activePlayers[playerIndex]->getPlayerName()
+				<< " is assigned territory: " << curr->getName() << "\n";
+
+			m_activePlayers[playerIndex]->addTerritory(curr);
+			playerIndex = (playerIndex + 1) % m_activePlayers.size();
+		}
+
+		std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
+
 		cout << "\nAfter randomizing the order of players, thats our list of players: \n" << endl;
 		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
-			cout << "Player" <<  i << " " << Player::m_activePlayers[i].getPlayerName()<< endl;
+			cout << m_activePlayers[i]->getPlayerName()<< endl;
 
-		// TO WORK ON! 
-		//Assign Players some territories using the Round Robin fashion (similar to FCFS).
-		vector<Player*> activePlayers = GameManager::getActivePlayers();
-		vector<Territory*> territories = Player::getTerritories();
-		//const std::vector<Territory*>* territories = map->getContinent();
-		 
-		int terriroySize = GameManager::map->getContinent();
-		
-	
-    	for (int i = 0; i < territories; i++)
-       	 	territories[i] = i;
-		std::shuffle(territories->begin(), territories->end(), default_random_engine);
+		std::cout << "\n";
 
-		for (int i = 0; i < terriroySize; i++) {
-			m_activePlayers.at(i % m_activePlayers.size())->addTerritory(territories->at(i));
-		}
  		int armies;
 		switch (m_activePlayers.size())
 		{
 			case 2:
-			  std::cout << "Each player will be given 40 armies\n ";
-			  armies = 40;
-			  break;
+				armies = 40;
+				break;
 
 			case 3:
-				std::cout << "Each player will be given 35 armies\n ";
 				armies = 35;
 				break;
 
   			case 4:
-	  			std::cout << "Each player will be given 30 armies\n ";
 				armies = 30;
 			  	break;
 
   			case 5:
-	  			std::cout << "Each player will be given 25 armies\n ";
 				armies = 25;
 			  	break;
-
-  			default:
-	  			std::cout << "Only 2 to 5 players are accepted in this game";
-
 		}
- 
-		//determine the order of players randomly
 
-		//Randomly assign territories to players one by one in a round-robin fashion
+		std::cout << "Each player will be given " << armies << " armies\n ";
+
+		for (Player* p : m_activePlayers)
+		{
+			p->m_reinforcements = armies;
+		}
   }
 }

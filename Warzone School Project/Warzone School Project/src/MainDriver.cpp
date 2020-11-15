@@ -3,14 +3,14 @@
 
 extern void MapDriver();
 extern void mainGameLoopDriver();
-extern void PlayerDriver();
+extern void startupPhaseDriver();
 extern void OrdersDriver();
 extern void CardsDriver();
 
 
 int main()
 {
-	std::array<const char*, 5> choices = {"Map", "Main Game Loop", "Player", "Orders", "Cards"};
+	std::array<const char*, 5> choices = {"Map", "Main Game Loop", "Startup Phase", "Orders", "Cards"};
 
 	bool done = false;
 	while(!done)
@@ -26,7 +26,7 @@ int main()
 			break;
 
 		case 3:
-			PlayerDriver();
+			startupPhaseDriver();
 			break;
 
 		case 4:
