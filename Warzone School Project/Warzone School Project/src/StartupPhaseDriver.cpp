@@ -66,27 +66,17 @@ namespace WZ
     }
 }
 
-void DeletePlayers(std::vector<WZ::Player*>& players)
-{
-	for (WZ::Player* p : players)
-	{
-		delete p;
-	}
-}
-
 void startupPhaseDriver()
 {
 	std::cout << "2 player example\n\n";
 	std::vector<WZ::Player*> players = { new WZ::Player("P1"), new WZ::Player("P2") };
 	WZ::startupPhaseSetup(players);
 	WZ::GameManager::startupPhase();
-	DeletePlayers(players);
 	
 	std::cout << "3 player example\n\n";
 	players = { new WZ::Player("P1"), new WZ::Player("P2"), new WZ::Player("P3") };
 	WZ::startupPhaseSetup(players);
 	WZ::GameManager::startupPhase();
-	DeletePlayers(players);
 
 	std::cout << "5 player example\n\n";
 	players = { new WZ::Player("P1"), new WZ::Player("P2"), new WZ::Player("P3"), new WZ::Player("P4"), new WZ::Player("P5") };
