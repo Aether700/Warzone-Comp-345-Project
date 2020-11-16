@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "Cards.h"
+#include "PlayerStrategies.h"
 
 namespace WZ
 {
@@ -17,30 +18,15 @@ namespace WZ
 		friend class GameManager;
 	private:
 		std::vector<Territory*> territories;
-		std::vector<Territory*> m_toDef;
-		std::vector<Territory*> m_toAtk;
 		Hand* hand;
 		std::string playerName;
 		OrderList* listOrders;
 		bool hasDrawnCard;
-		unsigned int m_reinforcements;
+		PlayerStrategy* m_strategy;
 
-		Territory* GetSourceTerritory(Territory* target = nullptr) const;
-
-		unsigned int GetNumArmiesToSend(Territory* t);
-
-		Card* GetCardOfType(Card::Type type);
-
-		Player* GetNegotiatingTarget(Territory* t) const;
-
-		bool ShouldBlockade(Territory* target) const;
-
-		/* Generates both the toAtk and toDef lists
+		/* returns a random strategy between an Aggressive or Benevolant strategy
 		*/
-		void GenerateToTerritoryLists();
-
-		void GenerateToDef();
-		void GenerateToAtk();
+		static PlayerStrategy* GetRandomStrategy();
 
 	public:
 		//default constructor of the Player class
@@ -49,7 +35,7 @@ namespace WZ
 		Player(const Player&); 
 		//default destructor of the Player class
 		~Player();
-		Player(std::string, std::vector<Territory*> = {});
+		Player(std::string, PlayerStrategy* strategy = nullptr, std::vector<Territory*> = {});
 
 		//Getters
 		std::vector<Territory*> getTerritories() const;
@@ -58,7 +44,6 @@ namespace WZ
 		Hand* getHand();
 		std::string getPlayerName() const;
 		const OrderList* getOrderList() const;
-		unsigned int getReinforcements() const;
 		
 		/* default begin function to allow use of ranged for loops
 		returns: an iterator pointing to the beginning of the list
@@ -80,15 +65,18 @@ namespace WZ
 		//Setters
 		void setPlayerName(std::string name);
 		void setHand();
-		void setReinforcements(unsigned int);
+		void SetStrategy(PlayerStrategy* strategy);
 
 		//Methods 
 		bool ownsTerritory(Territory* t) const; //method to check if a territory is owned or not.
 		void addTerritory(Territory* newTerritory); // method to add a territory
 		void removeTerritory(Territory* oldTerritory);// method to remove a territory
-		std::vector<Territory*>&  toDefend(); //method toDefend that returns a list of territories that are defended.
-		std::vector<Territory*>& toAttack();//method toAttack that returns a list of territories that are attacked.
 		
+		/* calls the void generateTerritoryLists function from this player's strategy object
+		*/
+		void generateTerritoryLists();
+
+
 		/* generates an order to add to the order list, returns null if no more orders should be played this turn
 
 		  returns: an order to add to the order list or null if no more orders should be played this turn

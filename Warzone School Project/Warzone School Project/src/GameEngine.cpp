@@ -398,11 +398,8 @@ namespace WZ
 		//	for all active players in the game
 		for (size_t i = 0; i < m_activePlayers.size(); i++) {					
 			CurrentPlayer = m_activePlayers[i];
-			m_activePlayers[i]->setReinforcements(reinforcementCalculator(m_activePlayers[i])
-				+ m_activePlayers[i]->m_reinforcements);	//	generate reinforcements
-
-			std::cout << m_activePlayers[i]->getPlayerName() << " now has " 
-				<< m_activePlayers[i]->m_reinforcements << " reinforcements for this turn\n";
+			m_activePlayers[i]->m_strategy->m_reinforcements = reinforcementCalculator(m_activePlayers[i])
+				+ m_activePlayers[i]->m_strategy->m_reinforcements;	//	generate reinforcements
 
 			GameManager::NotifyPhaseObserver();
 		}
@@ -413,7 +410,7 @@ namespace WZ
 		//reset all the toDefend and toAttack vectors
 		for (Player* p : m_activePlayers)
 		{
-			p->GenerateToTerritoryLists();
+			p->generateTerritoryLists();
 		}
 
 		//reset the available armies of all the territories on the map
@@ -579,7 +576,7 @@ namespace WZ
 
 		for (Player* p : m_activePlayers)
 		{
-			p->m_reinforcements = armies;
+			p->m_strategy->m_reinforcements = armies;
 		}
   }
 }
