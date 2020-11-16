@@ -76,6 +76,18 @@ namespace WZ
 		*/
 		void generateTerritoryLists();
 
+		/* returns the territories to defend by this player
+
+		   returns: the territories to defend by this player
+		*/
+		std::vector<Territory*> toDefend();
+		
+		/* returns the territories to attack by this player
+
+		   returns: the territories to attack by this player
+		*/
+		std::vector<Territory*> toAttack();
+
 
 		/* generates an order to add to the order list, returns null if no more orders should be played this turn
 

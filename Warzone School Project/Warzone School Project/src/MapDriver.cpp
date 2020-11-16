@@ -207,7 +207,7 @@ WZ::Map* CreateInvalidMap2()
 void MapDriver()
 {
 	WZ::Territory* t = new WZ::Territory("Example Territory", 7, nullptr, 10);
-	WZ::Player* p = new WZ::Player("Example Player", { t });
+	WZ::Player* p = new WZ::Player("Example Player", nullptr, { t });
 	t->setOwner(p);
 
 	std::cout << "display of the Example Territory object:\n";

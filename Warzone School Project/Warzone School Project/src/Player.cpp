@@ -2,6 +2,7 @@
 #include "Orders.h"
 #include "Map.h"
 #include "GameEngine.h"
+#include <assert.h>
 
 namespace WZ
 {
@@ -103,6 +104,8 @@ namespace WZ
 
 	void Player::SetStrategy(PlayerStrategy* strategy)
 	{
+		assert(strategy != nullptr);
+
 		delete m_strategy;
 		m_strategy = strategy;
 	}
@@ -125,6 +128,10 @@ namespace WZ
 	{
 		m_strategy->generateTerritoryLists();
 	}
+
+	std::vector<Territory*> Player::toDefend() { return m_strategy->toDefend(); }
+
+	std::vector<Territory*> Player::toAttack() { return m_strategy->toAttack(); }
 
 	//returns null if done playing for this turn
 	Order* Player::issueOrder()
