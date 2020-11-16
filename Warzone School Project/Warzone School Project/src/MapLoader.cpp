@@ -85,7 +85,7 @@ namespace WZ {
 	}
 
 	Map* MapLoader::mapGenerator() {
-		return mapGenerator(menu_loader("Map"));
+		return mapGenerator(menu_loader("assets/map files"));
 	}
 
 	void MapLoader::setAdjList() {
@@ -226,6 +226,11 @@ namespace WZ {
 
 
 		int fileIndex = AskInput(files);
-		return files[fileIndex - 1];
+		std::cout << "\n";
+		if (path == "")
+		{
+			return files[fileIndex - 1];
+		}
+		return path + "/" + files[fileIndex - 1];
 	}
-}
+}	

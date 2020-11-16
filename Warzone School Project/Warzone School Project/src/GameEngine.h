@@ -22,6 +22,7 @@ namespace WZ
 		friend void mainGameLoopSetup();
 		friend void startupPhaseSetup(std::vector<Player*>& players);
 		friend void gameObserversSetup();
+		friend void gameStartSetup();
 		friend void externalCleanup();
 
 		static void callMainGameLoop();		//	temporary function that calls the main game 

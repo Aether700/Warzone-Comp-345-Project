@@ -54,8 +54,8 @@ namespace WZ
 		map(nullptr), currentphase(GamePhase::Reinforcement), m_lastOrder(nullptr)
 	{
 		Random::Init();
-		GameManager::AddPhaseObserver(new PhaseObserver());
-		GameManager::AddStatisticsObserver(new StatisticsObserver());
+		Subject<PhaseObserver>::AddObserver(new PhaseObserver());
+		Subject<StatisticsObserver>::AddObserver(new StatisticsObserver());
 	}
 	
 	GameManager::~GameManager()
@@ -137,6 +137,12 @@ namespace WZ
 		return GetManager().CurrentPlayer;
 	}
 
+	void GameManager::gameStart()
+	{
+		GameManager::GetManager().getUserMap();
+		GameManager::GetManager().InitializePlayers();
+	}
+
 	void GameManager::getUserMap()
 	{
 		MapLoader loader;
@@ -150,10 +156,10 @@ namespace WZ
 				{
 					break;
 				}
-			}
-			else
-			{
-				std::cout<<"Invalid map"<<std::endl;
+				else
+				{
+					std::cout << "The Map chosen is not valid. Please pick a new one.\n";
+				}
 			}
 		}
 	}
@@ -174,12 +180,19 @@ namespace WZ
 	}
 
 	void GameManager::InitializePlayers(){
+		
+		for (Player* p : m_activePlayers) 
+		{
+			delete p;
+		}
+		m_activePlayers.clear();
+
 		int num=getUserNumPlayers();
 		m_activePlayers.reserve(num);
 
 		for(int i = 0 ; i < num ; i++){
 			string name="";
-			std::cout<<"Please enter player "<<(i+1)<<"name: ";
+			std::cout<<"Please enter player "<<(i+1)<<" name: ";
 			std::cin>>name;
 			m_activePlayers.push_back(new Player(name));
 		}
@@ -464,9 +477,6 @@ namespace WZ
 
 	void GameManager::mainGameLoop() {
 		while (m_activePlayers.size() > 1) {
-
-			//temp map print
-			std::cout << *map;
 
 			currentphase = GamePhase::Reinforcement;
 			reinforcementPhase();					

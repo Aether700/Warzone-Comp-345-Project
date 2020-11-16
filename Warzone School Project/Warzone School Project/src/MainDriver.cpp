@@ -1,16 +1,16 @@
 #include "Utils.h"
 #include "GameEngine.h"
 
-extern void gameObserversDriver();
-extern void mainGameLoopDriver();
+extern void gameStartDriver();
 extern void startupPhaseDriver();
+extern void mainGameLoopDriver();
 extern void OrdersDriver();
-extern void CardsDriver();
+extern void gameObserversDriver();
 
 
 int main()
 {
-	std::array<const char*, 5> choices = {"Observers", "Main Game Loop", "Startup Phase", "Orders", "Cards"};
+	std::array<const char*, 5> choices = {"Game Start", "Startup Phase", "Main Game Loop", "Orders", "Observers"};
 
 	bool done = false;
 	while(!done)
@@ -18,15 +18,15 @@ int main()
 		switch (WZ::AskInput(choices, "Exit"))
 		{
 		case 1:
-			gameObserversDriver();
+			gameStartDriver();
 			break;
 
 		case 2:
-			mainGameLoopDriver();
+			startupPhaseDriver();
 			break;
 
 		case 3:
-			startupPhaseDriver();
+			mainGameLoopDriver();
 			break;
 
 		case 4:
@@ -34,7 +34,7 @@ int main()
 			break;
 
 		case 5:
-			CardsDriver();
+			gameObserversDriver();
 			break;
 
 		case -1:
