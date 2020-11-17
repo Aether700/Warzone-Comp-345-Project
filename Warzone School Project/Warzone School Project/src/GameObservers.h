@@ -114,6 +114,14 @@ namespace WZ {
         std::vector<T*> m_observers;
     };
 
+    //stream insertion operator for the Subject class
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Subject<T>& obs)
+    {
+        stream << "Subject";
+        return stream;
+    }
+
 
     class PhaseObserver :public Observer {
     public:
@@ -134,6 +142,7 @@ namespace WZ {
 
     };
 
+    //stream insertion operator for the PhaseObserver class
     std::ostream& operator<<(std::ostream& stream, const PhaseObserver& obs);
 
     class StatisticsObserver :public Observer {
@@ -153,6 +162,7 @@ namespace WZ {
         StatisticsObserver& operator=(const StatisticsObserver& other);
     };
 
+    //stream insertion operator for the StatisticsObserver class
     std::ostream& operator<<(std::ostream& stream, const StatisticsObserver& obs);
 
 }
