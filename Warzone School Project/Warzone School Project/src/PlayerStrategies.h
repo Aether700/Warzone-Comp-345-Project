@@ -94,8 +94,8 @@ namespace WZ
 	class HumanPlayerStrategy : public PlayerStrategy
 	{
 	public:
-		/*base constructor of HumanPlayerStrategy to be used by
-		  sub classes, takes a ptr to the player who owns this Strategy object
+		/*base constructor of HumanPlayerStrategy, 
+		  takes a ptr to the player who owns this Strategy object
 
 		  player: the player who owns this object
 		*/
@@ -116,14 +116,12 @@ namespace WZ
 		*/
 		virtual Order* issueOrder() override;
 
-		/* function called by the GameManager at the start of every issuing order phase to
-		  update which territories should be attacked or defended by this player.
-		  Calling this function should allow the player to fill the list of territories
-		  to defend and to attack based on the new situation of the map
+		/* does nothing since the all the decisions are made 
+		   by the human user so no need to generate territory lists
 		*/
 		virtual void generateTerritoryLists() override;
 
-		/*assignment operator of the HumanPlayerStrategy class to be called by it's subclasses
+		/*assignment operator of the HumanPlayerStrategy class
 
 		  other: the other HumanPlayerStrategy object to assign to this one
 		  returns: this HumanPlayerStrategy object after assignment
@@ -190,6 +188,47 @@ namespace WZ
 		   returns: the order made when playing the card or null if the user selects the back option
 		*/
 		NegotiateOrder* PlayDiplomacyCard(Card* c);
+	};
+
+	class NeutralPlayerStrategy : public PlayerStrategy
+	{
+		/*base constructor of NeutralPlayerStrategy, 
+		  takes a ptr to the player who owns this Strategy object
+
+		  player: the player who owns this object
+		*/
+		NeutralPlayerStrategy(Player* player);
+
+		/* copy constructor of the NeutralPlayerStrategy class
+
+		   other: the other NeutralPlayerStrategy object to copy
+		*/
+		NeutralPlayerStrategy(const NeutralPlayerStrategy& other);
+
+		//deconstructor of the NeutralPlayerStrategy class
+		~NeutralPlayerStrategy();
+
+		/*returns nullptr since the neutral player never does anything
+		*/
+		virtual Order* issueOrder() override;
+
+		/* does nothing since the neutral player does not do anything 
+		   so no need to generate any territory lists
+		*/
+		virtual void generateTerritoryLists() override;
+
+		/*assignment operator of the NeutralPlayerStrategy class 
+
+		  other: the other NeutralPlayerStrategy object to assign to this one
+		  returns: this NeutralPlayerStrategy object after assignment
+		*/
+		NeutralPlayerStrategy& operator=(const NeutralPlayerStrategy& other);
+
+	protected:
+		/* provides a copy of this NeutralPlayerStrategy obj (like the clone method in java)
+		   will only be used by the Player class to perform a deep copy of a Player object
+		*/
+		virtual PlayerStrategy* copy() const override;
 	};
 
 }

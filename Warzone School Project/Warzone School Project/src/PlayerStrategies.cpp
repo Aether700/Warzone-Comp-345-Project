@@ -527,4 +527,26 @@ namespace WZ
 
 		return new NegotiateOrder(m_player, targetPlayers[choice - 1]);
 	}
+
+
+	// NeutralPlayerStrategy ////////////////////////////////////////////////////////////////
+
+	NeutralPlayerStrategy::NeutralPlayerStrategy(Player* player) : PlayerStrategy(player) { }
+
+	NeutralPlayerStrategy::NeutralPlayerStrategy(const NeutralPlayerStrategy& other) : PlayerStrategy(other) { }
+
+	NeutralPlayerStrategy::~NeutralPlayerStrategy() { }
+
+	Order* NeutralPlayerStrategy::issueOrder() { return nullptr; }
+
+	void NeutralPlayerStrategy::generateTerritoryLists() { }
+
+	NeutralPlayerStrategy& NeutralPlayerStrategy::operator=(const NeutralPlayerStrategy& other)
+	{
+		PlayerStrategy::operator=(other);
+		return *this;
+	}
+
+	PlayerStrategy* NeutralPlayerStrategy::copy() const { return new NeutralPlayerStrategy(*this); }
+
 }
