@@ -5,6 +5,7 @@ namespace WZ
 {
 	class Order;
 	class Territory;
+	class Player;
 
 	/* Base class for all Strategy object. 
 	  Serves as an interface to the Player object to 
@@ -15,7 +16,10 @@ namespace WZ
 	{
 		friend class GameManager;
 		friend class Player;
-	public: 
+	public:
+
+		PlayerStrategy(Player* player);
+
 		//default virtual deconstructor to avoid memory leaks
 		virtual ~PlayerStrategy();
 
@@ -44,6 +48,8 @@ namespace WZ
 		*/
 		virtual void generateTerritoryLists() = 0;
 
+		void SetPlayer(Player* p);
+
 	protected: 
 		/* provides a copy of this PlayerStrategy obj (like the clone method in java)
 		   will only be used by the Player class to perform a deep copy of a Player object
@@ -53,10 +59,12 @@ namespace WZ
 		/* fields to be managed by all child class of the PlayerStrategy class
 		   These vectors represent the list of territories to defend and to attack respectively.
 
-		   The unsigned int represents the reinforcements available to the Player this turn.
+		   The unsigned int represents the reinforcements available to the Player this turn 
+		   and the player is the player who owns this Strategy object
 		*/
 		std::vector<Territory*> m_toDef;
 		std::vector<Territory*> m_toAtk;
 		unsigned int m_reinforcements;
+		Player* m_player;
 	};
 }

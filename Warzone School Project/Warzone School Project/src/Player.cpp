@@ -108,6 +108,7 @@ namespace WZ
 
 		delete m_strategy;
 		m_strategy = strategy;
+		m_strategy->SetPlayer(this);
 	}
 
 	void Player::addTerritory(Territory* newTerritory) {
