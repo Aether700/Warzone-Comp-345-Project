@@ -16,6 +16,7 @@ namespace WZ
 	{
 		friend class GameManager;
 		friend class Player;
+		friend class Card;
 	public:
 
 		PlayerStrategy(Player* player);

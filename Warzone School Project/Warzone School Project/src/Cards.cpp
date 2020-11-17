@@ -7,6 +7,7 @@
 
 #include "Orders.h"
 #include "Utils.h"
+#include "Player.h"
 
 #define DECK_NUM_CARDS 20
 
@@ -15,6 +16,8 @@
 #define CARD_PROB_BLOCKADE 0.2f
 #define CARD_PROB_AIRLIFT 0.2f
 #define CARD_PROB_DIPLOMACY 0.2f
+
+#define CARD_REINFORCEMENT_VAL 5;
 
 namespace WZ
 {
@@ -176,8 +179,8 @@ std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
          }
          else if (type == Card::Type::Reinforcement){
              std::cout<<"Playing reinforcement card"<<std::endl;
-             Order* O= new DeployOrder(p,dest,amount);
-             return O; 
+             p->m_strategy->m_reinforcements += CARD_REINFORCEMENT_VAL;
+             return nullptr; 
         }
         else if  (type == Card::Type::Blockade){
             std::cout<<"Playing blockade card"<<std::endl;

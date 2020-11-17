@@ -16,6 +16,7 @@ namespace WZ
 	// Player class
 	class Player {
 		friend class GameManager;
+		friend class Card;
 	private:
 		std::vector<Territory*> territories;
 		Hand* hand;
