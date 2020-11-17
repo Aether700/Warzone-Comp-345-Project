@@ -105,6 +105,14 @@ namespace WZ
         /* The assignement operator which Assigns the values of the provided Hand object
         and returns the modified object */
         Hand& operator=(const Hand& other);
+        
+        /* bracket operator used to access cards by index
+          
+           index: the index of the card to return
+           returns: the card at the index specified
+        */
+        Card* operator[](size_t index);
+
         /* default begin function to allow use of ranged for loops
 		returns: an iterator pointing to the beginning of the list
 		*/

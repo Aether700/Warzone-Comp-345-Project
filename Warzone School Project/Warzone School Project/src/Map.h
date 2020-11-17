@@ -70,6 +70,12 @@ namespace WZ
         */
         unsigned int getArmies() const;
 
+        /* getter function that returns the number of available armies currently on the Territory object
+
+          returns: the number of available armies currently on the Territory object
+        */
+        unsigned int getAvailableArmies() const;
+
         /* getter function that returns a const ptr to the player who owns this territory or 
            nullptr if the territory is neutral
 

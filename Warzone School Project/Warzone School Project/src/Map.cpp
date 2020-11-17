@@ -36,6 +36,8 @@ namespace WZ
 
 	unsigned int Territory::getArmies() const { return m_armies; }
 
+	unsigned int Territory::getAvailableArmies() const { return m_availableArmies; }
+
 	void Territory::setOwner(Player* p) { m_owner = p; }
 	
 	void Territory::setArmies(unsigned int amount) { m_armies = amount; }

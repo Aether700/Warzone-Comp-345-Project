@@ -136,8 +136,10 @@ namespace WZ
         }
         return *this;
     }
+
+    Card* Hand::operator[](size_t index) { return hand[index]; }
     
-std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
+    std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
     std::vector<Card*>::iterator Deck::end(){return deck.end();}
     std::vector<Card*>::const_iterator Deck::begin() const{return deck.cbegin();}
     std::vector<Card*>::const_iterator Deck::end() const{return deck.cend();}
@@ -181,11 +183,6 @@ std::vector<Card*>::iterator Deck::begin(){return deck.begin();}
              std::cout<<"Playing reinforcement card"<<std::endl;
              p->m_strategy->m_reinforcements += CARD_REINFORCEMENT_VAL;
              return nullptr; 
-        }
-        else if  (type == Card::Type::Blockade){
-            std::cout<<"Playing blockade card"<<std::endl;
-            Order* O= new BlockadeOrder(p,dest);
-             return O; 
         }
         else if (type == Card::Type::Airlift){
             std::cout<<"Playing airlift card"<<std::endl;

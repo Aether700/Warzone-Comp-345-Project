@@ -48,7 +48,7 @@ namespace WZ {
         */
         Subject() { }
 
-        Subject(const Subject<T> other)
+        Subject(const Subject<T>& other)
         {
             m_observers.reserve(other.m_observers.size());
             for (T* t : other.m_observers)

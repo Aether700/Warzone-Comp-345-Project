@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
+#include "Orders.h"
 
 namespace WZ
 {
-	class Order;
 	class Territory;
 	class Player;
 
@@ -19,7 +19,18 @@ namespace WZ
 		friend class Card;
 	public:
 
+		/*base constructor of PlayerStrategy to be used by 
+		  sub classes, takes a ptr to the player who owns this Strategy object
+
+		  player: the player who owns this object
+		*/
 		PlayerStrategy(Player* player);
+
+		/* copy constructor of the PlayerStrategy object to be called by it's subclasses
+		   
+		   other: the other PlayerStrategy object to copy
+		*/
+		PlayerStrategy(const PlayerStrategy& other);
 
 		//default virtual deconstructor to avoid memory leaks
 		virtual ~PlayerStrategy();
@@ -49,7 +60,18 @@ namespace WZ
 		*/
 		virtual void generateTerritoryLists() = 0;
 
+		/* Sets the owning player of this Strategy object
+
+		  p: the new player who owns this object
+		*/
 		void SetPlayer(Player* p);
+
+		/*assignment operator of the PlayerStrategy class to be called by it's subclasses
+
+		  other: the other PlayerStrategy object to assign to this one
+		  returns: this PlayerStrategy object after assignment
+		*/
+		PlayerStrategy& operator=(const PlayerStrategy& other);
 
 	protected: 
 		/* provides a copy of this PlayerStrategy obj (like the clone method in java)
@@ -68,4 +90,106 @@ namespace WZ
 		unsigned int m_reinforcements;
 		Player* m_player;
 	};
+
+	class HumanPlayerStrategy : public PlayerStrategy
+	{
+	public:
+		/*base constructor of HumanPlayerStrategy to be used by
+		  sub classes, takes a ptr to the player who owns this Strategy object
+
+		  player: the player who owns this object
+		*/
+		HumanPlayerStrategy(Player* player);
+
+		/* copy constructor of the HumanPlayerStrategy class
+
+		   other: the other HumanPlayerStrategy object to copy
+		*/
+		HumanPlayerStrategy(const HumanPlayerStrategy& other);
+
+		//deconstructor of the HumanPlayerStrategy class
+		~HumanPlayerStrategy();
+
+		/* returns the next order to issue or null if this player is done issuing orders for this turn
+
+		  returns: the next order to issue or null if this player is done issuing orders for this turn
+		*/
+		virtual Order* issueOrder() override;
+
+		/* function called by the GameManager at the start of every issuing order phase to
+		  update which territories should be attacked or defended by this player.
+		  Calling this function should allow the player to fill the list of territories
+		  to defend and to attack based on the new situation of the map
+		*/
+		virtual void generateTerritoryLists() override;
+
+		/*assignment operator of the HumanPlayerStrategy class to be called by it's subclasses
+
+		  other: the other HumanPlayerStrategy object to assign to this one
+		  returns: this HumanPlayerStrategy object after assignment
+		*/
+		HumanPlayerStrategy& operator=(const HumanPlayerStrategy& other);
+
+	protected:
+		/* provides a copy of this HumanPlayerStrategy obj (like the clone method in java)
+		   will only be used by the Player class to perform a deep copy of a Player object
+		*/
+		virtual PlayerStrategy* copy() const override;
+
+	private:
+
+		/* provides a menu to the user so they can select a card to play.
+
+		  returns: the order created by the card or nullptr if the user selects the back option
+		*/
+		Order* PlayCard();
+
+		/* prompts the user to select one of their own territories allowing the user 
+		  to select a back option only if the boolean provided is true
+
+		  backMessage: defaults to true, determines if the user should be able to select a back option in the menu
+		  returns: the territory choosen or nullptr if the user picks the back option (and it's available)
+		*/
+		Territory* SelectOwnedTerritory(bool backMessage = true);
+		
+		/* prompts the user to enter the information needed to create a deploy order and returns it.
+
+		  returns: the deploy order created from the date provided by the user.
+		*/
+		DeployOrder* DeployArmies();
+
+		/* prompts the order to create an advance order and returns it or returns null if the user picked back
+		
+		  returns: the advance order created from the data provided by the user or null if the user picked back
+		*/
+		AdvanceOrder* Advance();
+		
+		/* prompts the order to create a blockad order and returns it or returns null if the user picked back
+
+		  returns: the blockade order created from the data provided by the user or null if the user picked back
+		*/
+		BlockadeOrder* Blockade();
+
+		/* prompts the user to play a Bomb card
+		   
+		   c: the card to play
+		   returns: the order made when playing the card or null if the user selects the back option
+		*/
+		BombOrder* PlayBombCard(Card* c);
+		
+		/* prompts the user to play an Airlift card
+
+		   c: the card to play
+		   returns: the order made when playing the card or null if the user selects the back option
+		*/
+		AirliftOrder* PlayAirliftCard(Card* c);
+
+		/* prompts the user to play a Diplomacy card
+
+		   c: the card to play
+		   returns: the order made when playing the card or null if the user selects the back option
+		*/
+		NegotiateOrder* PlayDiplomacyCard(Card* c);
+	};
+
 }
