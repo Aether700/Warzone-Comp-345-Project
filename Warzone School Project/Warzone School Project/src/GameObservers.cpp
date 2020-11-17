@@ -14,6 +14,12 @@ namespace WZ
 		return (number_of_territories_owned_by_player*100.0f)/total_number_of_territories;
 	}
 
+	PhaseObserver::PhaseObserver() { }
+
+	
+	//no field to copy
+	PhaseObserver::PhaseObserver(const PhaseObserver& other) { }
+
 	void PhaseObserver::update() {
 		const Player* p = GameManager::getCurrentPlayer();
 		
@@ -36,6 +42,26 @@ namespace WZ
 		{
 			std::cout << *lastOrder << "\n";
 		}
+	}
+
+	PhaseObserver& PhaseObserver::operator=(const PhaseObserver& other)
+	{
+		//nothing to copy
+		return *this;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const PhaseObserver& obs)
+	{
+		stream << "Phase Observer";
+		return stream;
+	}
+
+	StatisticsObserver::StatisticsObserver() { }
+
+	//copy constructor
+	StatisticsObserver::StatisticsObserver(const StatisticsObserver& other) 
+	{ 
+		//nothing to copy 
 	}
 
 	void StatisticsObserver::update() {
@@ -68,8 +94,16 @@ namespace WZ
 		}
 	}
 
-		//getLastOrder returns a pointer to the last order, we nned to print out
-		//static // impl for now return NULL
-		//game manager 
+	StatisticsObserver& StatisticsObserver::operator=(const StatisticsObserver& other)
+	{
+		//nothing to copy
+		return *this;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const StatisticsObserver& obs)
+	{
+		stream << "Statistics Observer";
+		return stream;
+	}
 
 }

@@ -9,8 +9,8 @@
 #ifndef OBSERVER_PATTERN_OBSERVER_HPP
 #define OBSERVER_PATTERN_OBSERVER_HPP
 #include <vector>
+#include <iostream>
 #include "Player.h"
-
 
 namespace WZ {
     
@@ -42,6 +42,19 @@ namespace WZ {
         */
         size_t getCount() const {
             return m_observers.size();
+        }
+
+        /* default constructor
+        */
+        Subject() { }
+
+        Subject(const Subject<T> other)
+        {
+            m_observers.reserve(other.m_observers.size());
+            for (T* t : other.m_observers)
+            {
+                m_observers.push_back(new T(t));
+            }
         }
 
         //virtual destructor of the Subject class
@@ -80,6 +93,22 @@ namespace WZ {
         //Adding Observer Object to the list
         void AddObserver(T* o) { m_observers.push_back(o); }
 
+        //assignment operator
+        Subject<T>& operator=(const Subject<T>& other)
+        {
+            for (T* t : m_observers)
+            {
+                delete t;
+            }
+
+            for (T* t : other.m_observers)
+            {
+                m_observers.push_back(new T(t));
+            }
+
+            return *this;
+        }
+
     private:
         //List of Observer Object pointers
         std::vector<T*> m_observers;
@@ -88,20 +117,43 @@ namespace WZ {
 
     class PhaseObserver :public Observer {
     public:
+        /* default constructor
+        */
+        PhaseObserver();
+
+        /* copy constructor
+        */
+        PhaseObserver(const PhaseObserver& other);
+
         //update function of the PhaseObserver type. 
         //Prints information relating to the phases as required by the assignment guidelines
         void update();
+
+        //assignment operator
+        PhaseObserver& operator=(const PhaseObserver& other);
+
     };
 
+    std::ostream& operator<<(std::ostream& stream, const PhaseObserver& obs);
 
     class StatisticsObserver :public Observer {
     public:
+
+        //default constructor
+        StatisticsObserver();
+
+        //copy constructor
+        StatisticsObserver(const StatisticsObserver& other);
+
         //update function of the StatisticsObserver type. 
         //Prints information relating to the territories owned as required by the assignment guidelines
         void update();
+
+        //assignement operator
+        StatisticsObserver& operator=(const StatisticsObserver& other);
     };
 
-
+    std::ostream& operator<<(std::ostream& stream, const StatisticsObserver& obs);
 
 }
 
