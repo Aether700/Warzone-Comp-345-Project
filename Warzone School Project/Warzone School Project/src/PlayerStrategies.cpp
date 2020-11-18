@@ -103,7 +103,7 @@ namespace WZ
 
 	Order* HumanPlayerStrategy::issueOrder()
 	{
-		constexpr  std::array<const char*, 4> choices = { "Play Card", "Advance Order", "Blockade", "End Turn"};
+		constexpr  std::array<const char*, 2> choices = { "Play Card", "Advance Order"};
 
 		Order* o;
 		while(true)
@@ -114,7 +114,7 @@ namespace WZ
 			}
 			else
 			{
-				switch (AskInput(choices))
+				switch (AskInput(choices, "End Turn"))
 				{
 				case 1:
 					o = PlayCard();
@@ -132,15 +132,7 @@ namespace WZ
 					}
 					break;
 				
-				case 3:
-					o = Blockade();
-					if (o != nullptr)
-					{
-						return o;
-					}
-					break;
-
-				case 4:
+				case -1:
 					return nullptr;
 				}
 			}
@@ -222,6 +214,15 @@ namespace WZ
 					return o;
 				}
 				break;
+
+			case Card::Type::Blockade:
+				o = PlayBlockadeCard(toPlay);
+				if (o != nullptr)
+				{
+					m_player->getHand()->removeCardFromHand(toPlay);
+					return o;
+				}
+				break;
 			}
 		}
 	}
@@ -255,7 +256,6 @@ namespace WZ
 
 		return m_player->getTerritories()[choice - 1];
 	}
-
 	
 	DeployOrder* HumanPlayerStrategy::DeployArmies()
 	{
@@ -344,8 +344,9 @@ namespace WZ
 		}
 	}
 
-	BlockadeOrder* HumanPlayerStrategy::Blockade()
+	BlockadeOrder* HumanPlayerStrategy::PlayBlockadeCard(Card* c)
 	{
+		assert(c->getType() == Card::Type::Blockade);
 		std::cout << "Which territory do you want to blockade?\n";
 
 		Territory* target = SelectOwnedTerritory();
@@ -357,7 +358,6 @@ namespace WZ
 
 		return new BlockadeOrder(m_player, target);
 	}
-
 
 	BombOrder* HumanPlayerStrategy::PlayBombCard(Card* c)
 	{

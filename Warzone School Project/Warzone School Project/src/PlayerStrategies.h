@@ -162,11 +162,12 @@ namespace WZ
 		*/
 		AdvanceOrder* Advance();
 		
-		/* prompts the order to create a blockad order and returns it or returns null if the user picked back
+		/* prompts the user to play a Blockade card
 
-		  returns: the blockade order created from the data provided by the user or null if the user picked back
+		   c: the card to play
+		   returns: the order made when playing the card or null if the user selects the back option
 		*/
-		BlockadeOrder* Blockade();
+		BlockadeOrder* PlayBlockadeCard(Card* c);
 
 		/* prompts the user to play a Bomb card
 		   
