@@ -62,11 +62,30 @@ namespace WZ {
 		MapLoader(const MapLoader&);						//	parameterised constructor
 		MapLoader& operator=(const MapLoader&);				//	assign operator overwriter
 		Map* mapGenerator();								//	default map generator - user picks a map from the predefined map folder
-		Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
+		virtual Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
 		string menu_loader(const string& path = "/Maps");	//	menu function to navigate through the menu option
 	};
 	/*
 		overwriter of the insertion operator
 	*/
 	std::ostream& operator<<(std::ostream& stream, const MapLoader& m);
+
+
+
+	///////////////////////////////////////////////////////////////////ConquestFileReaderAdapter///////////////////////////////////////////////////////////////////////
+
+	class ConquestFileReaderAdapter :public MapLoader {
+	private:
+		ConquestFileReader* filereader;													// 	data member
+	public:
+		ConquestFileReaderAdapter();													//	default constructor
+		~ConquestFileReaderAdapter();													//	default constructor
+		ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj);				//	copy constructor
+		ConquestFileReaderAdapter& operator=(const ConquestFileReaderAdapter& obj);		//	assignment operator
+		virtual Map* mapGenerator(const string&) override;								//	function that returns the map with the file reader
+
+	};
+
+	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m);
 }
+

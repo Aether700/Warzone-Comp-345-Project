@@ -37,8 +37,8 @@ namespace WZ {
 	}
 
 	MapLoader::MapLoader() {}
-	MapLoader::MapLoader(const MapLoader& mapL) 
-		: territories(mapL.territories), continents(mapL.continents), borders(mapL.borders) 
+	MapLoader::MapLoader(const MapLoader& mapL)
+		: territories(mapL.territories), continents(mapL.continents), borders(mapL.borders)
 	{
 		//	No need for copying because the data used is cleared after the map creation -
 		//			which all take place inside the mapGenerator function.
@@ -103,7 +103,7 @@ namespace WZ {
 			string line{ "" };                        //  string iterator through the file
 			int valid[] = { 0, 0, 0 };              //  counter to determine if the map has all sections needed
 			std::ifstream in(map);			        //  reader stream
-			
+
 			if (!in) {                              //  checks for corrupt files
 				cout << "Unable to open file";
 				return false;
@@ -122,7 +122,7 @@ namespace WZ {
 			}
 			in.close();
 			constexpr int correct[] = { 1, 1, 1 };
-			for (int i = 0; i < sizeof(correct)/sizeof(int); i++)
+			for (int i = 0; i < sizeof(correct) / sizeof(int); i++)
 			{
 				if (valid[i] != correct[i])
 				{
@@ -139,9 +139,9 @@ namespace WZ {
 
 		std::getline(open_map, line);
 		while (!open_map.eof()) {
-			
+
 			std::getline(open_map, line);
-			
+
 			if (line == "")
 			{
 				continue;
@@ -158,7 +158,7 @@ namespace WZ {
 				section = "borders";
 				continue;
 			}
-			
+
 			if (section == "continents") {
 				int space, bonus;
 				string cont;
@@ -189,7 +189,7 @@ namespace WZ {
 			else if (section == "borders") {
 				Borders* b = new Borders();
 				string num = "";
-				
+
 
 				for (size_t i = 0; i < line.size(); i++)
 				{
@@ -233,4 +233,43 @@ namespace WZ {
 		}
 		return path + "/" + files[fileIndex - 1];
 	}
-}	
+
+
+	//ConquestFileReaderAdapter///////////////////////////////////////
+
+
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter() {
+		filereader = new ConquestFileReader;
+	}
+
+	ConquestFileReaderAdapter::~ConquestFileReaderAdapter() {
+		delete filereader;
+	}
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj) {
+		filereader = new ConquestFileReader(obj.filereader);
+	}
+
+	ConquestFileReaderAdapter& ConquestFileReaderAdapter::operator=(const ConquestFileReaderAdapter& obj) { //deep copy 2 pointers for two objects
+		if (this == &obj) {
+			return *this;
+		}
+		delete filereader;
+		filereader = new ConquestFileReader(obj.filereader);
+		return *this;
+	}
+
+	Map* ConquestFileReaderAdapter::mapGenerator(const string& filepath) { 	//main function that returns map
+
+		return filereader->mapGenerator(filepath);
+
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m)
+	{
+		stream << "Conquest File Reader Adapter";
+		return stream;
+	}
+
+}

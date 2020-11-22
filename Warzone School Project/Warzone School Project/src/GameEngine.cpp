@@ -101,7 +101,6 @@ namespace WZ
 	{
 		if (p->hasDrawnCard)
 		{
-			std::cout << p->getPlayerName() << " tries to draws a card but they already drew this turn\n";
 			return;
 		}
 
@@ -381,8 +380,6 @@ namespace WZ
 				if (count == (map->getContinent(i)->getCount() - 1))					//	if the number of checked territories equals the size of continent
 				{
 					bonus += map->getContinent(i)->getBonus();									// >>	give reinforcement bonus
-					std::cout << currentPlayer->getPlayerName() 
-						<< " earned the army bonus of continent: " << map->getContinent(i)->getName() << "\n";
 				}
 			}
 		}
@@ -514,20 +511,10 @@ namespace WZ
 	void GameManager::startupPhaseImpl() {
 
 		//Randomize the order of the player
-		cout << "\nBefore randomizing the order of players, thats our list of players: \n" << endl;
-		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
-        	cout << m_activePlayers[i]->getPlayerName()<< endl;
-
 		unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
 		std::default_random_engine default_random_engine(seed);
 		std::shuffle(m_activePlayers.begin(), m_activePlayers.end(), default_random_engine);
 		
-		cout << "\nAfter randomizing the order of players, thats our list of players: \n" << endl;
-		for (int i = 0; i < GameManager::m_activePlayers.size(); i++)
-			cout << m_activePlayers[i]->getPlayerName()<< endl;
-
-		std::cout << "\n";
-
 		//get territories
 		std::vector<Territory*> territories;
 		territories.reserve(map->getTerritoryCount());
@@ -542,15 +529,9 @@ namespace WZ
 		int playerIndex = 0;
 		for (Territory* curr : territories)
 		{
-			std::cout << m_activePlayers[playerIndex]->getPlayerName()
-				<< " is assigned territory: " << curr->getName() << "\n";
-
 			m_activePlayers[playerIndex]->addTerritory(curr);
 			playerIndex = (playerIndex + 1) % m_activePlayers.size();
 		}
-
-		std::cout << "\n";
-
 
  		int armies;
 		switch (m_activePlayers.size())
@@ -571,8 +552,6 @@ namespace WZ
 				armies = 25;
 			  	break;
 		}
-
-		std::cout << "Each player will be given " << armies << " armies\n ";
 
 		for (Player* p : m_activePlayers)
 		{

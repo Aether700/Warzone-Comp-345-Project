@@ -66,7 +66,11 @@ namespace WZ
 	bool Order::isExecuted() const { return m_isExecuted; }
 
 	Order& Order::operator=(const Order& other) 
-	{ 
+	{
+		if (this == &other)
+		{
+			return *this;
+		}
 		this->m_player = other.m_player; 
 		return *this;
 	}
@@ -103,7 +107,6 @@ namespace WZ
 
 	bool DeployOrder::validate() const
 	{
-		std::cout << "Validating DeployOrder\n";
 		return getPlayer()->ownsTerritory(m_destination);
 	}
 	
@@ -135,6 +138,10 @@ namespace WZ
 
 	DeployOrder& DeployOrder::operator=(const DeployOrder& other)
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
 		Order::operator=(other);
 		m_destination = other.m_destination;
 		m_amount = other.m_amount;
@@ -173,7 +180,6 @@ namespace WZ
 
 	bool AdvanceOrder::validate() const
 	{
-		std::cout << "Validating AdvanceOrder\n";
 		if (!getPlayer()->ownsTerritory(m_source) || GameManager::isNegotiating(getPlayer(), (const Player*) m_target->getOwner()))
 		{
 			return false;
@@ -245,6 +251,10 @@ namespace WZ
 
 	AdvanceOrder& AdvanceOrder::operator=(const AdvanceOrder& other)
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
 		Order::operator=(other);
 
 		m_source = other.m_source;
@@ -279,7 +289,6 @@ namespace WZ
 
 	bool BombOrder::validate() const
 	{
-		std::cout << "Validating BombOrder\n";
 		if (getPlayer()->ownsTerritory(m_target))
 		{
 			return false;
@@ -318,6 +327,10 @@ namespace WZ
 
 	BombOrder& BombOrder::operator=(const BombOrder& other)
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
 		Order::operator=(other);
 		m_target = other.m_target;
 
@@ -349,7 +362,6 @@ namespace WZ
 
 	bool BlockadeOrder::validate() const
 	{	
-		std::cout << "Validating BlockadeOrder\n";
 		return getPlayer()->ownsTerritory(m_target);
 	}
 
@@ -385,6 +397,10 @@ namespace WZ
 
 	BlockadeOrder& BlockadeOrder::operator=(const BlockadeOrder& other)
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
 		Order::operator=(other);
 		m_target = other.m_target;
 
@@ -419,7 +435,6 @@ namespace WZ
 
 	bool AirliftOrder::validate() const
 	{
-		std::cout << "Validating AirliftOrder\n";
 		return getPlayer()->ownsTerritory(m_source) && m_source->getArmies() >= m_amount 
 			&& !GameManager::isNegotiating(getPlayer(), m_destination->getOwner());
 	}
@@ -474,6 +489,10 @@ namespace WZ
 
 	AirliftOrder& AirliftOrder::operator=(const AirliftOrder& other)
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
 		Order::operator=(other);
 		m_source = other.m_source;
 		m_destination = other.m_destination;
@@ -510,7 +529,6 @@ namespace WZ
 
 	bool NegotiateOrder::validate() const
 	{
-		std::cout << "Validating NegotiateOrder\n";
 		return *getPlayer() != *const_cast<const Player*>(m_otherPlayer);
 	}
 
@@ -544,6 +562,11 @@ namespace WZ
 
 	NegotiateOrder& NegotiateOrder::operator=(const NegotiateOrder& other)
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
+
 		Order::operator=(other);
 		m_otherPlayer = other.m_otherPlayer;
 
@@ -663,6 +686,17 @@ namespace WZ
 
 	OrderList& OrderList::operator=(const OrderList& other)
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
+
+		for (Order* o : m_orders)
+		{
+			delete o;
+		}
+		m_orders.clear();
+		m_orders.reserve(other.m_orders.size());
 		m_orders = other.m_orders;
 		return *this;
 	}
