@@ -549,4 +549,9 @@ namespace WZ
 
 	PlayerStrategy* NeutralPlayerStrategy::copy() const { return new NeutralPlayerStrategy(*this); }
 
+	
+	// AggressivePlayerStrategy ///////////////////////////////////////////////////////////////
+
+
+
 }

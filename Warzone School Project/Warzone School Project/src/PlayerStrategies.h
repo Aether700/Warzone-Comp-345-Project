@@ -232,4 +232,36 @@ namespace WZ
 		virtual PlayerStrategy* copy() const override;
 	};
 
+
+	class AggressivePlayerStrategy : public PlayerStrategy
+	{
+		/*base constructor of AggressivePlayerStrategy, 
+		  takes a ptr to the player who owns this Strategy object
+
+		  player: the player who owns this object
+		*/
+		AggressivePlayerStrategy(Player* player);
+
+		/* copy constructor of the AggressivePlayerStrategy class
+
+		   other: the other AggressivePlayerStrategy object to copy
+		*/
+		AggressivePlayerStrategy(const AggressivePlayerStrategy& other);
+
+		//deconstructor of the AggressivePlayerStrategy class
+		~AggressivePlayerStrategy();
+
+		/*assignment operator of the NeutralPlayerStrategy class 
+
+		  other: the other NeutralPlayerStrategy object to assign to this one
+		  returns: this NeutralPlayerStrategy object after assignment
+		*/
+		AggressivePlayerStrategy& operator=(const AggressivePlayerStrategy& other);
+
+	private:
+
+	protected:
+	
+	};
+
 }
