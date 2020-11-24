@@ -528,6 +528,11 @@ namespace WZ
 		return new NegotiateOrder(m_player, targetPlayers[choice - 1]);
 	}
 
+	std::ostream& operator<<(std::ostream& stream, const HumanPlayerStrategy&)
+	{
+		stream << "Human Player Strategy";
+		return stream;
+	}
 
 	// NeutralPlayerStrategy ////////////////////////////////////////////////////////////////
 
@@ -549,6 +554,11 @@ namespace WZ
 
 	PlayerStrategy* NeutralPlayerStrategy::copy() const { return new NeutralPlayerStrategy(*this); }
 
+	std::ostream& operator<<(std::ostream& stream, const NeutralPlayerStrategy&)
+	{
+		stream << "Neutral Player Strategy";
+		return stream;
+	}
 	
 	// AggressivePlayerStrategy ///////////////////////////////////////////////////////////////
 

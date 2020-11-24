@@ -191,6 +191,8 @@ namespace WZ
 		NegotiateOrder* PlayDiplomacyCard(Card* c);
 	};
 
+	std::ostream& operator<<(std::ostream& stream, const HumanPlayerStrategy&);
+
 	class NeutralPlayerStrategy : public PlayerStrategy
 	{
 		/*base constructor of NeutralPlayerStrategy, 
@@ -232,6 +234,7 @@ namespace WZ
 		virtual PlayerStrategy* copy() const override;
 	};
 
+	std::ostream& operator<<(std::ostream& stream, const NeutralPlayerStrategy&);
 
 	class AggressivePlayerStrategy : public PlayerStrategy
 	{
@@ -263,7 +266,6 @@ namespace WZ
 	protected:
 	
 	};
-
 
 	class BenevolentPlayerStrategy : public PlayerStrategy{
 
