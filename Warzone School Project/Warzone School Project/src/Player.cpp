@@ -190,6 +190,10 @@ namespace WZ
 
 	PlayerStrategy* Player::GetRandomStrategy()
 	{
-		return nullptr;
+		if (Random::GetFloat() <= 0.5f)
+		{
+			return new BenevolentPlayerStrategy(this);
+		}
+		return new AggressivePlayerStrategy(this);
 	}
 }
