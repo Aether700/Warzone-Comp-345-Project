@@ -195,6 +195,7 @@ namespace WZ
 
 	class NeutralPlayerStrategy : public PlayerStrategy
 	{
+	public:
 		/*base constructor of NeutralPlayerStrategy, 
 		  takes a ptr to the player who owns this Strategy object
 
@@ -269,7 +270,7 @@ namespace WZ
 
 	class BenevolentPlayerStrategy : public PlayerStrategy{
 
-
+	public:
 		/*base constructor of BenevolentPlayerStrategy, 
 		  takes a ptr to the player who owns this Strategy object
 
@@ -301,14 +302,14 @@ namespace WZ
 
 
 
-		protected:
+	protected:
 		/* provides a copy of this BenevolentPlayerStrategy obj (like the clone method in java)
 		   will only be used by the Player class to perform a deep copy of a Player object
 		*/
 		virtual PlayerStrategy* copy() const override;
 
 
-		private:
+	private:
 
 		DeployOrder* DeployArmies();
 
