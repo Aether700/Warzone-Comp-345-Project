@@ -83,9 +83,19 @@ static WZ::PlayerStrategy* ChooseStrategy(WZ::Player* p)
 	}
 }
 
+static void GiveCards(WZ::Player* p) 
+{
+	p->getHand()->addCardToHand(new WZ::Card(WZ::Card::Type::Airlift));
+	p->getHand()->addCardToHand(new WZ::Card(WZ::Card::Type::Blockade));
+	p->getHand()->addCardToHand(new WZ::Card(WZ::Card::Type::Bomb));
+	p->getHand()->addCardToHand(new WZ::Card(WZ::Card::Type::Diplomacy));
+	p->getHand()->addCardToHand(new WZ::Card(WZ::Card::Type::Reinforcement));
+}
+
 void StrategyDriver()
 {
 	WZ::Player p = WZ::Player("P");
+	GiveCards(&p);
 	WZ::PlayerStrategy* strategy;
 	WZ::Map* map = CreateMap(&p);
 
@@ -110,6 +120,7 @@ void StrategyDriver()
 			strategy = ChooseStrategy(&p);
 			p.SetStrategy(strategy); //deletes the old strategy
 		}
+		GiveCards(&p);
 	}
 
 	delete map;
