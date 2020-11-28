@@ -19,6 +19,8 @@ namespace WZ
 	public:
 
 		//temporary friend functions for the drivers
+		friend void StrategyDriver();
+
 		friend void mainGameLoopSetup();
 		friend void startupPhaseSetup(std::vector<Player*>& players);
 		friend void gameObserversSetup();

@@ -17,6 +17,10 @@ namespace WZ
 		friend class GameManager;
 		friend class Player;
 		friend class Card;
+		
+		//temp friend function for player strategies driver
+		friend void StrategyDriver();
+
 	public:
 
 		/*base constructor of PlayerStrategy to be used by 
@@ -239,7 +243,7 @@ namespace WZ
 
 	class AggressivePlayerStrategy : public PlayerStrategy
 	{
-		/*base constructor of AggressivePlayerStrategy, 
+		/*base constructor of AggressivePlayerStrategy,
 		  takes a ptr to the player who owns this Strategy object
 
 		  player: the player who owns this object
@@ -255,7 +259,7 @@ namespace WZ
 		//deconstructor of the AggressivePlayerStrategy class
 		~AggressivePlayerStrategy();
 
-		/*assignment operator of the NeutralPlayerStrategy class 
+		/*assignment operator of the NeutralPlayerStrategy class
 
 		  other: the other NeutralPlayerStrategy object to assign to this one
 		  returns: this NeutralPlayerStrategy object after assignment
@@ -267,13 +271,13 @@ namespace WZ
 		virtual std::vector<Territory*> toDefend();
 
 		virtual std::vector<Territory*> toAttack();
-	
+
 	};
 
-	class BenevolentPlayerStrategy : public PlayerStrategy{
+	class BenevolentPlayerStrategy : public PlayerStrategy {
 
 	public:
-		/*base constructor of BenevolentPlayerStrategy, 
+		/*base constructor of BenevolentPlayerStrategy,
 		  takes a ptr to the player who owns this Strategy object
 
 		  player: the player who owns this object
@@ -292,7 +296,7 @@ namespace WZ
 		*/
 		BenevolentPlayerStrategy(const BenevolentPlayerStrategy& other);
 
-		/*assignment operator of the BenevolentPlayerStrategy class 
+		/*assignment operator of the BenevolentPlayerStrategy class
 
 		  other: the other BenevolentPlayerStrategy object to assign to this one
 		  returns: this BenevolentPlayerStrategy object after assignment
@@ -320,7 +324,5 @@ namespace WZ
 
 
 	};
-
-
 
 }

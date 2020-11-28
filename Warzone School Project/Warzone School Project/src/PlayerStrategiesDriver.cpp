@@ -1,11 +1,12 @@
 #include "PlayerStrategies.h"
+#include "GameEngine.h"
 #include "Utils.h"
 #include "Map.h"
 #include "Player.h"
 
 #include <iostream>
 
-static WZ::Map* CreateMap(WZ::Player* p)
+static WZ::Map* CreateMap(WZ::Player* p, WZ::Player* p2)
 {
 	std::vector<WZ::Continent*> v;
 
@@ -27,6 +28,7 @@ static WZ::Map* CreateMap(WZ::Player* p)
 	p->addTerritory(t2);
 	p->addTerritory(t3);
 	p->addTerritory(t4);
+	p2->addTerritory(t5);
 
 	t1->addAdjTerritory(t2);
 	t2->addAdjTerritory(t1);
@@ -39,7 +41,13 @@ static WZ::Map* CreateMap(WZ::Player* p)
 	t5->addAdjTerritory(t6);
 	t6->addAdjTerritory(t4);
 
-
+	t1->setArmies(10);
+	t2->setArmies(10);
+	t3->setArmies(10);
+	t4->setArmies(10);
+	t5->setArmies(10);
+	t6->setArmies(10);
+	
 	c1->addTerritory(t1);
 	c1->addTerritory(t2);
 	c1->addTerritory(t3);
@@ -56,30 +64,25 @@ static WZ::Map* CreateMap(WZ::Player* p)
 
 static WZ::PlayerStrategy* ChooseStrategy(WZ::Player* p)
 {
-	constexpr std::array<const char*, 5> choices = { "Human", "Neutral", "Aggressive", "Benevolant" };
+	constexpr std::array<const char*, 4> choices = { "Human", "Neutral", "Aggressive", "Benevolant" };
 
-	std::cout << "Please choose a Strategy to use for the player";
+	std::cout << "Please choose a Strategy to use for the player\n";
 	switch(WZ::AskInput(choices, "Exit Driver"))
 	{
 	case 1:
 		return new WZ::HumanPlayerStrategy(p);
-		break;
 
 	case 2:
 		return new WZ::NeutralPlayerStrategy(p);
-		break;
 
 	case 3:
 		return new WZ::AggressivePlayerStrategy(p);
-		break;
 
 	case 4:
 		return new WZ::BenevolentPlayerStrategy(p);
-		break;
 
 	case -1:
 		return nullptr;
-		break;
 	}
 }
 
@@ -92,37 +95,68 @@ static void GiveCards(WZ::Player* p)
 	p->getHand()->addCardToHand(new WZ::Card(WZ::Card::Type::Reinforcement));
 }
 
-void StrategyDriver()
+namespace WZ
 {
-	WZ::Player p = WZ::Player("P");
-	GiveCards(&p);
-	WZ::PlayerStrategy* strategy;
-	WZ::Map* map = CreateMap(&p);
-
-
-	strategy = ChooseStrategy(&p);
-	p.SetStrategy(strategy);
-	while (strategy != nullptr)
+	void StrategyDriver()
 	{
-		std::cout << *map << "\n\n";
-		WZ::Order* o = p.issueOrder();
-		if (o == nullptr)
-		{
-			std::cout << "The player is done for this turn (will not issue orders for the rest of the turn";
-			strategy->generateTerritoryLists();
-		}
-		std::cout << "The player issued the following order:\n" << *o << "\n";
-		delete o;
+		WZ::Player* p = new  WZ::Player("P1");
+		WZ::Player* p2 = new WZ::Player("P2");
+		GiveCards(p);
+		WZ::PlayerStrategy* strategy;
+		WZ::Map* map = CreateMap(p, p2);
 
-		std::cout << "Keep the same strategy for next order?";
-		if (!WZ::AskYN())
+		//set map to the game manager since the strategies get the map through the manager
+		GameManager::GetManager().map = map;
+
+		//delete old players and set the current ones as the active players 
+		//(the strategies get players through the manager)
+		for (Player* p : GameManager::GetManager().m_activePlayers)
 		{
-			strategy = ChooseStrategy(&p);
-			p.SetStrategy(strategy); //deletes the old strategy
+			delete p;
 		}
-		GiveCards(&p);
+		GameManager::GetManager().m_activePlayers = { p, p2 };
+
+
+		strategy = ChooseStrategy(p);
+		while (strategy != nullptr)
+		{
+			map->resetAvailableArmies();
+
+			p->SetStrategy(strategy); //deletes old strategy
+			std::cout << *map << "\n\n";
+
+			//give player reinforcements to show that can only do deploy orders when has some
+			std::cout << "Give player reinforcements?\n";
+			if (WZ::AskYN())
+			{
+				p->m_strategy->m_reinforcements = 10;
+			}
+			std::cout << "\n";
+
+			WZ::Order* o = p->issueOrder();
+			if (o == nullptr)
+			{
+				std::cout << "The player is done for this turn (will not issue orders for the rest of the turn\n";
+				strategy->generateTerritoryLists();
+			}
+			else
+			{
+				std::cout << "The player issued the following order:\n" << *o << "\n";
+				delete o;
+				GiveCards(p);
+			}
+
+			//reset stategy reinforcements to 0 to allow none deploy orders to be made
+			p->m_strategy->m_reinforcements = 0;
+			std::cout << "\nKeep the same strategy for next order?\n";
+			if (!WZ::AskYN())
+			{
+				strategy = ChooseStrategy(p);
+			}
+
+			std::cout << "\n";
+		}
+
+		delete map;
 	}
-
-	delete map;
 }
-

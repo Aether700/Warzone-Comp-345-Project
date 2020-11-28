@@ -107,6 +107,11 @@ namespace WZ
 	{
 		assert(strategy != nullptr);
 
+		if (strategy == m_strategy)
+		{
+			return;
+		}
+
 		delete m_strategy;
 		m_strategy = strategy;
 		m_strategy->SetPlayer(this);
@@ -193,8 +198,9 @@ namespace WZ
 	{
 		if (Random::GetFloat() <= 0.5f)
 		{
-			return new BenevolentPlayerStrategy(this);
+			//return new BenevolentPlayerStrategy(this);
 		}
-		return new AggressivePlayerStrategy(this);
+		//return new AggressivePlayerStrategy(this);
+		return nullptr;
 	}
 }

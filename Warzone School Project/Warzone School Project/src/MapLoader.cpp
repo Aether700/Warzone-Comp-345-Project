@@ -393,8 +393,9 @@ namespace WZ {
 
 	Map* ConquestFileReaderAdapter::mapGenerator(const string& filepath) { 	//main function that returns map
 
-		return filereader->conquestMapGenerator(filepath);
-
+		//return filereader->conquestMapGenerator(filepath);
+		std::cout << "mapGenerator for Conquest Reader called\n";
+		return nullptr;
 	}
 
 	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m)

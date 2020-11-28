@@ -446,6 +446,15 @@ namespace WZ
 		}
 	}
 
+	void Map::resetAvailableArmies()
+	{
+		for (auto pair : *this)
+		{
+			Territory* t = pair.second;
+			t->m_availableArmies = t->m_armies;
+		}
+	}
+
 	std::vector<Territory*> Map::getAccessList(Territory* t) const
 	{
 		std::vector<Territory*> accessList;

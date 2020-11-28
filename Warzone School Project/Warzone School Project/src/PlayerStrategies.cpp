@@ -117,7 +117,10 @@ namespace WZ
 			}
 			else
 			{
-				switch (AskInput(choices, "End Turn"))
+				int choice = AskInput(choices, "End Turn");
+				std::cout << "\n";
+
+				switch (choice)
 				{
 				case 1:
 					o = PlayCard();
@@ -164,11 +167,28 @@ namespace WZ
 		}
 
 		std::vector<std::string> cardStr;
-		cardStr.reserve(m_player->getHand()->getCount());
+		int size = m_player->getHand()->getCount() < 5 ? m_player->getHand()->getCount() : 5;
+		cardStr.reserve(size);
+
+		int count = 0;
 
 		for(Card* c : *m_player->getHand())
 		{
+			//early break if all card types have been found
+			if (count == size)
+			{
+				break;
+			}
+
+			for (std::string type : cardStr)
+			{
+				if (type == CardTypeToStr(c->getType()))
+				{
+					continue;
+				}
+			}
 			cardStr.push_back(CardTypeToStr(c->getType()));
+			count++;
 		}
 
 		while (true)
@@ -299,7 +319,7 @@ namespace WZ
 				return nullptr;
 			}
 			//make sure the territory has some available armies
-			else if (src->getAvailableArmies() != 0)
+			else if (src->getAvailableArmies() == 0)
 			{
 				std::cout << "This territory has no available armies. Please choose another one.\n";
 				continue;
@@ -452,7 +472,7 @@ namespace WZ
 				{
 					Territory* curr = pair.second;
 
-					if (curr->getOwner() != m_player)
+					if (curr != src)
 					{
 						targetList.push_back(curr);
 					}
@@ -466,6 +486,8 @@ namespace WZ
 				{
 					targetListStr.push_back(t->getName());
 				}
+
+				std::cout << "\nChoose a target territory:\n";
 
 				int choice = AskInput(targetListStr, "Back");
 
@@ -482,11 +504,11 @@ namespace WZ
 
 			while (true)
 			{
-				std::cout << "How many armies do you want to send?\t"
+				std::cout << "\nHow many armies do you want to send?\t"
 					<< src->getName() << ": " << src->getAvailableArmies() << " Armies\n";
 				numArmies = Clamp(1, src->getAvailableArmies(), AskInt());
 
-				std::cout << "Are you sure you want to send " << numArmies << " Armies?\n";
+				std::cout << "\nAre you sure you want to send " << numArmies << " Armies?\n";
 				if (AskYN())
 				{
 					break;
@@ -599,5 +621,6 @@ namespace WZ
 		std::stable_sort(territories.begin(), territories.end());
 		return territories;
 	}	
+	
 
 }
