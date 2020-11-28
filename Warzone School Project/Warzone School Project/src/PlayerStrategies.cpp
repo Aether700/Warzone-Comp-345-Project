@@ -1,5 +1,8 @@
 #include <assert.h>
 #include <array>
+#include <sstream>
+#include <random>
+#include <chrono>
 
 #include "PlayerStrategies.h"
 #include "GameEngine.h"
@@ -562,6 +565,39 @@ namespace WZ
 	
 	// AggressivePlayerStrategy ///////////////////////////////////////////////////////////////
 
+	AggressivePlayerStrategy::AggressivePlayerStrategy(Player* player) : PlayerStrategy(player) { }
 
+	AggressivePlayerStrategy::AggressivePlayerStrategy(const AggressivePlayerStrategy& other) : PlayerStrategy(other) { }
+
+	AggressivePlayerStrategy::~AggressivePlayerStrategy() {}
+
+	AggressivePlayerStrategy& AggressivePlayerStrategy::operator=(const AggressivePlayerStrategy& other)
+	{
+		PlayerStrategy::operator=(other);
+		return *this;
+	}
+
+	Order* AggressivePlayerStrategy::issueOrder() {
+		
+		std::vector<Territory*> defend = toDefend();
+		std::vector<Territory*> attack = toAttack();
+		if(m_reinforcements > 0 && defend.size > 0){
+			Territory* territory = toDefend().at(0);
+
+
+		}
+	}
+
+	std::vector<Territory*> AggressivePlayerStrategy::toDefend() {
+	
+	}
+
+	std::vector<Territory*> AggressivePlayerStrategy::toAttack() {
+		unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
+		std::default_random_engine default_random_engine(seed);
+		std::vector<Territory*> territories = m_player->getTerritories();
+		std::stable_sort(territories.begin(), territories.end());
+		return territories;
+	}	
 
 }

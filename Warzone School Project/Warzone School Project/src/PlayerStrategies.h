@@ -262,9 +262,11 @@ namespace WZ
 		*/
 		AggressivePlayerStrategy& operator=(const AggressivePlayerStrategy& other);
 
-	private:
+		virtual Order* issueOrder() override;
 
-	protected:
+		virtual std::vector<Territory*> toDefend();
+
+		virtual std::vector<Territory*> toAttack();
 	
 	};
 
