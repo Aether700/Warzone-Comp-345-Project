@@ -34,24 +34,22 @@ namespace WZ {
 		*/
 		vector<Borders> borders;
 		/*
-			determine if the given file contains a map or not
+			Overloading function for the assignment operator
 		*/
-		bool conquest_map_validator(const string&);
+		ConquestFileReader& operator=(const ConquestFileReader&);
+		/*
+			Overloading function for the insertion operator
+		*/
+		std::ostream& operator<<(std::ostream&);
 		/*
 			extracts the needed data from the passed map file and stores it into the passed vectors acordingly
 		*/
 		void conquestParserFunction(const string&, vector<Continent*>&, vector<Territory*>&, vector<Borders>&);
-		/*
-			function that creates the graph which will represent the map during the game play. All adjacency
-		*/
-		void setAdjList();
+
 
 	public:
 		ConquestFileReader();										//	default constructor
 		ConquestFileReader(const ConquestFileReader&);				//	parameterised constructor
 		ConquestFileReader& operator=(const ConquestFileReader&);	//	assign operator overwriter
-		Map* conquestMapGenerator();								//	default map generator - user picks a map from the predefined map folder
-		Map* conquestMapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
-		string conquest_menu_loader(const string& path = "/Maps");	//	menu function to navigate through the menu option
 	};
 }
