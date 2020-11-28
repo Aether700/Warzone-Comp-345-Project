@@ -23,6 +23,7 @@ namespace WZ
 	Player::~Player() {
 		delete hand;
 		delete listOrders;
+		delete m_strategy;
 	}
 
 	Player::Player(string n, PlayerStrategy* strategy, vector<Territory*> t) : hasDrawnCard(false), m_strategy(strategy) {
@@ -190,6 +191,10 @@ namespace WZ
 
 	PlayerStrategy* Player::GetRandomStrategy()
 	{
-		return nullptr;
+		if (Random::GetFloat() <= 0.5f)
+		{
+			return new BenevolentPlayerStrategy(this);
+		}
+		return new AggressivePlayerStrategy(this);
 	}
 }

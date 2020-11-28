@@ -27,7 +27,7 @@ namespace WZ
 
 		/* returns a random strategy between an Aggressive or Benevolant strategy
 		*/
-		static PlayerStrategy* GetRandomStrategy();
+		PlayerStrategy* GetRandomStrategy();
 
 	public:
 		//default constructor of the Player class

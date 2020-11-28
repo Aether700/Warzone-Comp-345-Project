@@ -191,8 +191,11 @@ namespace WZ
 		NegotiateOrder* PlayDiplomacyCard(Card* c);
 	};
 
+	std::ostream& operator<<(std::ostream& stream, const HumanPlayerStrategy&);
+
 	class NeutralPlayerStrategy : public PlayerStrategy
 	{
+	public:
 		/*base constructor of NeutralPlayerStrategy, 
 		  takes a ptr to the player who owns this Strategy object
 
@@ -232,6 +235,7 @@ namespace WZ
 		virtual PlayerStrategy* copy() const override;
 	};
 
+	std::ostream& operator<<(std::ostream& stream, const NeutralPlayerStrategy&);
 
 	class AggressivePlayerStrategy : public PlayerStrategy
 	{
@@ -263,5 +267,58 @@ namespace WZ
 	protected:
 	
 	};
+
+	class BenevolentPlayerStrategy : public PlayerStrategy{
+
+	public:
+		/*base constructor of BenevolentPlayerStrategy, 
+		  takes a ptr to the player who owns this Strategy object
+
+		  player: the player who owns this object
+		*/
+		BenevolentPlayerStrategy(Player* player);
+
+		//deconstructor of the BenevolentPlayerStrategy class
+		~BenevolentPlayerStrategy();
+
+		virtual Order* issueOrder() override;
+
+
+		/* copy constructor of the BenevolentPlayerStrategy class
+
+		   other: the other BenevolentPlayerStrategy object to copy
+		*/
+		BenevolentPlayerStrategy(const BenevolentPlayerStrategy& other);
+
+		/*assignment operator of the BenevolentPlayerStrategy class 
+
+		  other: the other BenevolentPlayerStrategy object to assign to this one
+		  returns: this BenevolentPlayerStrategy object after assignment
+		*/
+		BenevolentPlayerStrategy& operator=(const BenevolentPlayerStrategy& other);
+
+
+		virtual void generateTerritoryLists() override;
+
+
+
+	protected:
+		/* provides a copy of this BenevolentPlayerStrategy obj (like the clone method in java)
+		   will only be used by the Player class to perform a deep copy of a Player object
+		*/
+		virtual PlayerStrategy* copy() const override;
+
+
+	private:
+
+		DeployOrder* DeployArmies();
+
+		AdvanceOrder* Advance();
+
+
+
+	};
+
+
 
 }
