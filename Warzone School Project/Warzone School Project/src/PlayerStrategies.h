@@ -306,6 +306,10 @@ namespace WZ
 
 		virtual void generateTerritoryLists() override;
 
+		virtual Order* issueOrder() override;
+
+		
+
 
 
 	protected:
@@ -317,7 +321,10 @@ namespace WZ
 
 	private:
 
-		DeployOrder* DeployArmies();
+		
+		Order* offensivePlay();
+		Order* defensivePlay();
+		DeployOrder* issueDeployOrder();
 
 		AdvanceOrder* Advance();
 

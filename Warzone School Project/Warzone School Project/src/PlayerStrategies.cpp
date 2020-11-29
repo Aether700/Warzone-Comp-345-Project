@@ -603,7 +603,7 @@ namespace WZ
 		
 		std::vector<Territory*> defend = toDefend();
 		std::vector<Territory*> attack = toAttack();
-		if(m_reinforcements > 0 && defend.size > 0){
+		if(m_reinforcements > 0 && defend.size() > 0){
 			Territory* territory = toDefend().at(0);
 
 
@@ -621,6 +621,142 @@ namespace WZ
 		std::stable_sort(territories.begin(), territories.end());
 		return territories;
 	}	
+
+
+
+	// BenevolentPlayerStrategy ///////////////////////////////////////////////////////////////
+
+	BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player* player) : PlayerStrategy(player) { }
+
+	BenevolentPlayerStrategy::BenevolentPlayerStrategy(const BenevolentPlayerStrategy& other) : PlayerStrategy(other) { }
+
+	BenevolentPlayerStrategy::~BenevolentPlayerStrategy() { }
+
+	BenevolentPlayerStrategy& BenevolentPlayerStrategy::operator=(const BenevolentPlayerStrategy& other)
+	{
+		PlayerStrategy::operator=(other);
+		return *this;
+	}
+
+	Order* BenevolentPlayerStrategy::issueOrder() {
+		if(m_reinforcements > 0 )
+			return issueDeployOrder();
+		
+		return defensivePlay();
+		
+	}
+
+	
+	
+	Order* BenevolentPlayerStrategy::defensivePlay(){
+		vector<Territory*>& toDfd=toDefend();
+		if(toDfd.empty())
+			return NULL;
+		
+		if(m_player->hasCardType(Card::Type::Reinforcement) && Random::GetFloat()<=0.6f){
+			Hand* hand = m_player->getHand();
+			Card* crd;
+			for(Card* card :*hand){
+				if(card->getType()==Card::Type::Reinforcement){
+					crd=card;
+					break;
+				}
+
+			}
+			hand->removeCardFromHand(crd);
+			crd->play(NULL,NULL,NULL,NULL,0);
+			return issueOrder();
+		}
+		else
+		{
+			return Advance();
+		}
+		
+	}
+	
+	AdvanceOrder* BenevolentPlayerStrategy::Advance(){
+		vector<Territory*>& toDfd=toDefend();
+		Territory* target = toDfd[0];
+		Territory* source= getSourceTerritory(target);
+		if(source==NULL)
+			return NULL;
+		
+		int armies=source->getAvailableArmies()/2;
+		if(armies<1)
+			armies=1;
+		return new AdvanceOrder(m_player,source,target,armies);
+		
+	}
+
+	Territory* BenevolentPlayerStrategy::getSourceTerritory(Territory* target){
+		Territory* source=nullptr;
+		vector<Territory*> accesslist=GameManager::getMap()->getAccessList(target);
+		for(Territory* t : accesslist){
+			if (t->getOwner()==m_player && t->getAvailableArmies()!= 0){
+				if(source==NULL)
+					source=t;
+				else if(source->getAvailableArmies() < t->getAvailableArmies())
+				{
+					source=t;
+					
+				}
+			}
+		}
+		return source;
+
+	}
+	void BenevolentPlayerStrategy::generateTerritoryLists(){
+		m_toDef.clear();
+		vector<Territory*> owned=m_player->getTerritories();
+		quickSortTerritories(owned,0,owned.size());
+		m_toDef=owned;
+
+	}
+
+	void BenevolentPlayerStrategy::quickSortTerritories(vector<Territory*>& list,int start,int end){
+		if(end-start <=1)
+			return;
+		else if(end-start ==2){
+			if(list[start]->getArmies() > list[end-1]->getArmies()){
+				swapTerritories(list,start,end);	
+			}
+			return;
+		}
+		int pivotIndex=(end - start)/2 + start;
+		Territory* pivot=list[pivotIndex];
+		int wall=start;
+		for(int i=start ; i<end ; i++){
+			if(list[i]->getArmies()< pivot->getArmies()){
+				swapTerritories(list,i,wall);
+				wall++;
+			}
+		}
+		quickSortTerritories(list,start,wall);
+		if(wall==start)
+			wall++;
+		quickSortTerritories(list,wall,end);
+
+
+	}
+
+
+	void BenevolentPlayerStrategy::swapTerritories(vector<Territory*>& list,int i,int j){
+		Territory* temp=list[i];
+		list[i]=list[j];
+		list[j]=temp;
+	}
+
+	// std::vector<Territory*> BenevolentPlayerStrategy::toDefend() {
+	
+	// }
+
+	// std::vector<Territory*> BenevolentPlayerStrategy::toAttack() {
+	// 	unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
+	// 	std::default_random_engine default_random_engine(seed);
+	// 	std::vector<Territory*> territories = m_player->getTerritories();
+	// 	std::stable_sort(territories.begin(), territories.end());
+	// 	return territories;
+	// }	
 	
 
 }
