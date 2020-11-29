@@ -674,6 +674,16 @@ namespace WZ
 		
 	}
 	
+	DeployOrder* BenevolentPlayerStrategy::issueDeployOrder()
+	{
+		std::vector<Territory*>& toDef = toDefend();
+		Territory* target = toDef[0];
+
+		toDef.erase(toDef.begin());
+		m_reinforcements = 0;
+		return new DeployOrder(m_player, target, m_reinforcements);
+	}
+
 	AdvanceOrder* BenevolentPlayerStrategy::Advance(){
 		vector<Territory*>& toDfd=toDefend();
 		Territory* target = toDfd[0];
@@ -705,6 +715,7 @@ namespace WZ
 		return source;
 
 	}
+	
 	void BenevolentPlayerStrategy::generateTerritoryLists(){
 		m_toDef.clear();
 		vector<Territory*> owned=m_player->getTerritories();
@@ -739,24 +750,21 @@ namespace WZ
 
 	}
 
-
 	void BenevolentPlayerStrategy::swapTerritories(vector<Territory*>& list,int i,int j){
 		Territory* temp=list[i];
 		list[i]=list[j];
 		list[j]=temp;
 	}
 
-	// std::vector<Territory*> BenevolentPlayerStrategy::toDefend() {
+	PlayerStrategy* BenevolentPlayerStrategy::copy() const
+	{
+		return new BenevolentPlayerStrategy(*this);
+	}
 	
-	// }
-
-	// std::vector<Territory*> BenevolentPlayerStrategy::toAttack() {
-	// 	unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
-	// 	std::default_random_engine default_random_engine(seed);
-	// 	std::vector<Territory*> territories = m_player->getTerritories();
-	// 	std::stable_sort(territories.begin(), territories.end());
-	// 	return territories;
-	// }	
-	
+	std::ostream& operator<<(std::ostream& stream, const BenevolentPlayerStrategy&)
+	{
+		stream << "Benevolant Player Strategy";
+		return stream;
+	}
 
 }

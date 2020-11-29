@@ -322,14 +322,17 @@ namespace WZ
 	private:
 
 		
-		Order* offensivePlay();
 		Order* defensivePlay();
 		DeployOrder* issueDeployOrder();
 
 		AdvanceOrder* Advance();
+		Territory* getSourceTerritory(Territory* target);
 
-
+		void quickSortTerritories(vector<Territory*>& list, int start, int end);
+		void swapTerritories(vector<Territory*>& list, int i, int j);
 
 	};
+
+	std::ostream& operator<<(std::ostream& stream, const BenevolentPlayerStrategy&);
 
 }

@@ -41,12 +41,12 @@ static WZ::Map* CreateMap(WZ::Player* p, WZ::Player* p2)
 	t5->addAdjTerritory(t6);
 	t6->addAdjTerritory(t4);
 
-	t1->setArmies(10);
-	t2->setArmies(10);
+	t1->setArmies(5);
+	t2->setArmies(3);
 	t3->setArmies(10);
-	t4->setArmies(10);
-	t5->setArmies(10);
-	t6->setArmies(10);
+	t4->setArmies(8);
+	t5->setArmies(9);
+	t6->setArmies(11);
 	
 	c1->addTerritory(t1);
 	c1->addTerritory(t2);
