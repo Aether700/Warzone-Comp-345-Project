@@ -120,8 +120,10 @@ namespace WZ
 		*/
 		virtual Order* issueOrder() override;
 
-		/* does nothing since the all the decisions are made 
-		   by the human user so no need to generate territory lists
+		/* Fills the vector of territories to defend to the territories 
+		   owned by the player and the vector of territories to attack to 
+		   all territories accessible from the owned territories that are 
+		   not owned by the player
 		*/
 		virtual void generateTerritoryLists() override;
 

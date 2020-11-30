@@ -147,7 +147,19 @@ namespace WZ
 
 	void HumanPlayerStrategy::generateTerritoryLists()
 	{
-		//do nothing, decisions based on human user so no need to generate territory lists
+		m_toDef = m_player->getTerritories();
+		m_toAtk.clear();
+
+		for (Territory* t : m_player->getTerritories())
+		{
+			for (Territory* adj : t->getAdjList())
+			{
+				if (adj->getOwner() != m_player)
+				{
+					m_toAtk.push_back(adj);
+				}
+			}
+		}
 	}
 
 	HumanPlayerStrategy& HumanPlayerStrategy::operator=(const HumanPlayerStrategy& other)
@@ -253,10 +265,10 @@ namespace WZ
 	Territory* HumanPlayerStrategy::SelectOwnedTerritory(bool backMessage)
 	{
 		std::vector<std::string> strList;
-		strList.reserve(m_player->getNumOfTerritories());
+		strList.reserve(toDefend().size());
 
 
-		for (Territory* t : m_player->getTerritories())
+		for (Territory* t : toDefend())
 		{
 			strList.push_back(t->getName());
 		}
@@ -277,7 +289,7 @@ namespace WZ
 			choice = AskInput(strList);
 		}
 
-		return m_player->getTerritories()[choice - 1];
+		return toDefend()[choice - 1];
 	}
 	
 	DeployOrder* HumanPlayerStrategy::DeployArmies()
@@ -387,30 +399,7 @@ namespace WZ
 		assert(c->getType() == Card::Type::Bomb);
 
 		//create a list of territories that can be bombed
-		std::vector<Territory*> targetList;
-
-		for (Territory* owned : m_player->getTerritories())
-		{
-			for (Territory* adj : owned->getAdjList())
-			{
-				if (adj->getOwner() != m_player)
-				{
-					bool found = false;
-					for (Territory* target : targetList)
-					{
-						if (adj == target)
-						{
-							break;
-						}
-					}
-
-					if (!found)
-					{
-						targetList.push_back(adj);
-					}
-				}
-			}
-		}
+		std::vector<Territory*> targetList = toAttack();
 	
 		//make a string vector to pass to AskInput to prompt the user to select a territory
 
