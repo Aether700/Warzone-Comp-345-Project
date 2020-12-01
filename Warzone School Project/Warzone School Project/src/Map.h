@@ -22,6 +22,7 @@ namespace WZ
         friend class Map;
         friend class MapLoader;
         friend class AggressivePlayerStrategy;
+        friend class ConquestFileReader;
     public:
         /*Territory constructor
 
@@ -406,6 +407,9 @@ namespace WZ
           c: the map to remove
         */
         void removeContinent(Continent* c);
+
+        //sets the number of available armies of every territory of the map to the number of armies they have
+        void resetAvailableArmies();
 
         /* returns a vector list of all the territories on the map which can access the provided territory
 

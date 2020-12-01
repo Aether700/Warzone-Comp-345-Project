@@ -1,27 +1,43 @@
 #include "MapLoader.h"
+#include "Utils.h"
 #include <iostream>
-using std::cout;
-using std::endl;
 
-void MapLoaderDriver() {
-	WZ::MapLoader* loader = new WZ::MapLoader();
-	WZ::Map* map;
-
-	//	wrong maps
-	std::cout << "generating wrong map from arcticWrong.txt" << std::endl;
-	map = loader->mapGenerator("assets/map files/arcticWrong.txt");
-	std::cout << "generating wrong map from bigeuropeWrong.map" << std::endl;
-	map = loader->mapGenerator("assets/map files/bigeuropeWrong.map");
+WZ::MapLoader* ChooseMapType()
+{
+	std::array<const char*, 2> choices = { "Domination Format", "Conquest File" };
 	
-	// good maps
-	std::cout << "generating correct map from solar.map" << std::endl;
-	map = loader->mapGenerator("assets/map files/solar.map");
-	cout << "printing map:\n" << *map << endl;
+	std::cout << "Which type of map do you want to load?\n";
 
-	std::cout << "generating correct map from MiddleEast-Qatar.txt" << std::endl;
-	map = loader->mapGenerator("assets/map files/MiddleEast-Qatar.txt");
-	cout << "printing map ... \n\n" << *map << endl;
+	switch (WZ::AskInput(choices, "Back"))
+	{
+	case 1:
+		return new WZ::MapLoader();
 
-	delete map;
-	delete loader;
+	case 2:
+		return new WZ::ConquestFileReaderAdapter();
+
+	case -1:
+		return nullptr;
+	}
+}
+
+void MapLoaderDriver() 
+{
+	WZ::MapLoader* loader = ChooseMapType();
+	while (loader != nullptr)
+	{
+		WZ::Map* map = loader->mapGenerator();
+
+		if (map == nullptr)
+		{
+			std::cout << "The map file provided is not valid. Please choose another one.\n";
+		}
+		else
+		{
+			std::cout << *map << "\n";
+		}
+
+		delete loader;
+		loader = ChooseMapType();
+	}
 }

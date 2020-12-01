@@ -7,11 +7,9 @@ The map format that are readable - .txt or .map exclusevly.
 // parse the file content and create a map object that will be used to play the game.
 
 #pragma once
-#include <string>
-#include <vector>
+
 #include <iostream>
 #include "Map.h"
-#include "Utils.h"
 
 using std::string;
 using std::vector;
@@ -45,13 +43,14 @@ namespace WZ {
 		*/
 		vector<Borders> borders;
 		/*
-			determine if the given file contains a map or not
+			determine if the given file contains a risk map or not
 		*/
 		bool map_validator(const string&);
 		/*
 			extracts the needed data from the passed map file and stores it into the passed vectors acordingly
 		*/
 		void parserFunction(const string&, vector<Continent*>&, vector<Territory*>&, vector<Borders>&);
+
 		/*
 			function that creates the graph which will represent the map during the game play. All adjacency
 		*/
@@ -65,11 +64,6 @@ namespace WZ {
 		virtual Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
 		string menu_loader(const string& path = "/Maps");	//	menu function to navigate through the menu option
 	};
-	/*
-		overwriter of the insertion operator
-	*/
-	std::ostream& operator<<(std::ostream& stream, const MapLoader& m);
-
 
 	class ConquestFileReader
 	{
@@ -87,15 +81,15 @@ namespace WZ {
 		*/
 		vector<Borders> borders;
 		/*
-			determine if the given file contains a map or not
-		*/
-		bool conquest_map_validator(const string&);
-		/*
 			extracts the needed data from the passed map file and stores it into the passed vectors acordingly
 		*/
 		void conquestParserFunction(const string&, vector<Continent*>&, vector<Territory*>&, vector<Borders>&);
 		/*
-			function that creates the graph which will represent the map during the game play. All adjacency
+		determine if the given file contains a conquest map or not
+		*/
+		bool map_validator(const string&);
+		/*
+		Sets the adjacency list of the borders
 		*/
 		void setAdjList();
 
@@ -103,11 +97,32 @@ namespace WZ {
 		ConquestFileReader();										//	default constructor
 		ConquestFileReader(const ConquestFileReader&);				//	parameterised constructor
 		ConquestFileReader& operator=(const ConquestFileReader&);	//	assign operator overwriter
-		Map* conquestMapGenerator();								//	default map generator - user picks a map from the predefined map folder
-		Map* conquestMapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
-		string conquest_menu_loader(const string& path = "/Maps");	//	menu function to navigate through the menu option
-	};
+		
+		/*
+		Generates the in-game running map based on the map name indicated by user
+		*/
+		Map* mapGenerator(const string& map_name);
 
+		/*
+		Generates the in-game running map based on the map name selected by user
+		*/
+		Map* mapGenerator();
+		
+		string menu_loader(const string&);
+
+		/*
+			Overloading function for the assignment operator
+		*/
+		ConquestFileReader& operator=(const ConquestFileReader&);
+		/*
+			Overloading function for the insertion operator
+		*/
+		std::ostream& operator<<(std::ostream&);
+	};
+	/*
+		overwriter of the insertion operator
+	*/
+	std::ostream& operator<<(std::ostream& stream, const MapLoader& m);
 
 	///////////////////////////////////////////////////////////////////ConquestFileReaderAdapter///////////////////////////////////////////////////////////////////////
 
@@ -124,5 +139,43 @@ namespace WZ {
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m);
-}
 
+	//ConquestFileReaderAdapter///////////////////////////////////////
+
+
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter() {
+		filereader = new ConquestFileReader;
+	}
+
+	ConquestFileReaderAdapter::~ConquestFileReaderAdapter() {
+		delete filereader;
+	}
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj) {
+		filereader = new ConquestFileReader(*obj.filereader);
+	}
+
+	ConquestFileReaderAdapter& ConquestFileReaderAdapter::operator=(const ConquestFileReaderAdapter& obj) { //deep copy 2 pointers for two objects
+		if (this == &obj) {
+			return *this;
+		}
+		delete filereader;
+		filereader = new ConquestFileReader(*obj.filereader);
+		return *this;
+	}
+
+	Map* ConquestFileReaderAdapter::mapGenerator(const string& filepath) { 	//main function that returns map
+
+		//return filereader->conquestMapGenerator(filepath);
+		std::cout << "mapGenerator for Conquest Reader called\n";
+		return nullptr;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m)
+	{
+		stream << "Conquest File Reader Adapter";
+		return stream;
+	}
+
+}

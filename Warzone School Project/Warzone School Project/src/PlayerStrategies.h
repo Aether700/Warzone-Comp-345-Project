@@ -17,6 +17,10 @@ namespace WZ
 		friend class GameManager;
 		friend class Player;
 		friend class Card;
+		
+		//temp friend function for player strategies driver
+		friend void StrategyDriver();
+
 	public:
 
 		/*base constructor of PlayerStrategy to be used by 
@@ -116,8 +120,10 @@ namespace WZ
 		*/
 		virtual Order* issueOrder() override;
 
-		/* does nothing since the all the decisions are made 
-		   by the human user so no need to generate territory lists
+		/* Fills the vector of territories to defend to the territories 
+		   owned by the player and the vector of territories to attack to 
+		   all territories accessible from the owned territories that are 
+		   not owned by the player
 		*/
 		virtual void generateTerritoryLists() override;
 
@@ -240,7 +246,7 @@ namespace WZ
 	class AggressivePlayerStrategy : public PlayerStrategy
 	{
 	public: 
-		/*base constructor of AggressivePlayerStrategy, 
+		/*base constructor of AggressivePlayerStrategy,
 		  takes a ptr to the player who owns this Strategy object
 
 		  player: the player who owns this object
@@ -256,7 +262,7 @@ namespace WZ
 		//deconstructor of the AggressivePlayerStrategy class
 		~AggressivePlayerStrategy();
 
-		/*assignment operator of the NeutralPlayerStrategy class 
+		/*assignment operator of the NeutralPlayerStrategy class
 
 		  other: the other NeutralPlayerStrategy object to assign to this one
 		  returns: this NeutralPlayerStrategy object after assignment
@@ -265,13 +271,12 @@ namespace WZ
 
 		virtual Order* issueOrder() override;
 		virtual void generateTerritoryLists() override;
-	
 	};
 
-	class BenevolentPlayerStrategy : public PlayerStrategy{
+	class BenevolentPlayerStrategy : public PlayerStrategy {
 
 	public:
-		/*base constructor of BenevolentPlayerStrategy, 
+		/*base constructor of BenevolentPlayerStrategy,
 		  takes a ptr to the player who owns this Strategy object
 
 		  player: the player who owns this object
@@ -290,7 +295,7 @@ namespace WZ
 		*/
 		BenevolentPlayerStrategy(const BenevolentPlayerStrategy& other);
 
-		/*assignment operator of the BenevolentPlayerStrategy class 
+		/*assignment operator of the BenevolentPlayerStrategy class
 
 		  other: the other BenevolentPlayerStrategy object to assign to this one
 		  returns: this BenevolentPlayerStrategy object after assignment
@@ -299,6 +304,10 @@ namespace WZ
 
 
 		virtual void generateTerritoryLists() override;
+
+		virtual Order* issueOrder() override;
+
+		
 
 
 
@@ -311,14 +320,18 @@ namespace WZ
 
 	private:
 
-		DeployOrder* DeployArmies();
+		
+		Order* defensivePlay();
+		DeployOrder* issueDeployOrder();
 
 		AdvanceOrder* Advance();
+		Territory* getSourceTerritory(Territory* target);
 
-
+		void quickSortTerritories(vector<Territory*>& list, int start, int end);
+		void swapTerritories(vector<Territory*>& list, int i, int j);
 
 	};
 
-
+	std::ostream& operator<<(std::ostream& stream, const BenevolentPlayerStrategy&);
 
 }
