@@ -49,6 +49,7 @@ namespace WZ
 		Hand* getHand();
 		std::string getPlayerName() const;
 		const OrderList* getOrderList() const;
+		Card* getCardType(Card::Type);
 		
 		/* default begin function to allow use of ranged for loops
 		returns: an iterator pointing to the beginning of the list

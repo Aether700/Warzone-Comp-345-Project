@@ -66,6 +66,15 @@ namespace WZ
 
 	const OrderList* Player::getOrderList() const { return listOrders; }
 
+	Card* Player::getCardType(Card::Type t){
+		for(Card* c: *hand){
+			if(c->getType() == t){
+				return c;
+			}
+		} 
+		return NULL;
+	}
+
 	std::vector<Territory*>::iterator Player::begin() {
 		return territories.begin();
 	}
