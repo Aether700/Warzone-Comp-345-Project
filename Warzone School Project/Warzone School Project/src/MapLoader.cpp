@@ -251,7 +251,7 @@ namespace WZ {
 			return false;
 		else {
 			string line{ "" };				//  string iterator through the file
-			int valid[] = { 0, 0, 0 };		//  counter to determine if the map has all sections needed
+			int valid[] = { 0, 0 }; 		//  counter to determine if the map has all sections needed
 			std::ifstream in(map);			//  reader stream
 
 			if (!in) {						//  checks for corrupt files
@@ -260,18 +260,15 @@ namespace WZ {
 			}
 
 			while (std::getline(in, line)) {	//  checking line by line for the 3 sections needed
-				if (line == "[continents]") {
+				if (line == "[Continents]") {
 					valid[0]++;
 				}
-				else if (line == "[countries]") {
+				else if (line == "[Territories]") {
 					valid[1]++;
-				}
-				else if (line == "[borders]") {
-					valid[2]++;
 				}
 			}
 			in.close();
-			constexpr int correct[] = { 1, 1, 0 };
+			constexpr int correct[] = { 1, 1 };
 			for (int i = 0; i < sizeof(correct) / sizeof(int); i++)
 			{
 				if (valid[i] != correct[i])
@@ -322,7 +319,7 @@ namespace WZ {
 				bonus = stringToInt(line.substr(++delimiter, line.size() - 1));
 				continents.push_back(new Continent(cont, bonus));
 			}
-			else if (section == "Territories") {
+			else if (section == "territories") {
 				int comma;						//	index value usefull to navigate through the line
 				string name, continentName;
 				comma = line.find(",");			//	first comma - preceeded by the name of the territory
@@ -349,7 +346,7 @@ namespace WZ {
 					else {
 						b.push_back(line.substr(0, comma));		//	saving each substring between 2 commas
 					}
-					line = line.substr(++comma);
+					line = line.substr(comma + 1);
 				}
 				borders_string.push_back(b);	//	saving the state of neigbouring of each territory
 
@@ -364,8 +361,6 @@ namespace WZ {
 						c->addTerritory(t);			//	updating the continent
 					}
 				}
-				delete t;			//	free memory
-				t = NULL;
 			}
 		}
 
@@ -455,9 +450,9 @@ namespace WZ {
 
 	void ConquestFileReader::setAdjList() {
 		for (Borders b : borders) {
-			Territory* curentTerritory = territories[b.getBorder()[0] - 1];
+			Territory* curentTerritory = territories[b.getBorder()[0]];
 			for (size_t i = 1; i < b.getBorder().size(); i++)
-				curentTerritory->addAdjTerritory(territories[b.getBorder()[i] - 1]);
+				curentTerritory->addAdjTerritory(territories[b.getBorder()[i]]);
 		}
 	}
 

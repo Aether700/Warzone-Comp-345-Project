@@ -197,6 +197,7 @@ namespace WZ
 		NegotiateOrder* PlayDiplomacyCard(Card* c);
 	};
 
+	//stream insertion operator for the HumanPlayerStrategy class
 	std::ostream& operator<<(std::ostream& stream, const HumanPlayerStrategy&);
 
 	class NeutralPlayerStrategy : public PlayerStrategy
@@ -241,6 +242,7 @@ namespace WZ
 		virtual PlayerStrategy* copy() const override;
 	};
 
+	//stream insertion operator for the NeutralPlayerStrategy class
 	std::ostream& operator<<(std::ostream& stream, const NeutralPlayerStrategy&);
 
 	class AggressivePlayerStrategy : public PlayerStrategy
@@ -329,6 +331,7 @@ namespace WZ
 		Order* defensivePlay();
 	};
 
+	//stream insertion operator for the AggressivePlayerStrategy class
 	std::ostream& operator<<(std::ostream& stream, const AggressivePlayerStrategy&);
 
 	class BenevolentPlayerStrategy : public PlayerStrategy {
@@ -424,11 +427,7 @@ namespace WZ
 
 	};
 
-	/* stream insertion operator for the BenevolentPlayerStrategy class
-
-	   stream: the stream to insert to
-	   strategy: the object to insert a string representation of into the stream
-	*/
+	//stream insertion operator for the BenevolentPlayerStrategy class
 	std::ostream& operator<<(std::ostream& stream, const BenevolentPlayerStrategy& strategy);
 
 }
