@@ -239,6 +239,7 @@ namespace WZ
 
 	class AggressivePlayerStrategy : public PlayerStrategy
 	{
+	public: 
 		/*base constructor of AggressivePlayerStrategy, 
 		  takes a ptr to the player who owns this Strategy object
 
@@ -263,10 +264,7 @@ namespace WZ
 		AggressivePlayerStrategy& operator=(const AggressivePlayerStrategy& other);
 
 		virtual Order* issueOrder() override;
-
-		virtual std::vector<Territory*> toDefend();
-
-		virtual std::vector<Territory*> toAttack();
+		virtual void generateTerritoryLists() override;
 	
 	};
 

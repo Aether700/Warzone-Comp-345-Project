@@ -578,26 +578,121 @@ namespace WZ
 	}
 
 	Order* AggressivePlayerStrategy::issueOrder() {
-		
-		std::vector<Territory*> defend = toDefend();
-		std::vector<Territory*> attack = toAttack();
-		if(m_reinforcements > 0 && defend.size > 0){
+		std::vector<Territory*>& defend = toDefend();
+		std::vector<Territory*>& attack = toAttack();
+
+		if(m_reinforcements > 0){
 			Territory* territory = toDefend().at(0);
+			int armies = m_reinforcements;
+			m_reinforcements = 0;
+			return new DeployOrder(m_player, territory, armies);
+		}
+		if (Random::GetFloat() <= 0.8f){ //80% of the time (defense play)
+			if(attack.empty()){
+				return NULL;
+			}
+			if(m_player->hasCardType(Card::Type::Bomb) || m_player->hasCardType(Card::Type::Airlift)){
+				Card* card;
+				if (!m_player->hasCardType(Card::Type::Bomb)){
+					card = m_player->getCardType(Card::Type::Airlift);
+				}
+				else if (!m_player->hasCardType(Card::Type::Airlift)){
+					card = m_player->getCardType(Card::Type::Bomb);
+				}
+				else{
+					if(Random::GetFloat() <=0.5){  //pick 50% between both
+						card = m_player->getCardType(Card::Type::Airlift);
+					}
+					else
+					{
+						card = m_player->getCardType(Card::Type::Bomb);
+					}
+				}
 
+				Territory* target = attack.at(0);
+				attack.erase(attack.begin());
+				if(card->getType() == (Card::Type::Bomb)){
+					return new BombOrder(m_player, target);
+				}
+				Territory *source = defend.at(0);
+				int armies = source->getAvailableArmies();
+				source->m_availableArmies = 0;
+				defend.erase(defend.begin());
+				return new AirliftOrder(m_player, source, target, armies);
+			}
+			
+			int i = 0;
+			bool targetFound = false;
+			Territory *strongest = defend.at(0);
+			defend.erase(defend.begin());
+			Territory *target = NULL;
+			for(Territory* atk: attack){
+				for(Territory* adj:strongest->getAdjList()){
+					if(adj == atk){
+						target = adj;
+						targetFound=true;
+						break;
+					}
+				}
+				if(targetFound){
+					break;
+				}
+				i++;
+			}
+			if(target == NULL){
+				return NULL;
+			}
+			attack.erase(attack.begin()+i);
+			
+			int armies = source->getAvailableArmies();
+			source->m_availableArmies = 0;
+			return new AdvanceOrder(m_player, source, target, armies);
+		} 
+		//defend
+		Territory* strongest = defend.at(0);
+		Territory* source = NULL;
+		const Map* map = GameManager::getMap();
 
+		std::vector<Territory*> accessList = map->getAccessList(strongest);
+		for(Territory* t:accessList){
+			if(t->getOwner() == m_player && t->getAvailableArmies() > 0){
+				source = t;
+				break;
+			}
+		}
+		if(source==NULL){
+			return NULL;
+		}
+		
+		int armies = source->getAvailableArmies();
+		source->m_availableArmies = 0;
+		return new AdvanceOrder(m_player, source, strongest, armies);
+	}
+
+	void AggressivePlayerStrategy::generateTerritoryLists() {
+		//remove everything from the lists
+		m_toDef.clear();
+		m_toAtk.clear();
+		Territory* strongest = NULL;
+		for(Territory* t: m_player->getTerritories()){
+			if (strongest == NULL){
+				strongest = t;
+			}
+			else if (t->getArmies() > strongest){
+				strongest = t;
+			}
+			if(t->getArmies()>= 20){
+				m_toDef.push_back(t);
+			}
+		}
+		if(strongest < 20){
+			m_toDef.push_back(strongest);
+		}
+		for (Territory* t: m_toDef){
+			if(t->getOwner() != m_player){
+				m_toAtk.push_back(t);
+			}
 		}
 	}
-
-	std::vector<Territory*> AggressivePlayerStrategy::toDefend() {
-	
-	}
-
-	std::vector<Territory*> AggressivePlayerStrategy::toAttack() {
-		unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
-		std::default_random_engine default_random_engine(seed);
-		std::vector<Territory*> territories = m_player->getTerritories();
-		std::stable_sort(territories.begin(), territories.end());
-		return territories;
-	}	
-
 }
+
