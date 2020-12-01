@@ -461,4 +461,39 @@ namespace WZ {
 		}
 	}
 
+	// ConquestFileReaderAdapter /////////////////////////////////////////////////////////////////////////
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter() {
+		filereader = new ConquestFileReader;
+	}
+
+	ConquestFileReaderAdapter::~ConquestFileReaderAdapter() {
+		delete filereader;
+	}
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj) {
+		filereader = new ConquestFileReader(*obj.filereader);
+	}
+
+	ConquestFileReaderAdapter& ConquestFileReaderAdapter::operator=(const ConquestFileReaderAdapter& obj) { //deep copy 2 pointers for two objects
+		if (this == &obj) {
+			return *this;
+		}
+		delete filereader;
+		filereader = new ConquestFileReader(*obj.filereader);
+		return *this;
+	}
+
+	Map* ConquestFileReaderAdapter::mapGenerator(const string& filepath) { 	//main function that returns map
+
+		return filereader->mapGenerator(filepath);
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m)
+	{
+		stream << "Conquest File Reader Adapter";
+		return stream;
+	}
+
+
 }	

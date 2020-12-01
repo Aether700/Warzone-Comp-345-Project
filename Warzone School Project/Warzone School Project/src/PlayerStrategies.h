@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
 #include "Orders.h"
+#include <vector>
 
 namespace WZ
 {
@@ -269,9 +269,66 @@ namespace WZ
 		*/
 		AggressivePlayerStrategy& operator=(const AggressivePlayerStrategy& other);
 
+		/* returns the order issued by the player or nullptr if the player is done issuing orders for this turn 
+
+		   returns: the order issued by the player or nullptr if the player is done issuing orders for this turn
+		*/
 		virtual Order* issueOrder() override;
+
+		/* generates the list of territories to attack and to defend for this turn.
+		*/
 		virtual void generateTerritoryLists() override;
+
+	protected:
+		/* provides a copy of this NeutralPlayerStrategy obj (like the clone method in java)
+		   will only be used by the Player class to perform a deep copy of a Player object
+		*/
+		virtual PlayerStrategy* copy() const override;
+
+	private:
+		/*sorts the provided vector of territory such that the territory with 
+		  the most armies is at the start of the vector (index 0) and the one 
+		  with the least armies is at the end of the vector (index size - 1)
+
+		  list: the list of territories to sort
+		  start: the starting index of the currently processed sublist
+		  end: one past the last index of the currently processed sublist. the last valid index is end - 1, not end 
+		*/
+		void quickSortTerritories(std::vector<Territory*>& list, int start, int end);
+
+		/* helper function which simply swaps the territories at the indices provided inside the provided vector
+
+		   list: the vector containing the territories to swap
+		   i: the index of the first territory to swap
+		   j: the index of the second territory to swap
+		*/
+		void swapTerritories(std::vector<Territory*>& list, int i, int j);
+
+		/* returns true if the the provided territory should be blockaded
+
+		   target: the territory to evaluate
+		   returns: true if the the provided territory should be blockaded
+		*/
+		bool ShouldBlockade(Territory* target);
+
+		/* returns a player that should be negotiated with given the local territories near the provided territory
+
+		   t: the territory that is used to evaluate who to negotiate with
+		   returns: the player to negotiate with or null if none was found
+		*/
+		Player* GetNegotiatingTarget(Territory* t) const;
+
+		/*returns a viable territory to get armies from, if the provided target territory is not null, 
+		  the territory returned must also have access to the territory provided in one move
+
+		  target: the territory to send the armies to
+		  returns: a viable territory to get armies from, if the provided target territory is not null, 
+		  the territory returned must also have access to the territory provided in one move
+		*/
+		Territory* GetSourceTerritory(Territory* target = nullptr) const;
 	};
+
+	std::ostream& operator<<(std::ostream& stream, const AggressivePlayerStrategy&);
 
 	class BenevolentPlayerStrategy : public PlayerStrategy {
 
@@ -283,17 +340,20 @@ namespace WZ
 		*/
 		BenevolentPlayerStrategy(Player* player);
 
-		//deconstructor of the BenevolentPlayerStrategy class
-		~BenevolentPlayerStrategy();
-
-		virtual Order* issueOrder() override;
-
-
 		/* copy constructor of the BenevolentPlayerStrategy class
 
 		   other: the other BenevolentPlayerStrategy object to copy
 		*/
 		BenevolentPlayerStrategy(const BenevolentPlayerStrategy& other);
+
+		//deconstructor of the BenevolentPlayerStrategy class
+		~BenevolentPlayerStrategy();
+
+		/* returns the order issued by the player or nullptr if the player is done issuing orders for this turn
+
+		   returns: the order issued by the player or nullptr if the player is done issuing orders for this turn
+		*/
+		virtual Order* issueOrder() override;
 
 		/*assignment operator of the BenevolentPlayerStrategy class
 
@@ -302,13 +362,9 @@ namespace WZ
 		*/
 		BenevolentPlayerStrategy& operator=(const BenevolentPlayerStrategy& other);
 
-
+		/* generates the list of territories to attack and to defend for this turn.
+		*/
 		virtual void generateTerritoryLists() override;
-
-		virtual Order* issueOrder() override;
-
-		
-
 
 
 	protected:
@@ -320,18 +376,58 @@ namespace WZ
 
 	private:
 
-		
+		/* helper function which returns an order or null following 
+		   the a defensive play from the player
+
+		   returns: the order issued or nullptr if the player is done playing for this turn
+		*/
 		Order* defensivePlay();
+
+		/* helper function which issues a deploy order 
+		   
+		   returns: the deploy order issued by the player
+		*/
 		DeployOrder* issueDeployOrder();
 
+		/* helper function which issues an advance order
+
+		   returns: the advance order issued by the player
+		*/
 		AdvanceOrder* Advance();
+
+		/* helper function responsible to find a source territory owned by the player
+		   that is to send armies to the territory provided
+
+		   returns: a territory owned by the player capable of sending armies to the 
+		   provided territory in one move or null if none was found
+		*/
 		Territory* getSourceTerritory(Territory* target);
 
-		void quickSortTerritories(vector<Territory*>& list, int start, int end);
-		void swapTerritories(vector<Territory*>& list, int i, int j);
+		/*sorts the provided vector of territory such that the territory with
+		  the least armies is at the start of the vector (index 0) and the one
+		  with the most armies is at the end of the vector (index size - 1)
+
+		  list: the list of territories to sort
+		  start: the starting index of the currently processed sublist
+		  end: one past the last index of the currently processed sublist. the last valid index is end - 1, not end
+		*/
+		void quickSortTerritories(std::vector<Territory*>& list, int start, int end);
+		
+		/* helper function which simply swaps the territories at the indices provided inside the provided vector
+
+		   list: the vector containing the territories to swap
+		   i: the index of the first territory to swap
+		   j: the index of the second territory to swap
+		*/
+		void swapTerritories(std::vector<Territory*>& list, int i, int j);
 
 	};
 
-	std::ostream& operator<<(std::ostream& stream, const BenevolentPlayerStrategy&);
+	/* stream insertion operator for the BenevolentPlayerStrategy class
+
+	   stream: the stream to insert to
+	   strategy: the object to insert a string representation of into the stream
+	*/
+	std::ostream& operator<<(std::ostream& stream, const BenevolentPlayerStrategy& strategy);
 
 }

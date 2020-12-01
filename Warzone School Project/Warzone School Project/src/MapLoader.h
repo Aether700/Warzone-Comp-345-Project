@@ -111,10 +111,6 @@ namespace WZ {
 		string menu_loader(const string&);
 
 		/*
-			Overloading function for the assignment operator
-		*/
-		ConquestFileReader& operator=(const ConquestFileReader&);
-		/*
 			Overloading function for the insertion operator
 		*/
 		std::ostream& operator<<(std::ostream&);
@@ -139,43 +135,5 @@ namespace WZ {
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m);
-
-	//ConquestFileReaderAdapter///////////////////////////////////////
-
-
-
-	ConquestFileReaderAdapter::ConquestFileReaderAdapter() {
-		filereader = new ConquestFileReader;
-	}
-
-	ConquestFileReaderAdapter::~ConquestFileReaderAdapter() {
-		delete filereader;
-	}
-
-	ConquestFileReaderAdapter::ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj) {
-		filereader = new ConquestFileReader(*obj.filereader);
-	}
-
-	ConquestFileReaderAdapter& ConquestFileReaderAdapter::operator=(const ConquestFileReaderAdapter& obj) { //deep copy 2 pointers for two objects
-		if (this == &obj) {
-			return *this;
-		}
-		delete filereader;
-		filereader = new ConquestFileReader(*obj.filereader);
-		return *this;
-	}
-
-	Map* ConquestFileReaderAdapter::mapGenerator(const string& filepath) { 	//main function that returns map
-
-		//return filereader->conquestMapGenerator(filepath);
-		std::cout << "mapGenerator for Conquest Reader called\n";
-		return nullptr;
-	}
-
-	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m)
-	{
-		stream << "Conquest File Reader Adapter";
-		return stream;
-	}
 
 }

@@ -1,6 +1,7 @@
 #include "GameObservers.h"
 #include "GameEngine.h"
 #include "Orders.h"
+#include "Utils.h"
 #include <iostream>
 
 #define NUM_COL 2

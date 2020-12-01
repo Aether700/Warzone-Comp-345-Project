@@ -24,17 +24,18 @@ static WZ::Map* CreateMap(WZ::Player* p, WZ::Player* p2)
 	WZ::Territory* t5 = new WZ::Territory("T5", 6, c2);
 	WZ::Territory* t6 = new WZ::Territory("T6", 7, c2);
 
-	p->addTerritory(t1);
 	p->addTerritory(t2);
 	p->addTerritory(t3);
 	p->addTerritory(t4);
-	p2->addTerritory(t5);
 
 	t1->addAdjTerritory(t2);
 	t2->addAdjTerritory(t1);
 	t2->addAdjTerritory(t3);
 	t3->addAdjTerritory(t1);
+	t3->addAdjTerritory(t2);
 	t3->addAdjTerritory(t4);
+	t3->addAdjTerritory(t5);
+	t4->addAdjTerritory(t2);
 	t4->addAdjTerritory(t3);
 	t4->addAdjTerritory(t5);
 	t5->addAdjTerritory(t4);
@@ -123,6 +124,7 @@ namespace WZ
 			map->resetAvailableArmies();
 
 			p->SetStrategy(strategy); //deletes old strategy
+			p->generateTerritoryLists();
 			std::cout << *map << "\n\n";
 
 			//give player reinforcements to show that can only do deploy orders when has some
