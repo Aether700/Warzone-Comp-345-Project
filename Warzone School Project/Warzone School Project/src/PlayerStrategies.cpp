@@ -595,8 +595,8 @@ namespace WZ
 	}
 
 	Order* AggressivePlayerStrategy::issueOrder() {
-		std::vector<Territory*> defend = toDefend();
-		std::vector<Territory*> attack = toAttack();
+		std::vector<Territory*>& defend = toDefend();
+		std::vector<Territory*>& attack = toAttack();
 
 		if(m_reinforcements > 0){
 			Territory* territory;
@@ -629,172 +629,11 @@ namespace WZ
 			return nullptr;
 		}
 
-		if (Random::GetFloat() <= 0.8f){ //80% of the time (defense play)
-			if(attack.empty()){
-				return NULL;
-			}
-
-			if((m_player->hasCardType(Card::Type::Bomb) || m_player->hasCardType(Card::Type::Airlift))
-				&& Random::GetFloat() < 0.5f){
-				Card* card;
-				if (!m_player->hasCardType(Card::Type::Bomb)){
-					card = m_player->getCardType(Card::Type::Airlift);
-				}
-				else if (!m_player->hasCardType(Card::Type::Airlift)){
-					card = m_player->getCardType(Card::Type::Bomb);
-				}
-				else{
-					if(Random::GetFloat() <=0.5){  //pick 50% between both
-						card = m_player->getCardType(Card::Type::Airlift);
-					}
-					else
-					{
-						card = m_player->getCardType(Card::Type::Bomb);
-					}
-				}
-
-				//remove card from player hand
-				m_player->getHand()->removeCardFromHand(card);
-
-				Territory* target = attack.at(0);
-				attack.erase(attack.begin());
-				if(card->getType() == (Card::Type::Bomb)){
-					return card->play(nullptr, target, m_player, nullptr, 0);
-				}
-				Territory *source = defend.at(0);
-				int armies = source->getAvailableArmies();
-				source->m_availableArmies = 0;
-				defend.erase(defend.begin());
-				return card->play(source, target, m_player, nullptr, armies);
-			}
-			
-			if (m_player->hasCardType(Card::Type::Reinforcement))
-			{
-				Card* toPlay = m_player->getCardType(Card::Type::Reinforcement);
-				m_player->getHand()->removeCardFromHand(toPlay);
-				toPlay->play(nullptr, nullptr, m_player, nullptr, 0);
-				delete toPlay;
-				return issueOrder();
-			}
-			Territory *strongest = defend.at(0);
-
-			if (m_player->hasCardType(Card::Type::Blockade))
-			{
-				//check if we blockade
-				if (ShouldBlockade(strongest))
-				{
-					Card* toPlay = m_player->getCardType(Card::Type::Blockade);
-					return toPlay->play(nullptr, strongest, m_player, nullptr, 0);
-				}
-			}
-
-			Player* playerTarget = nullptr;
-			if (m_player->hasCardType(Card::Type::Diplomacy))
-			{
-				playerTarget = GetNegotiatingTarget(strongest);
-			}
-
-			Territory* src = nullptr;
-
-			if (m_player->hasCardType(Card::Type::Airlift))
-			{
-				src = GetSourceTerritory(strongest);
-			}
-
-			if ((src != nullptr || playerTarget != nullptr) && Random::GetFloat() <= CARD_PLAY)
-			{
-				//play card
-				Card::Type typeToPlay;
-				if (src == nullptr)
-				{
-					typeToPlay = Card::Type::Diplomacy;
-				}
-				else if (playerTarget == nullptr)
-				{
-					typeToPlay = Card::Type::Airlift;
-				}
-				else
-				{
-					//if we have both cards pick one card randomly
-					if (Random::GetFloat() <= 0.5f)
-					{
-						typeToPlay = Card::Type::Diplomacy;
-					}
-					else
-					{
-						typeToPlay = Card::Type::Airlift;
-					}
-				}
-
-				Card* toPlay = m_player->getCardType(typeToPlay);
-
-				if (typeToPlay == Card::Type::Diplomacy)
-				{
-					m_player->getHand()->removeCardFromHand(toPlay);
-					Order* o = toPlay->play(nullptr, nullptr, m_player, playerTarget, 0);
-					delete toPlay;
-					return o;
-				}
-				else
-				{
-					m_player->getHand()->removeCardFromHand(toPlay);
-					unsigned int armiesToSend = src->getAvailableArmies();
-					src->m_availableArmies -= armiesToSend;
-					Order* o = toPlay->play(src, strongest, m_player, nullptr, armiesToSend);
-					delete toPlay;
-					return o;
-				}
-
-			}
-			else
-			{
-				//do other order
-				int i = 0;
-				bool targetFound = false;
-				defend.erase(defend.begin());
-				Territory* target = NULL;
-				for (Territory* atk : attack) {
-					for (Territory* adj : strongest->getAdjList()) {
-						if (adj == atk) {
-							target = adj;
-							targetFound = true;
-							break;
-						}
-					}
-					if (targetFound) {
-						break;
-					}
-					i++;
-				}
-				if (target == NULL) {
-					return NULL;
-				}
-				attack.erase(attack.begin() + i);
-
-				int armies = strongest->getAvailableArmies();
-				strongest->m_availableArmies = 0;
-				return new AdvanceOrder(m_player, strongest, target, armies);
-			}
-		} 
-		//defend
-		Territory* strongest = defend.at(0);
-		Territory* source = NULL;
-		const Map* map = GameManager::getMap();
-
-		std::vector<Territory*> accessList = map->getAccessList(strongest);
-		for(Territory* t:accessList){
-			if(t->getOwner() == m_player && t->getAvailableArmies() > 0){
-				source = t;
-				break;
-			}
+		if (Random::GetFloat() <= 0.5f) { //50% of the time do an offensive play
+			return offensivePlay();
 		}
-		if(source==NULL){
-			return NULL;
-		}
-		
-		int armies = source->getAvailableArmies();
-		source->m_availableArmies = 0;
-		return new AdvanceOrder(m_player, source, strongest, armies);
+
+		return defensivePlay();
 	}
 
 	void AggressivePlayerStrategy::generateTerritoryLists() {
@@ -871,41 +710,6 @@ namespace WZ
 		Territory* temp = list[i];
 		list[i] = list[j];
 		list[j] = temp;
-	}
-
-	bool AggressivePlayerStrategy::ShouldBlockade(Territory* target)
-	{
-		if (m_player->getTerritories().size() == 1)
-		{
-			return false;
-		}
-
-		std::vector<Territory*> accessList = GameManager::getMap()->getAccessList(target);
-
-		if (accessList.size() == 0)
-		{
-			return false;
-		}
-
-		int heuristic = 0;
-
-		for (Territory* t : accessList)
-		{
-			if (t->getOwner() == GameManager::getNeutralPlayer())
-			{
-				continue;
-			}
-			else if (t->getOwner() == target->getOwner())
-			{
-				heuristic -= t->getArmies();
-			}
-			else
-			{
-				heuristic += t->getArmies();
-			}
-		}
-
-		return heuristic >= BLOCKADE_THRESHOLD;
 	}
 
 	Player* AggressivePlayerStrategy::GetNegotiatingTarget(Territory* t) const
@@ -993,6 +797,181 @@ namespace WZ
 		return nullptr;
 	}
 
+
+	Order* AggressivePlayerStrategy::offensivePlay()
+	{
+		std::vector<Territory*>& defend = toDefend();
+		std::vector<Territory*>& attack = toAttack();
+		if (attack.empty()) {
+			return NULL;
+		}
+
+		Territory* strongest = defend[0];
+
+		if ((m_player->hasCardType(Card::Type::Bomb) || m_player->hasCardType(Card::Type::Airlift))
+			&& Random::GetFloat() < 0.5f) {
+			Card* card;
+			if (!m_player->hasCardType(Card::Type::Bomb)) {
+				card = m_player->getCardType(Card::Type::Airlift);
+			}
+			else if (!m_player->hasCardType(Card::Type::Airlift)) {
+				card = m_player->getCardType(Card::Type::Bomb);
+			}
+			else {
+				if (Random::GetFloat() <= 0.5) {  //pick 50% between both
+					card = m_player->getCardType(Card::Type::Airlift);
+				}
+				else
+				{
+					card = m_player->getCardType(Card::Type::Bomb);
+				}
+			}
+
+			//remove card from player hand
+			m_player->getHand()->removeCardFromHand(card);
+
+			Territory* target = attack.at(0);
+			attack.erase(attack.begin());
+			if (card->getType() == (Card::Type::Bomb)) {
+				return card->play(nullptr, target, m_player, nullptr, 0);
+			}
+			Territory* source = defend.at(0);
+			int armies = source->getAvailableArmies();
+			source->m_availableArmies = 0;
+			defend.erase(defend.begin());
+			return card->play(source, target, m_player, nullptr, armies);
+		}
+
+		//do other order
+		int i = 0;
+		bool targetFound = false;
+		defend.erase(defend.begin());
+		Territory* target = NULL;
+		for (Territory* atk : attack) {
+			for (Territory* adj : strongest->getAdjList()) {
+				if (adj == atk) {
+					target = adj;
+					targetFound = true;
+					break;
+				}
+			}
+			if (targetFound) {
+				break;
+			}
+			i++;
+		}
+		if (target == NULL) {
+			return NULL;
+		}
+		attack.erase(attack.begin() + i);
+
+		int armies = strongest->getAvailableArmies();
+		strongest->m_availableArmies = 0;
+		return new AdvanceOrder(m_player, strongest, target, armies);
+
+	}
+
+	Order* AggressivePlayerStrategy::defensivePlay()
+	{
+		std::vector<Territory*>& defend = toDefend();
+		std::vector<Territory*>& attack = toAttack();
+
+		if (m_player->hasCardType(Card::Type::Reinforcement) && Random::GetFloat() <= 0.4f)
+		{
+			Card* toPlay = m_player->getCardType(Card::Type::Reinforcement);
+			m_player->getHand()->removeCardFromHand(toPlay);
+			toPlay->play(nullptr, nullptr, m_player, nullptr, 0);
+			delete toPlay;
+			return issueOrder();
+		}
+		Territory* strongest = defend.at(0);
+
+		if (m_player->hasCardType(Card::Type::Blockade) && Random::GetFloat() <= 0.4f)
+		{
+			Card* toPlay = m_player->getCardType(Card::Type::Blockade);
+			m_player->getHand()->removeCardFromHand(toPlay);
+			Order* o = toPlay->play(nullptr, strongest, m_player, nullptr, 0);
+			delete toPlay;
+			return o;
+		}
+
+		Player* playerTarget = nullptr;
+		if (m_player->hasCardType(Card::Type::Diplomacy) && Random::GetFloat() <= 0.4f)
+		{
+			playerTarget = GetNegotiatingTarget(strongest);
+		}
+
+		Territory* src = nullptr;
+
+		if (m_player->hasCardType(Card::Type::Airlift))
+		{
+			src = GetSourceTerritory(strongest);
+		}
+
+		if ((src != nullptr || playerTarget != nullptr) && Random::GetFloat() <= CARD_PLAY)
+		{
+			//play card
+			Card::Type typeToPlay;
+			if (src == nullptr)
+			{
+				typeToPlay = Card::Type::Diplomacy;
+			}
+			else if (playerTarget == nullptr)
+			{
+				typeToPlay = Card::Type::Airlift;
+			}
+			else
+			{
+				//if we have both cards pick one card randomly
+				if (Random::GetFloat() <= 0.5f)
+				{
+					typeToPlay = Card::Type::Diplomacy;
+				}
+				else
+				{
+					typeToPlay = Card::Type::Airlift;
+				}
+			}
+
+			Card* toPlay = m_player->getCardType(typeToPlay);
+			m_player->getHand()->removeCardFromHand(toPlay);
+
+			if (typeToPlay == Card::Type::Diplomacy)
+			{
+				Order* o = toPlay->play(nullptr, nullptr, m_player, playerTarget, 0);
+				delete toPlay;
+				return o;
+			}
+			else
+			{
+				unsigned int armiesToSend = src->getAvailableArmies();
+				src->m_availableArmies -= armiesToSend;
+				Order* o = toPlay->play(src, strongest, m_player, nullptr, armiesToSend);
+				delete toPlay;
+				return o;
+			}
+		}
+		
+		//defend
+		Territory* source = NULL;
+		const Map* map = GameManager::getMap();
+
+		std::vector<Territory*> accessList = map->getAccessList(strongest);
+		for (Territory* t : accessList) {
+			if (t->getOwner() == m_player && t->getAvailableArmies() > 0) {
+				source = t;
+				break;
+			}
+		}
+
+		if (source == NULL) {
+			return NULL;
+		}
+
+		int armies = source->getAvailableArmies();
+		source->m_availableArmies = 0;
+		return new AdvanceOrder(m_player, source, strongest, armies);
+	}
 
 	std::ostream& operator<<(std::ostream& stream, const AggressivePlayerStrategy&)
 	{

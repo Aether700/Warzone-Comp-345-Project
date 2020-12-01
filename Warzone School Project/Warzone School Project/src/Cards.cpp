@@ -194,7 +194,11 @@ namespace WZ
             Order* O= new NegotiateOrder(p,r);
              return O; 
         }
-               
+        else
+        {
+             std::cout << "Playing blockade card" << std::endl;
+             return new BlockadeOrder(p, dest);
+        }
     }
 
      Card& Card::operator=(const Card& other){

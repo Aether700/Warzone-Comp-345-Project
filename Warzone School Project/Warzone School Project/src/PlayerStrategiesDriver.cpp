@@ -24,9 +24,12 @@ static WZ::Map* CreateMap(WZ::Player* p, WZ::Player* p2)
 	WZ::Territory* t5 = new WZ::Territory("T5", 6, c2);
 	WZ::Territory* t6 = new WZ::Territory("T6", 7, c2);
 
+	p2->addTerritory(t1);
 	p->addTerritory(t2);
 	p->addTerritory(t3);
 	p->addTerritory(t4);
+	p2->addTerritory(t5);
+	p2->addTerritory(t6);
 
 	t1->addAdjTerritory(t2);
 	t2->addAdjTerritory(t1);
@@ -119,12 +122,13 @@ namespace WZ
 
 
 		strategy = ChooseStrategy(p);
+		p->SetStrategy(strategy);
+		p->generateTerritoryLists();
+		map->resetAvailableArmies();
 		while (strategy != nullptr)
 		{
-			map->resetAvailableArmies();
 
 			p->SetStrategy(strategy); //deletes old strategy
-			p->generateTerritoryLists();
 			std::cout << *map << "\n\n";
 
 			//give player reinforcements to show that can only do deploy orders when has some
@@ -140,6 +144,7 @@ namespace WZ
 			{
 				std::cout << "The player is done for this turn (will not issue orders for the rest of the turn\n";
 				strategy->generateTerritoryLists();
+				map->resetAvailableArmies();
 			}
 			else
 			{
@@ -154,11 +159,14 @@ namespace WZ
 			if (!WZ::AskYN())
 			{
 				strategy = ChooseStrategy(p);
+				if (strategy != nullptr)
+				{
+					map->resetAvailableArmies();
+					strategy->generateTerritoryLists();
+				}
 			}
 
 			std::cout << "\n";
 		}
-
-		delete map;
 	}
 }

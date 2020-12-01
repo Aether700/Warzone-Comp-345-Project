@@ -304,13 +304,6 @@ namespace WZ
 		*/
 		void swapTerritories(std::vector<Territory*>& list, int i, int j);
 
-		/* returns true if the the provided territory should be blockaded
-
-		   target: the territory to evaluate
-		   returns: true if the the provided territory should be blockaded
-		*/
-		bool ShouldBlockade(Territory* target);
-
 		/* returns a player that should be negotiated with given the local territories near the provided territory
 
 		   t: the territory that is used to evaluate who to negotiate with
@@ -326,6 +319,14 @@ namespace WZ
 		  the territory returned must also have access to the territory provided in one move
 		*/
 		Territory* GetSourceTerritory(Territory* target = nullptr) const;
+
+		/* issues an offensive order
+		*/
+		Order* offensivePlay();
+
+		/* issues a defensive order
+		*/
+		Order* defensivePlay();
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const AggressivePlayerStrategy&);
