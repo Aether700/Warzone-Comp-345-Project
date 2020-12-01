@@ -7,11 +7,9 @@ The map format that are readable - .txt or .map exclusevly.
 // parse the file content and create a map object that will be used to play the game.
 
 #pragma once
-#include <string>
-#include <vector>
+
 #include <iostream>
 #include "Map.h"
-#include "Utils.h"
 
 using std::string;
 using std::vector;
@@ -45,13 +43,14 @@ namespace WZ {
 		*/
 		vector<Borders> borders;
 		/*
-			determine if the given file contains a map or not
+			determine if the given file contains a risk map or not
 		*/
 		bool map_validator(const string&);
 		/*
 			extracts the needed data from the passed map file and stores it into the passed vectors acordingly
 		*/
 		void parserFunction(const string&, vector<Continent*>&, vector<Territory*>&, vector<Borders>&);
+
 		/*
 			function that creates the graph which will represent the map during the game play. All adjacency
 		*/
@@ -62,14 +61,9 @@ namespace WZ {
 		MapLoader(const MapLoader&);						//	parameterised constructor
 		MapLoader& operator=(const MapLoader&);				//	assign operator overwriter
 		Map* mapGenerator();								//	default map generator - user picks a map from the predefined map folder
-		virtual Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
+		Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
 		string menu_loader(const string& path = "/Maps");	//	menu function to navigate through the menu option
 	};
-	/*
-		overwriter of the insertion operator
-	*/
-	std::ostream& operator<<(std::ostream& stream, const MapLoader& m);
-
 
 	class ConquestFileReader
 	{
@@ -90,33 +84,40 @@ namespace WZ {
 			extracts the needed data from the passed map file and stores it into the passed vectors acordingly
 		*/
 		void conquestParserFunction(const string&, vector<Continent*>&, vector<Territory*>&, vector<Borders>&);
+		/*
+		determine if the given file contains a conquest map or not
+		*/
+		bool map_validator(const string&);
+		/*
+		Generates the in-game running map based on the map name indicated by user
+		*/
+		Map* mapGenerator(const string& map_name);
+		/*
+		Sets the adjacency list of the borders
+		*/
+		void setAdjList();
+		/*
+		Generates the in-game running map based on the map name selected by user
+		*/
+		Map* mapGenerator();
+		string menu_loader(const string&);
 
 
 	public:
 		ConquestFileReader();										//	default constructor
 		ConquestFileReader(const ConquestFileReader&);				//	parameterised constructor
 		ConquestFileReader& operator=(const ConquestFileReader&);	//	assign operator overwriter
-		
+		/*
+			Overloading function for the assignment operator
+		*/
+		ConquestFileReader& operator=(const ConquestFileReader&);
 		/*
 			Overloading function for the insertion operator
 		*/
 		std::ostream& operator<<(std::ostream&);
 	};
-
-	///////////////////////////////////////////////////////////////////ConquestFileReaderAdapter///////////////////////////////////////////////////////////////////////
-
-	class ConquestFileReaderAdapter :public MapLoader {
-	private:
-		ConquestFileReader* filereader;													// 	data member
-	public:
-		ConquestFileReaderAdapter();													//	default constructor
-		~ConquestFileReaderAdapter();													//	default constructor
-		ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj);				//	copy constructor
-		ConquestFileReaderAdapter& operator=(const ConquestFileReaderAdapter& obj);		//	assignment operator
-		virtual Map* mapGenerator(const string&) override;								//	function that returns the map with the file reader
-
-	};
-
-	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m);
+	/*
+		overwriter of the insertion operator
+	*/
+	std::ostream& operator<<(std::ostream& stream, const MapLoader& m);
 }
-
