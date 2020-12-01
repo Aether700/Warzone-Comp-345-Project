@@ -37,6 +37,7 @@ void MapLoaderDriver()
 			std::cout << *map << "\n";
 		}
 
+		delete loader;
 		loader = ChooseMapType();
 	}
 }

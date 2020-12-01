@@ -61,7 +61,7 @@ namespace WZ {
 		MapLoader(const MapLoader&);						//	parameterised constructor
 		MapLoader& operator=(const MapLoader&);				//	assign operator overwriter
 		Map* mapGenerator();								//	default map generator - user picks a map from the predefined map folder
-		Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
+		virtual Map* mapGenerator(const string&);					//	a map generator where the path of the map file and name is predefined
 		string menu_loader(const string& path = "/Maps");	//	menu function to navigate through the menu option
 	};
 
@@ -89,24 +89,27 @@ namespace WZ {
 		*/
 		bool map_validator(const string&);
 		/*
-		Generates the in-game running map based on the map name indicated by user
-		*/
-		Map* mapGenerator(const string& map_name);
-		/*
 		Sets the adjacency list of the borders
 		*/
 		void setAdjList();
-		/*
-		Generates the in-game running map based on the map name selected by user
-		*/
-		Map* mapGenerator();
-		string menu_loader(const string&);
-
 
 	public:
 		ConquestFileReader();										//	default constructor
 		ConquestFileReader(const ConquestFileReader&);				//	parameterised constructor
 		ConquestFileReader& operator=(const ConquestFileReader&);	//	assign operator overwriter
+		
+		/*
+		Generates the in-game running map based on the map name indicated by user
+		*/
+		Map* mapGenerator(const string& map_name);
+
+		/*
+		Generates the in-game running map based on the map name selected by user
+		*/
+		Map* mapGenerator();
+		
+		string menu_loader(const string&);
+
 		/*
 			Overloading function for the assignment operator
 		*/
@@ -120,4 +123,59 @@ namespace WZ {
 		overwriter of the insertion operator
 	*/
 	std::ostream& operator<<(std::ostream& stream, const MapLoader& m);
+
+	///////////////////////////////////////////////////////////////////ConquestFileReaderAdapter///////////////////////////////////////////////////////////////////////
+
+	class ConquestFileReaderAdapter :public MapLoader {
+	private:
+		ConquestFileReader* filereader;													// 	data member
+	public:
+		ConquestFileReaderAdapter();													//	default constructor
+		~ConquestFileReaderAdapter();													//	default constructor
+		ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj);				//	copy constructor
+		ConquestFileReaderAdapter& operator=(const ConquestFileReaderAdapter& obj);		//	assignment operator
+		virtual Map* mapGenerator(const string&) override;								//	function that returns the map with the file reader
+
+	};
+
+	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m);
+
+	//ConquestFileReaderAdapter///////////////////////////////////////
+
+
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter() {
+		filereader = new ConquestFileReader;
+	}
+
+	ConquestFileReaderAdapter::~ConquestFileReaderAdapter() {
+		delete filereader;
+	}
+
+	ConquestFileReaderAdapter::ConquestFileReaderAdapter(const ConquestFileReaderAdapter& obj) {
+		filereader = new ConquestFileReader(*obj.filereader);
+	}
+
+	ConquestFileReaderAdapter& ConquestFileReaderAdapter::operator=(const ConquestFileReaderAdapter& obj) { //deep copy 2 pointers for two objects
+		if (this == &obj) {
+			return *this;
+		}
+		delete filereader;
+		filereader = new ConquestFileReader(*obj.filereader);
+		return *this;
+	}
+
+	Map* ConquestFileReaderAdapter::mapGenerator(const string& filepath) { 	//main function that returns map
+
+		//return filereader->conquestMapGenerator(filepath);
+		std::cout << "mapGenerator for Conquest Reader called\n";
+		return nullptr;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m)
+	{
+		stream << "Conquest File Reader Adapter";
+		return stream;
+	}
+
 }

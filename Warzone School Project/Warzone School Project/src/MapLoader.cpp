@@ -1,6 +1,7 @@
 #include <fstream>
 #include <filesystem>
 #include "MapLoader.h"
+#include "Utils.h"
 
 using std::cout;
 using std::endl;
@@ -226,14 +227,6 @@ namespace WZ {
 	// ************************************************************************
 	// ConquestFileReader  ////////////////////////////////////////////////////////////////////
 
-		//	converter from string numbers to integers **** this is a helper function
-	int stringToInt(string s) {		//	takes the string s representing the number
-		if (s.size() == 1)			//	if the string is a single char
-			return (int)s[0] - 48;	//		convert it according the ASCII value
-		else						//	if the number is represented on a multi
-			return (10 * (stringToInt(s.substr(0, (s.size() - 1))))) + (int)s[(s.size() - 1)] - 48;
-	}
-
 	ConquestFileReader::ConquestFileReader() {}
 	ConquestFileReader::ConquestFileReader(const ConquestFileReader& mapL)
 		: territories(mapL.territories), continents(mapL.continents), borders(mapL.borders)
@@ -300,7 +293,7 @@ namespace WZ {
 	void ConquestFileReader::conquestParserFunction(const string& s, vector<Continent*>& continents, vector<Territory*>& countries, vector<Borders>& borders) {
 		string line, section = "";
 		std::ifstream open_map(s);
-		vector<vector<string>>* borders_string = new vector<vector<string>>;
+		vector<vector<string>> borders_string;
 		int id = 0;
 
 		std::getline(open_map, line);
@@ -358,7 +351,7 @@ namespace WZ {
 					}
 					line = line.substr(++comma);
 				}
-				borders_string->push_back(b);	//	saving the state of neigbouring of each territory
+				borders_string.push_back(b);	//	saving the state of neigbouring of each territory
 
 				//	make a new territory and push it in the territory vector
 				Territory* t = new Territory(name, id++);
@@ -380,23 +373,19 @@ namespace WZ {
 		vector<vector<string>>::iterator row;		//	creating an iterator for rows
 		vector<string>::iterator col;				//	creating an iterator for columns
 		int index = 0;								//	index to be added as territory ID
-		for (row = borders_string->begin(); row != borders_string->end(); row++) {	//	looping through the rows
-			Borders* b = new Borders();				//	for each row we create a Borders object
-			b->setBorders(index++);					//	first element of Borders object is the index of the territory it represents
+		for (row = borders_string.begin(); row != borders_string.end(); row++) {	//	looping through the rows
+			Borders b;				//	for each row we create a Borders object
+			b.setBorders(index++);					//	first element of Borders object is the index of the territory it represents
 			for (col = row->begin(); col != row->end(); col++) {		//	looping through each element of the row - these are strings 
 																		//	and representing the names of the neigboring territories
 				for (int i = 0; i < territories.size(); i++) {		//	looking at every territory
 					if (territories[i]->getName() == *col) {		//	and check to match the name we have with the name of the territory
-						b->setBorders(i);								//	populating the borders data member
+						b.setBorders(i);								//	populating the borders data member
 						break;
 					}
 				}
 			}
-			borders.push_back(*b);					//	for each loop representing each territory - pushing into the borders
-			delete b;								//	free memory
-			delete borders_string;					//	free memory
-			b = NULL;
-			borders_string = NULL;
+			borders.push_back(b);					//	for each loop representing each territory - pushing into the borders
 		}
 	}
 
@@ -463,6 +452,7 @@ namespace WZ {
 		}
 		return path + "/" + files[fileIndex - 1];
 	}
+
 	void ConquestFileReader::setAdjList() {
 		for (Borders b : borders) {
 			Territory* curentTerritory = territories[b.getBorder()[0] - 1];
