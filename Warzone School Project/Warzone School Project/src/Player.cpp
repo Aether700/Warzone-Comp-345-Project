@@ -9,7 +9,7 @@ namespace WZ
 {
 	using namespace std;
 
-	Player::Player() : hasDrawnCard(false), m_strategy(nullptr) {
+	Player::Player() : hasDrawnCard(false), m_strategy(GetRandomStrategy()) {
 		hand = new Hand();
 		listOrders = new OrderList();
 	}
@@ -208,9 +208,8 @@ namespace WZ
 	{
 		if (Random::GetFloat() <= 0.5f)
 		{
-			//return new BenevolentPlayerStrategy(this);
+			return new BenevolentPlayerStrategy(this);
 		}
-		//return new AggressivePlayerStrategy(this);
-		return nullptr;
+		return new AggressivePlayerStrategy(this);
 	}
 }

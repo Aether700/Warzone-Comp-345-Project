@@ -7,6 +7,9 @@ using std::cout;
 using std::endl;
 namespace WZ {
 
+	MapLoader LoaderInterface::m_dominationLoader;
+	ConquestFileReaderAdapter LoaderInterface::m_conquestReader;
+
 	// Borders ////////////////////////////////////////////////////////////////////
 
 	void Borders::setBorders(int state) {
@@ -57,7 +60,6 @@ namespace WZ {
 			//make sure have enough territories for the number of borders
 			if (territories.size() < borders.size())
 			{
-				cout << "Invalid map file." << endl;
 				return NULL;
 			}
 
@@ -69,13 +71,25 @@ namespace WZ {
 			return mapPointer;
 		}
 		else {
-			cout << "Invalid map file." << endl;
 			return NULL;
 		}
 	}
 
 	Map* MapLoader::mapGenerator() {
-		return mapGenerator(menu_loader("assets/map files"));
+		std::string path = menu_loader("assets/map files");
+		if (path == "")
+		{
+			return nullptr;
+		}
+
+		Map* map = mapGenerator(path);
+		if (map == nullptr)
+		{
+			std::cout << "Invalid map, Please select another one\n";
+			return mapGenerator();
+		}
+
+		return map;
 	}
 
 	void MapLoader::setAdjList() {
@@ -215,7 +229,13 @@ namespace WZ {
 		}
 
 
-		int fileIndex = AskInput(files);
+		int fileIndex = AskInput(files, "Back");
+
+		if (fileIndex == -1)
+		{
+			return "";
+		}
+
 		std::cout << "\n";
 		if (path == "")
 		{
@@ -398,7 +418,6 @@ namespace WZ {
 			//make sure have enough territories for the number of borders
 			if (territories.size() < borders.size())	//	verifying the acuracy of the data
 			{
-				cout << "Invalid map file." << endl;
 				return NULL;
 			}
 
@@ -410,7 +429,6 @@ namespace WZ {
 			return mapPointer;
 		}
 		else {
-			cout << "Invalid map file." << endl;
 			return NULL;
 		}
 	}
@@ -492,5 +510,37 @@ namespace WZ {
 	{
 		stream << "Conquest File Reader Adapter";
 		return stream;
+	}
+
+	Map* LoaderInterface::LoadMap()
+	{
+		std::string path = m_dominationLoader.menu_loader("assets/map files");
+		
+		//return null if user selected back option
+		if (path == "")
+		{
+			return nullptr;
+		}
+
+		//try loading domination map
+		Map* map = m_dominationLoader.mapGenerator(path);
+
+		//if format correct return map (map might be invalid)
+		if (map != nullptr)
+		{
+			return map;
+		}
+
+		//if not domination file, try conquest file format
+		map = m_conquestReader.mapGenerator(path);
+
+		//if still invalid, display message to user and re-try again by calling LoadMap again
+		if (map == nullptr)
+		{
+			std::cout << "Invalid map, Please select another one\n";
+			return LoadMap();
+		}
+
+		return map;
 	}
 }	

@@ -136,4 +136,15 @@ namespace WZ {
 
 	std::ostream& operator<<(std::ostream& stream, const ConquestFileReaderAdapter& m);
 
+	//class added after assignment 3 for better user interface when loading different types of maps
+	class LoaderInterface
+	{
+	public:
+		//loads map of either domination or conquest format (will ask user to select file)
+		static Map* LoadMap();
+	private:
+		static MapLoader m_dominationLoader;
+		static ConquestFileReaderAdapter m_conquestReader;
+	};
+
 }

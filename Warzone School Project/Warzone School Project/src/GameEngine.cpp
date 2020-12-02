@@ -19,8 +19,12 @@ using std::cin;
 
 namespace WZ
 {
-	void GameManager::callMainGameLoop() {
-		GetManager().mainGameLoop();
+	std::string GetRandomPlayerName()
+	{
+		std::string names[] = { "Harry", "Timmy", "Dinkleberg", 
+			"He Who Must Not Be Named", "Corvo", "Link" };
+
+		return names[Random::GetInt() % (sizeof(names) / sizeof(std::string))];
 	}
 
 	std::string FormatBoolOption(const std::string& option, bool val)
@@ -136,31 +140,39 @@ namespace WZ
 		return GetManager().CurrentPlayer;
 	}
 
-	void GameManager::gameStart()
+	bool GameManager::gameStart()
 	{
-		GameManager::GetManager().getUserMap();
-		GameManager::GetManager().InitializePlayers();
-	}
-
-	void GameManager::getUserMap()
-	{
-		MapLoader loader;
-		delete map;
-		while(true){
-			//will automatically ask the user to select a map file and generate the map from that file if it is valid
-			map = loader.mapGenerator();
-			if(map!=nullptr)
+		if (GameManager::GetManager().getUserMap())
+		{
+			if (GameManager::GetManager().InitializePlayers())
 			{
-				if(map->validate())
-				{
-					break;
-				}
-				else
-				{
-					std::cout << "The Map chosen is not valid. Please pick a new one.\n";
-				}
+				return true;
 			}
 		}
+		return false;
+	}
+
+	bool GameManager::getUserMap()
+	{
+		delete map;
+		while(true){
+			//loads map of both file format (asks user to pick file)
+			map = LoaderInterface::LoadMap();
+			if (map == nullptr)
+			{
+				return false;
+			}
+
+			if (map->validate())
+			{
+				break;
+			}
+			else
+			{
+				std::cout << "The Map chosen is not valid. Please pick a new one.\n";
+			}
+		}
+		return true;
 	}
 	
 	int GameManager::getUserNumPlayers()
@@ -170,15 +182,22 @@ namespace WZ
 			std::cout << "Player with how many players?\n";
 			int num = Clamp(2, 5, AskInt());
 
-			std::cout << "Play with " << num << " players?\n";
+			std::cout << "\nPlay with " << num << " players?\n";
 			if (AskYN())
 			{
 				return num;
 			}
+
+			std::cout << "\nExit player selection?\n";
+
+			if (AskYN())
+			{
+				return -1;
+			}
 		}
 	}
 
-	void GameManager::InitializePlayers(){
+	bool GameManager::InitializePlayers(){
 		
 		for (Player* p : m_activePlayers) 
 		{
@@ -187,14 +206,28 @@ namespace WZ
 		m_activePlayers.clear();
 
 		int num=getUserNumPlayers();
+
+		if (num == -1)
+		{
+			return false;
+		}
+
 		m_activePlayers.reserve(num);
 
-		for(int i = 0 ; i < num ; i++){
-			string name="";
-			std::cout<<"Please enter player "<<(i+1)<<" name: ";
-			std::cin>>name;
+		string name = "";
+		std::cout << "Please enter your player name: ";
+		std::cin >> name;
+
+		Player* human = new Player(name);
+		human->SetStrategy(new HumanPlayerStrategy(human));
+		m_activePlayers.push_back(human);
+
+		for(int i = 1 ; i < num ; i++){
+			name = GetRandomPlayerName();
 			m_activePlayers.push_back(new Player(name));
 		}
+
+		return true;
 	}
 
 	//PHASE OBSERVER IMPLEMENTATION
@@ -469,8 +502,9 @@ namespace WZ
 		}
 	}
 
-	void GameManager::mainGameLoop() {
-		while (m_activePlayers.size() > 1) {
+	bool GameManager::mainGameLoop() {
+		bool done = false;
+		while (m_activePlayers.size() > 1 && !done) {
 
 			currentphase = GamePhase::Reinforcement;
 			reinforcementPhase();					
@@ -489,6 +523,13 @@ namespace WZ
 				if (m_activePlayers[i]->getNumOfTerritories() == 0) {
 					cout << m_activePlayers[i]->getPlayerName() << " was eliminated. " << endl;
 					Player* eliminated = m_activePlayers[i];
+
+					if (m_humanPlayer == eliminated)
+					{
+						done = true;
+						break;
+					}
+
 					m_activePlayers.erase(m_activePlayers.begin() + i);
 					GameManager::NotifyStatisticsObserver();
 					delete eliminated;
@@ -506,6 +547,9 @@ namespace WZ
 			m_bufferList.clear();
 			std::cout << "=======================New Turn==========================\n";
 		}
+
+		//we are only done if the human player lost therefore return !done
+		return !done;
 	}
 
 	void GameManager::startupPhaseImpl() {
@@ -557,5 +601,53 @@ namespace WZ
 		{
 			p->m_strategy->m_reinforcements = armies;
 		}
-  }
+	}
+
+	void GameManager::RunGame()
+	{
+		while (true)
+		{
+			if (gameStart())
+			{
+				startupPhase();
+				if (!GetManager().mainGameLoop())
+				{
+					//this print statement will merge with the one below
+					std::cout << "You lost. "; 
+				}
+
+				std::cout << "Play again?\n\n";
+				if (!AskYN())
+				{
+					break;
+				}
+			}
+		}
+	}
+
+	void GameManager::MainMenu()
+	{
+		std::array<const char*, 2> choices = { "Play", "Settings" };
+
+		while (true)
+		{
+			std::cout << "\tWelcome to Warzone\n\n";
+
+			switch(AskInput(choices, "Exit"))
+			{
+			case 1:
+				RunGame();
+				break;
+
+			case 2: 
+				SettingsMenu();
+				break;
+
+			case -1:
+				return;
+			}
+		}
+
+	}
+
 }

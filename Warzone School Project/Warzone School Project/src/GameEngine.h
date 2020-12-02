@@ -17,19 +17,6 @@ namespace WZ
 	class GameManager:public Subject <PhaseObserver>, public Subject<StatisticsObserver>
 	{
 	public:
-
-		//temporary friend functions for the drivers
-		friend void StrategyDriver();
-
-		friend void mainGameLoopSetup();
-		friend void startupPhaseSetup(std::vector<Player*>& players);
-		friend void gameObserversSetup();
-		friend void gameStartSetup();
-		friend void externalCleanup();
-
-		static void callMainGameLoop();		//	temporary function that calls the main game 
-												//	>>	loop from outside
-
 		/* Given that GameManager is a singleton we delete both the copy constructor 
 		  and the assignment operator to avoid having other objects of type GameManager 
 		  other than the single instance provided
@@ -63,20 +50,13 @@ namespace WZ
 		*/
 		static Player* getNeutralPlayer();
 
-		/*Method startupPhase is a method that will randomise the order of play of the player.
-		where the number of players can be between 2 and 5 inclusively. The territories in the
-		map will be randomly assigned to the players in a round-robin fashion.
-		And finally, depending on the number of players, each player will start with a number of
-		initial armies.  This method will return the player, the number of armies and its territories.*/;
-		static void startupPhase();
 	
 		//Returns the current game manager phase
 		static GamePhase getCurrentPhase();
 
+		//returns the player currently making a decision
 		static const Player* getCurrentPlayer();
 
-		// function to initialize the game with the user's preferences
-		static void gameStart();
 
 		/* Adds a PhaseObserver to "listen" to the GameManager
 
@@ -111,12 +91,8 @@ namespace WZ
 		*/
 		static const Map* getMap();
 
-
+		//returns last order managed by the GameManager
 		static const Order* getLastOrder();
-
-		/* displays a menu to the user allowing them to toggle the observers on and off
-		*/
-		static void SettingsMenu();
 
 		/* Static function responsible of running an attack
 
@@ -127,6 +103,9 @@ namespace WZ
 		  return: true if the attackers have successfully captured the territory, false otherwise
 		*/
 		static bool Attack(Territory* source, Territory* target, unsigned int amount);
+
+		//provides interface to the user so they can start a game or exit the program
+		static void MainMenu();
 
 	private:
 
@@ -140,6 +119,13 @@ namespace WZ
 		  returns: the single instance of the GameManager class 
 		*/
 		static GameManager& GetManager();
+
+		/*Method startupPhase is a method that will randomise the order of play of the player.
+		where the number of players can be between 2 and 5 inclusively. The territories in the
+		map will be randomly assigned to the players in a round-robin fashion.
+		And finally, depending on the number of players, each player will start with a number of
+		initial armies.  This method will return the player, the number of armies and its territories.*/;
+		static void startupPhase();
 
 		/*Underlying implementation of the isNegotiating function
 
@@ -158,6 +144,14 @@ namespace WZ
 		*/
 		void drawCardImpl(Player* p);
 
+		/* displays a menu to the user allowing them to toggle the observers on and off
+		*/
+		static void SettingsMenu();
+
+		// function to initialize the game with the user's preferences, 
+		//returns true if user chooses to go through with game false otherwise
+		static bool gameStart();
+		
 		/*Underlying implementation of the isNegotiating function
 
 		  returns: a ptr to the neutral player;
@@ -178,9 +172,12 @@ namespace WZ
 		*/
 		static void NotifyStatisticsObserver();
 
-		//asks the user to select a map file and creates that map (if the file is valid) and assigns 
-		//it to the map attribute of the GameManager
-		void getUserMap();
+		/*asks the user to select a map file and creates that map (if the file is valid) and assigns 
+		  it to the map attribute of the GameManager. 
+
+		  Returns true if the user chooses a map, false if they choose to back out of the selection
+		*/
+		bool getUserMap();
 
 		//Asks the user how many player will play and returns that number
 		int getUserNumPlayers();
@@ -189,8 +186,11 @@ namespace WZ
 		*/
 		void AddPhaseObserverImpl(PhaseObserver* p);
 		
-		/*function to get the number of players and initialize them in the m_activePlayers */
-		void InitializePlayers();
+		/*function to get the number of players and initialize them in the m_activePlayers 
+
+		  returns true if the user selects the number of players, false if they back out of the selection
+		*/
+		bool InitializePlayers();
 
 		/* underlyin implementation of RemovePhaseObserver
 		*/
@@ -246,8 +246,12 @@ namespace WZ
 		void executeOrderPhase();
 
 		/* main game loop
+
+		   returns true if the human player won, false otherwise
 		*/
-		void mainGameLoop();
+		bool mainGameLoop();
+
+		static void RunGame();
 
 		const Order* getLastOrderImpl() const;
 
@@ -256,6 +260,7 @@ namespace WZ
 		std::vector<std::pair<const Player*, const Player*>> m_bufferList;
 		Deck* m_deck;
 		Player* m_neutralPlayer;
+		Player* m_humanPlayer;
 		GamePhase currentphase;
 		Player* CurrentPlayer;
 		Map* map;

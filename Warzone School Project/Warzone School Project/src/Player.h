@@ -18,9 +18,6 @@ namespace WZ
 		friend class GameManager;
 		friend class Card;
 
-		//temp friend function for player strategies driver
-		friend void StrategyDriver();
-
 	private:
 		std::vector<Territory*> territories;
 		Hand* hand;

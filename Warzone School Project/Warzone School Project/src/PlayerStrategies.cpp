@@ -318,6 +318,7 @@ namespace WZ
 				break;
 			}
 		}
+		m_reinforcements -= numArmies;
 
 		return new DeployOrder(m_player, target, numArmies);
 	}
@@ -682,7 +683,7 @@ namespace WZ
 			return;
 		else if (end - start == 2) {
 			if (list[start]->getArmies() < list[end - 1]->getArmies()) {
-				swapTerritories(list, start, end);
+				swapTerritories(list, start, end - 1);
 			}
 			return;
 		}
@@ -840,6 +841,11 @@ namespace WZ
 			source->m_availableArmies = 0;
 			defend.erase(defend.begin());
 			return card->play(source, target, m_player, nullptr, armies);
+		}
+
+		if (strongest->getAvailableArmies() == 0)
+		{
+			return nullptr;
 		}
 
 		//do other order
