@@ -288,45 +288,46 @@ namespace WZ {
 
 	//	goes through the file and stores the usefull data (continents, territories and borders) into the given vector arguments
 	void ConquestFileReader::conquestParserFunction(const string& s, vector<Continent*>& continents, vector<Territory*>& countries, vector<Borders>& borders) {
-		string line, section = "";
-		std::ifstream open_map(s);
-		vector<vector<string>> borders_string;
-		int id = 0;
+		string line, section = "";				//	line will be used as storage for each line in the file
+												//	section will store the section of the file we're reading
+		std::ifstream open_map(s);				//	stream for reading the map file
+		vector<vector<string>> borders_string;	//	a temporary double-vector string for extracting borders
+		int id = 0;								//	used for giving each territory an ID, to match the mapLoader format
 
 		std::getline(open_map, line);
-		while (!open_map.eof()) {
+		while (!open_map.eof()) {				//	loop each line of the file
 
-			std::getline(open_map, line);
+			std::getline(open_map, line);		//	saving the file line into the string line
 
 			if (line == "")
 			{
 				continue;
 			}
-			if (line == "[Continents]") {
+			if (line == "[Continents]") {		//	checking if we're entering Continents sections
 				section = "continents";
 				continue;
 			}
-			else if (line == "[Territories]") {
+			else if (line == "[Territories]") {	//	checking if we're entering Territories sections
 				section = "territories";
 				continue;
 			}
 
-			if (section == "continents") {
-				int delimiter, bonus;
-				string cont;
-				delimiter = line.find("=");
-				cont = line.substr(0, delimiter);
-				bonus = stringToInt(line.substr(++delimiter, line.size() - 1));
-				continents.push_back(new Continent(cont, bonus));
+			if (section == "continents") {		//	sequence to follow if in the continents section
+				int delimiter, bonus;			//	index value used in file to separate the name from the bonus; bonus variable
+				string cont;					//	to store the name of continent
+				delimiter = line.find("=");		//	the "=" sign is the delimiter in the file
+				cont = line.substr(0, delimiter);	//	substracting the name of continent
+				bonus = stringToInt(line.substr(++delimiter, line.size() - 1));		//	retrive the bonus of continent
+				continents.push_back(new Continent(cont, bonus));	//	create the continent and store it
 			}
-			else if (section == "territories") {
+			else if (section == "territories") {//	sequence to follow if in the territories section
 				int comma;						//	index value usefull to navigate through the line
 				string name, continentName;
 				comma = line.find(",");			//	first comma - preceeded by the name of the territory
 				name = line.substr(0, comma);	//	saving the name of the territory
 				line = line.substr(++comma);	//	dumping the string portion that was proccesed
 
-				//	this section will make us jump over x and y points, which are not important.
+				//	this section will make us jump over x and y coordinates, which we're not using.
 				comma = line.find(",");
 				line = line.substr(++comma);
 				comma = line.find(",");
@@ -340,11 +341,11 @@ namespace WZ {
 				vector<string> b;				//	temporary storry for borders
 				while (comma != -1) {			//	unknown number of borders, so must loop untill no more comma's found
 					comma = line.find(",");
-					if (comma == -1) {
-						b.push_back(line);
+					if (comma == -1) {			//	if there are no more commas - last border
+						b.push_back(line);		//	save last border string
 					}
 					else {
-						b.push_back(line.substr(0, comma));		//	saving each substring between 2 commas
+						b.push_back(line.substr(0, comma));		//	saving each border substring between 2 commas
 					}
 					line = line.substr(comma + 1);
 				}
@@ -371,11 +372,11 @@ namespace WZ {
 		for (row = borders_string.begin(); row != borders_string.end(); row++) {	//	looping through the rows
 			Borders b;				//	for each row we create a Borders object
 			b.setBorders(index++);					//	first element of Borders object is the index of the territory it represents
-			for (col = row->begin(); col != row->end(); col++) {		//	looping through each element of the row - these are strings 
-																		//	and representing the names of the neigboring territories
+			for (col = row->begin(); col != row->end(); col++) {	//	looping through each element of the row - these are strings 
+																	//	and representing the names of the neigboring territories
 				for (int i = 0; i < territories.size(); i++) {		//	looking at every territory
 					if (territories[i]->getName() == *col) {		//	and check to match the name we have with the name of the territory
-						b.setBorders(i);								//	populating the borders data member
+						b.setBorders(i);							//	populating the borders data member
 						break;
 					}
 				}
@@ -391,17 +392,17 @@ namespace WZ {
 		are stored in temporary vectors which will be deleted after the map is created.
 	*/
 	Map* ConquestFileReader::mapGenerator(const string& map_name) {
-		if (map_validator(map_name)) {
-			conquestParserFunction(map_name, continents, territories, borders);
+		if (map_validator(map_name)) {					//	check the map to be valid
+			conquestParserFunction(map_name, continents, territories, borders);		//	extracts the usefull data
 
 			//make sure have enough territories for the number of borders
-			if (territories.size() < borders.size())
+			if (territories.size() < borders.size())	//	verifying the acuracy of the data
 			{
 				cout << "Invalid map file." << endl;
 				return NULL;
 			}
 
-			setAdjList();
+			setAdjList();								//	creating the map-graph
 			Map* mapPointer = new Map(continents);
 			continents.clear();
 			territories.clear();
@@ -425,21 +426,21 @@ namespace WZ {
 	}
 
 	string ConquestFileReader::menu_loader(const string& path) {
-		string extension;
-		vector<string> files;
-		for (const auto& entry : std::filesystem::directory_iterator(path)) {
-			extension = entry.path().filename().extension().string();
-			if (extension == ".map" || extension == ".txt") {
+		string extension;														//	variable used to store file extension
+		vector<string> files;													//	a list with possible map files
+		for (const auto& entry : std::filesystem::directory_iterator(path)) {	//	loop for each file in directory
+			extension = entry.path().filename().extension().string();			//	looking at extension of the file
+			if (extension == ".map" || extension == ".txt") {						//	choose only .map and .txt files
 				files.push_back(entry.path().filename().string());
 			}
 		}
-		if (files.size() == 0) {
+		if (files.size() == 0) {												//	folder can have 0 map files
 			cout << "No map file were found." << endl;
 			return "";
 		}
 
 
-		int fileIndex = AskInput(files);
+		int fileIndex = AskInput(files);				//	menu function for user to select the desired map
 		std::cout << "\n";
 		if (path == "")
 		{
@@ -448,10 +449,13 @@ namespace WZ {
 		return path + "/" + files[fileIndex - 1];
 	}
 
+	/*
+	Function that creates the graph that represents the map
+	*/
 	void ConquestFileReader::setAdjList() {
-		for (Borders b : borders) {
-			Territory* curentTerritory = territories[b.getBorder()[0]];
-			for (size_t i = 1; i < b.getBorder().size(); i++)
+		for (Borders b : borders) {					//	for every borders set in the list
+			Territory* curentTerritory = territories[b.getBorder()[0]];		//	a territory is created using the first value
+			for (size_t i = 1; i < b.getBorder().size(); i++)				//	the other values of b will be set as borders for this territory
 				curentTerritory->addAdjTerritory(territories[b.getBorder()[i]]);
 		}
 	}
@@ -489,6 +493,4 @@ namespace WZ {
 		stream << "Conquest File Reader Adapter";
 		return stream;
 	}
-
-
 }	
