@@ -122,9 +122,13 @@ namespace WZ
 
 
 		strategy = ChooseStrategy(p);
-		p->SetStrategy(strategy);
-		p->generateTerritoryLists();
-		map->resetAvailableArmies();
+		if (strategy != nullptr)
+		{
+			p->SetStrategy(strategy);
+			p->generateTerritoryLists();
+			map->resetAvailableArmies();
+		}
+
 		while (strategy != nullptr)
 		{
 
