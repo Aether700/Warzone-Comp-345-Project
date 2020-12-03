@@ -24,6 +24,7 @@ namespace WZ
         friend class AggressivePlayerStrategy;
         friend class BenevolentPlayerStrategy;
         friend class HumanPlayerStrategy;
+        friend class RoundedPlayerStrategy;
         friend class ConquestFileReader;
     public:
         /*Territory constructor

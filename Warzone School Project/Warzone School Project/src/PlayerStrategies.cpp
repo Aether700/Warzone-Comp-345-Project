@@ -10,9 +10,11 @@
 #include <random>
 #include <chrono>
 
+#define OFFENSIVE_PLAY 0.6f
 #define STRONGEST_THRESHOLD 20
 #define BLOCKADE_THRESHOLD 15
 #define CARD_PLAY 0.5f
+#define DEF_THRESHOLD 10
 
 namespace WZ
 {
@@ -1004,8 +1006,58 @@ namespace WZ
 		if(m_reinforcements > 0 )
 			return issueDeployOrder();
 		
-		return defensivePlay();
-		
+		if (Random::GetFloat() <= 0.8f)
+		{
+			return defensivePlay();
+		}
+
+		//do an offensive play (advance order only)
+		if (m_toDef.empty())
+		{
+			return nullptr;
+		}
+
+		Territory* src; 
+		for (int i = 1; i <= m_toDef.size(); i++)
+		{
+			src = m_toDef[m_toDef.size() - i];
+
+			if (src->getAvailableArmies() > 0)
+			{
+				break;
+			}
+		}
+
+		if (src->getAvailableArmies() == 0)
+		{
+			return nullptr;
+		}
+
+		Territory* target = nullptr;
+
+		for (Territory* adj : src->getAdjList())
+		{
+			if (adj->getOwner() != m_player)
+			{
+				target = adj;
+				break;
+			}
+		}
+
+		if (target == nullptr)
+		{
+			return nullptr;
+		}
+
+		int numArmies = target->getAvailableArmies() / 2;
+
+		if (numArmies == 0)
+		{
+			numArmies++;
+		}
+
+		target->m_availableArmies -= numArmies;
+		return new AdvanceOrder(m_player, src, target, numArmies);
 	}
 
 	
@@ -1134,6 +1186,451 @@ namespace WZ
 	{
 		stream << "Benevolant Player Strategy";
 		return stream;
+	}
+
+	// RoundedPlayerStrategy //////////////////////////////////////////////////////////////////////////////////////////
+
+	RoundedPlayerStrategy::RoundedPlayerStrategy(Player* player) : PlayerStrategy(player) { }
+
+	RoundedPlayerStrategy::RoundedPlayerStrategy(const RoundedPlayerStrategy& other) : PlayerStrategy(other) { }
+
+	Order* RoundedPlayerStrategy::issueOrder()
+	{
+		if (m_reinforcements != 0)
+		{
+			return Deploy();
+		}
+		else
+		{
+			float randVal = OFFENSIVE_PLAY;
+
+			if (!m_toDef.empty())
+			{
+				randVal = Random::GetFloat();
+			}
+
+			if (!m_toAtk.empty() && randVal <= OFFENSIVE_PLAY)
+			{
+				return offensivePlay();
+			}
+			else
+			{
+				return defensivePlay();
+			}
+		}
+	}
+
+	void RoundedPlayerStrategy::generateTerritoryLists()
+	{
+		GenerateToDef();
+		GenerateToAtk();
+	}
+
+	PlayerStrategy* RoundedPlayerStrategy::copy() const
+	{
+		return new RoundedPlayerStrategy(*this);
+	}
+
+	void RoundedPlayerStrategy::GenerateToDef()
+	{
+		m_toDef.clear();
+
+		for (Territory* owned : m_player->getTerritories())
+		{
+			std::vector<Territory*> accessList = GameManager::getMap()->getAccessList(owned);
+
+			int heuristic = 0;
+
+			if (owned->getArmies() == 0)
+			{
+				m_toDef.push_back(owned);
+				continue;
+			}
+
+			for (Territory* adj : accessList)
+			{
+				if (adj->getOwner() == GameManager::getNeutralPlayer())
+				{
+					continue;
+				}
+				else if (adj->getOwner() != m_player)
+				{
+					heuristic += adj->getArmies();
+				}
+			}
+
+			if (heuristic >= DEF_THRESHOLD)
+			{
+				m_toDef.push_back(owned);
+			}
+		}
+	}
+	
+	void RoundedPlayerStrategy::GenerateToAtk()
+	{
+		m_toAtk.clear();
+
+		for (Territory* owned : m_player->getTerritories())
+		{
+			for (Territory* adj : owned->getAdjList())
+			{
+				if (adj->getOwner() != m_player)
+				{
+					m_toAtk.push_back(adj);
+				}
+			}
+		}
+	}
+
+	DeployOrder* RoundedPlayerStrategy::Deploy()
+	{
+		std::vector <Territory*>& def = toDefend();
+
+		if (def.empty())
+		{
+			def = m_player->getTerritories();
+		}
+
+		Territory* destination = def[0];
+		def.erase(def.begin());
+		def.push_back(destination);
+
+		unsigned int amount = Clamp(1, m_reinforcements, Random::GetInt() % m_reinforcements);
+
+
+		m_reinforcements -= amount;
+
+		return new DeployOrder(m_player, destination, amount);
+	}
+
+	Territory* RoundedPlayerStrategy::GetSourceTerritory(Territory* target)
+	{
+		for (Territory* t : m_player->getTerritories())
+		{
+			if (t->getAvailableArmies() > 0)
+			{
+				if (target == nullptr)
+				{
+					return t;
+				}
+
+				for (Territory* adj : t->getAdjList())
+				{
+					if (adj == target)
+					{
+						return t;
+					}
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
+	unsigned int RoundedPlayerStrategy::GetNumArmiesToSend(Territory* t)
+	{
+		if (t->getAvailableArmies() == 0)
+		{
+			return 0;
+		}
+
+		//temporarily taking all the available armies to make game run faster
+		unsigned int armiesToSend = t->m_availableArmies;
+		t->m_availableArmies -= armiesToSend;
+		return armiesToSend;
+	}
+
+	bool RoundedPlayerStrategy::ShouldBlockade(Territory* target)
+	{
+		if (m_player->getNumOfTerritories() == 1)
+		{
+			return false;
+		}
+
+		std::vector<Territory*> accessList = GameManager::getMap()->getAccessList(target);
+
+		if (accessList.size() == 0)
+		{
+			return false;
+		}
+
+		int heuristic = 0;
+
+		for (Territory* t : accessList)
+		{
+			if (t->getOwner() == GameManager::getNeutralPlayer())
+			{
+				continue;
+			}
+			else if (t->getOwner() == target->getOwner())
+			{
+				heuristic -= t->getArmies();
+			}
+			else
+			{
+				heuristic += t->getArmies();
+			}
+		}
+
+		return heuristic >= BLOCKADE_THRESHOLD;
+	}
+
+	Player* RoundedPlayerStrategy::GetNegotiatingTarget(Territory* t)
+	{
+		std::vector<Territory*> accessList = GameManager::getMap()->getAccessList(t);
+
+		if (accessList.size() == 0)
+		{
+			return nullptr;
+		}
+
+		const std::vector<Player*> activePlayers = GameManager::getActivePlayers();
+		std::pair<int, Player*>* heuristicArr = new std::pair<int, Player*>[activePlayers.size() - 1];
+		int index = 0;
+
+		//calculate heuristic of each player
+		for (Territory* curr : accessList)
+		{
+			if (curr->getOwner() == GameManager::getNeutralPlayer())
+			{
+				continue;
+			}
+			else if (curr->getOwner() != t->getOwner())
+			{
+				for (size_t i = 0; i < activePlayers.size(); i++)
+				{
+					if (curr->getOwner() == activePlayers[i])
+					{
+						bool foundPlayer = false;
+						for (int j = 0; j < index; j++)
+						{
+							if (heuristicArr[j].second == curr->getOwner())
+							{
+								heuristicArr[j].first += curr->getArmies();
+								foundPlayer = true;
+								break;
+							}
+						}
+
+						if (!foundPlayer)
+						{
+							heuristicArr[index] = std::pair<int, Player*>(curr->getArmies(), curr->getOwner());
+							index++;
+						}
+					}
+				}
+			}
+		}
+
+		int targetIndex = 0;
+		for (int i = 1; i < index; i++)
+		{
+			if (heuristicArr[targetIndex].first < heuristicArr[i].first)
+			{
+				targetIndex = i;
+			}
+		}
+
+		Player* target = heuristicArr[targetIndex].second;
+		delete[] heuristicArr;
+		return target;
+	}
+
+	Order* RoundedPlayerStrategy::offensivePlay()
+	{
+		std::vector<Territory*>& atk = toAttack();
+		Territory* target = atk[0];
+		atk.erase(atk.begin());
+
+		Territory* src = nullptr;
+
+		if (m_player->hasCardType(Card::Type::Airlift))
+		{
+			src = GetSourceTerritory(target);
+		}
+
+		if (src != nullptr || m_player->hasCardType(Card::Type::Bomb) && Random::GetFloat() <= CARD_PLAY)
+		{
+			Card::Type typeToPlay;
+
+			if (src == nullptr)
+			{
+				typeToPlay = Card::Type::Bomb;
+			}
+			else if (!m_player->hasCardType(Card::Type::Bomb))
+			{
+				typeToPlay = Card::Type::Airlift;
+			}
+			else
+			{
+				//if we have both cards pick one card randomly
+				if (Random::GetFloat() <= 0.5f)
+				{
+					typeToPlay = Card::Type::Bomb;
+				}
+				else
+				{
+					typeToPlay = Card::Type::Airlift;
+				}
+			}
+
+			Card* toPlay = m_player->getCardType(typeToPlay);
+			m_player->getHand()->removeCardFromHand(toPlay);
+
+			if (typeToPlay == Card::Type::Bomb)
+			{
+				Order* o = toPlay->play(nullptr, target, m_player, nullptr, 0);
+				delete toPlay;
+				return o;
+			}
+			else
+			{
+				unsigned int armiesToSend = GetNumArmiesToSend(src);
+				Order* o = toPlay->play(src, target, m_player, nullptr, armiesToSend);
+				delete toPlay;
+				return o;
+			}
+		}
+		else
+		{
+			//do other order (here only advance)
+
+			if (src == nullptr)
+			{
+				src = GetSourceTerritory(target);
+
+				while (!m_toAtk.empty() && src == nullptr)
+				{
+					target = atk[0];
+					atk.erase(atk.begin());
+					src = GetSourceTerritory(target);
+				}
+
+				if (src == nullptr)
+				{
+					return nullptr;
+				}
+			}
+
+			unsigned int armiesToSend = GetNumArmiesToSend(src);
+
+			return new AdvanceOrder(m_player, src, target, armiesToSend);
+		}
+	}
+
+	Order* RoundedPlayerStrategy::defensivePlay()
+	{
+		//make sure we have territories to defend
+		if (m_toDef.empty())
+		{
+			return nullptr;
+		}
+
+		if (m_player->hasCardType(Card::Type::Reinforcement))
+		{
+			Card* toPlay = m_player->getCardType(Card::Type::Reinforcement);
+			m_player->getHand()->removeCardFromHand(toPlay);
+			toPlay->play(nullptr, nullptr, m_player, nullptr, 0);
+			delete toPlay;
+			return issueOrder();
+		}
+
+		std::vector<Territory*>& def = toDefend();
+		Territory* target = def[0];
+		def.erase(def.begin());
+
+		if (m_player->hasCardType(Card::Type::Blockade))
+		{
+			//check if we blockade
+			if (ShouldBlockade(target))
+			{
+				Card* toPlay = m_player->getCardType(Card::Type::Blockade);
+				return toPlay->play(nullptr, target, m_player, nullptr, 0);
+			}
+		}
+
+		Player* playerTarget = nullptr;
+		if (m_player->hasCardType(Card::Type::Diplomacy))
+		{
+			playerTarget = GetNegotiatingTarget(target);
+		}
+
+		Territory* src = nullptr;
+
+		if (m_player->hasCardType(Card::Type::Airlift))
+		{
+			src = GetSourceTerritory(target);
+		}
+
+		if ((src != nullptr || playerTarget != nullptr) && Random::GetFloat() <= CARD_PLAY)
+		{
+			//play card
+			Card::Type typeToPlay;
+			if (src == nullptr)
+			{
+				typeToPlay = Card::Type::Diplomacy;
+			}
+			else if (playerTarget == nullptr)
+			{
+				typeToPlay = Card::Type::Airlift;
+			}
+			else
+			{
+				//if we have both cards pick one card randomly
+				if (Random::GetFloat() <= 0.5f)
+				{
+					typeToPlay = Card::Type::Diplomacy;
+				}
+				else
+				{
+					typeToPlay = Card::Type::Airlift;
+				}
+			}
+
+			Card* toPlay = m_player->getCardType(typeToPlay);
+			m_player->getHand()->removeCardFromHand(toPlay);
+
+			if (typeToPlay == Card::Type::Diplomacy)
+			{
+				Order* o = toPlay->play(nullptr, nullptr, m_player, playerTarget, 0);
+				delete toPlay;
+				return o;
+			}
+			else
+			{
+				unsigned int armiesToSend = GetNumArmiesToSend(src);
+				Order* o = toPlay->play(src, target, m_player, nullptr, armiesToSend);
+				delete toPlay;
+				return o;
+			}
+
+		}
+		else
+		{
+			//do other order
+
+			//otherwise we try to advance
+			if (src == nullptr)
+			{
+				src = GetSourceTerritory(target);
+
+				while (!m_toDef.empty() && src == nullptr)
+				{
+					target = def[0];
+					def.erase(def.begin());
+					src = GetSourceTerritory(target);
+				}
+
+				if (src == nullptr)
+				{
+					return nullptr;
+				}
+			}
+
+			unsigned int armiesToSend = GetNumArmiesToSend(src);
+
+			return new AdvanceOrder(m_player, src, target, armiesToSend);
+		}
 	}
 
 }

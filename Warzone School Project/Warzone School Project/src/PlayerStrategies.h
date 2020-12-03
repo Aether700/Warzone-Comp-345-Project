@@ -430,4 +430,49 @@ namespace WZ
 	//stream insertion operator for the BenevolentPlayerStrategy class
 	std::ostream& operator<<(std::ostream& stream, const BenevolentPlayerStrategy& strategy);
 
+	class RoundedPlayerStrategy : public PlayerStrategy
+	{
+	public:
+		/*base constructor of RoundedPlayerStrategy,
+		  takes a ptr to the player who owns this Strategy object
+
+		  player: the player who owns this object
+		*/
+		RoundedPlayerStrategy(Player* player);
+
+		//copy constructor
+		RoundedPlayerStrategy(const RoundedPlayerStrategy& other);
+
+		/* returns the order issued by the player or nullptr if the player is done issuing orders for this turn
+
+		   returns: the order issued by the player or nullptr if the player is done issuing orders for this turn
+		*/
+		virtual Order* issueOrder() override;
+
+		
+		/* generates the list of territories to attack and to defend for this turn.
+		*/
+		virtual void generateTerritoryLists() override;
+
+	protected:
+		/* provides a copy of this RoundedPlayerStrategy obj (like the clone method in java)
+		   will only be used by the Player class to perform a deep copy of a Player object
+		*/
+		virtual PlayerStrategy* copy() const override;
+
+		void GenerateToDef();
+		void GenerateToAtk();
+
+		DeployOrder* Deploy();
+		Territory* GetSourceTerritory(Territory* target = nullptr);
+
+		unsigned int GetNumArmiesToSend(Territory* t);
+
+		bool ShouldBlockade(Territory* target);
+		Player* GetNegotiatingTarget(Territory* t);
+
+		Order* offensivePlay();
+		Order* defensivePlay();
+	};
+
 }

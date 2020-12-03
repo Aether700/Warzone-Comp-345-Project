@@ -208,6 +208,10 @@ namespace WZ
 	{
 		if (Random::GetFloat() <= 0.5f)
 		{
+			return new RoundedPlayerStrategy(this);
+		}
+		else if (Random::GetFloat() <= 0.5f)
+		{
 			return new BenevolentPlayerStrategy(this);
 		}
 		return new AggressivePlayerStrategy(this);
