@@ -265,7 +265,7 @@ namespace WZ
 		Player* CurrentPlayer;
 		Map* map;
 		Order* m_lastOrder;
-		bool PhaseObsOn=true;
+		bool PhaseObsOn=false;
 		bool StatsObsOn=true;
 		
 	};

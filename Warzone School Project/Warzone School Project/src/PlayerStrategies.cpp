@@ -1017,7 +1017,7 @@ namespace WZ
 			return nullptr;
 		}
 
-		Territory* src; 
+		Territory* src = nullptr; 
 		for (int i = 1; i <= m_toDef.size(); i++)
 		{
 			src = m_toDef[m_toDef.size() - i];

@@ -455,6 +455,7 @@ namespace WZ
 
 		while (!issuingPlayers.empty())
 		{
+			std::cout << *map << "\n\n"; //prints map for user
 			for (size_t i = 0; i < issuingPlayers.size(); i++)
 			{
 				Order* currOrder = issuingPlayers[i]->issueOrder();
@@ -484,6 +485,8 @@ namespace WZ
 		m_lastOrder = nullptr;
 		while (ordersLeft) {
 			ordersLeft = false;			//	False value allows OR operations over each player
+
+
 			for (Player* p : m_activePlayers) {	
 				CurrentPlayer = p;
 				Order* currOrder = p->executeTopOrder();

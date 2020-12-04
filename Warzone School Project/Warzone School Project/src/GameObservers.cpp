@@ -43,6 +43,7 @@ namespace WZ
 		{
 			std::cout << *lastOrder << "\n";
 		}
+		std::cout << "\n";
 	}
 
 	PhaseObserver& PhaseObserver::operator=(const PhaseObserver& other)

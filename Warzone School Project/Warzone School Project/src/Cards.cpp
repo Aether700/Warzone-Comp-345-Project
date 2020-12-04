@@ -172,31 +172,26 @@ namespace WZ
         return type;
     }
 
-    Order* Card::play(Territory* start,Territory* dest,Player* p,Player* r,int amount){
+    Order* Card::play(Territory* start, Territory* dest, Player* p, Player* r, int amount){
          
          if(type == Card::Type::Bomb){
-             std::cout<<"Playing Bomb card"<<std::endl;
              Order* O= new BombOrder(p,dest);
              return O;
          }
          else if (type == Card::Type::Reinforcement){
-             std::cout<<"Playing reinforcement card"<<std::endl;
              p->m_strategy->m_reinforcements += CARD_REINFORCEMENT_VAL;
              return nullptr; 
         }
         else if (type == Card::Type::Airlift){
-            std::cout<<"Playing airlift card"<<std::endl;
             Order* O= new AirliftOrder(p, start,dest, amount);
-             return O; 
+            return O; 
         } 
         else if(type == Card::Type::Diplomacy){
-            std::cout<<"Playing diplomacy card"<<std::endl;
             Order* O= new NegotiateOrder(p,r);
-             return O; 
+            return O; 
         }
         else
         {
-             std::cout << "Playing blockade card" << std::endl;
              return new BlockadeOrder(p, dest);
         }
     }
